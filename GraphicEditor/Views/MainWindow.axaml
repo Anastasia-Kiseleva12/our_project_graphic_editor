@@ -3,20 +3,52 @@
         xmlns:vm="using:GraphicEditor.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="GraphicEditor.Views.MainWindow"
+        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+		Height="1080"		Width="1920"
+		x:Class="GraphicEditor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="GraphicEditor">
         
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 	<Grid Background="White">
-		<!-- Ваши элементы управления -->
+		<Canvas Background="AliceBlue">
+			<Panel Background="Black" 
+				   Height="980" 
+				   Width="1670"
+				   Canvas.Bottom="0"
+				   Canvas.Right="0">
+				
+			</Panel>
+			<Panel Background="Blue"
+				   Height="1010"
+				   Width="250"
+				   Canvas.Left="0"
+				   Canvas.Bottom="0">
+				<StackPanel>
+					<RadioButton Content="Кнопка1" Margin="10 10 0 0"/>
+					<RadioButton Content="Кнопка2" Margin="10 10 0 0"/>
+					<RadioButton Content="Кнопка3" Margin="10 10 0 0"/>
+					<RadioButton Content="Кнопка4" Margin="10 10 0 0"/>
 
-		<TextBlock Text="{Binding Greeting}" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				</StackPanel>
+			</Panel>
+			<Panel  Background="Red" 
+				   Height="70" 
+				   Width="1920"
+				   Canvas.Top="0"
+				   Canvas.Right="0">
+				
+			</Panel>
+			<Panel Background="Green"
+				   Height="30"
+				   Width="1670"
+				   Canvas.Top="70"
+				   Canvas.Right="0">
+				
+			</Panel>
+		</Canvas>
 	</Grid>
 </Window>
