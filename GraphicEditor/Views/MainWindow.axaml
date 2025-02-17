@@ -34,17 +34,46 @@
 		</Style>
 		<!--вид выбранной кнопки-->
 		<Style Selector="RadioButton.Figure:checked /template/ Border#ButtFig">
-			<Setter Property="Background" Value="#5a5a5a"/>
+			<Setter Property="Background" Value="#999999"/>
 		</Style>
 		<!--вид кнопки при наведенном курсоре-->
 		<Style Selector="RadioButton.Figure:pointerover /template/ Border#ButtFig">
-			<Setter Property="Background" Value="#555555"/>
+      <Setter Property="Background" Value="#787878"/>
 		</Style>
 	</Window.Styles>
+
+  <Window.Styles>
+    <!--переопределяем вид радио-кнопок для переключениями между вкладок-->
+    <Style Selector="RadioButton.Figure2">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Grid>
+              <Border Name="ButtFig" Width="300" Height="22"
+									CornerRadius="10,10,0,0"
+									Background="#c4c4c4">
+              </Border>
+              <ContentPresenter Content="{TemplateBinding Content}"
+											  HorizontalAlignment="Center"
+											  VerticalAlignment="Center"/>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <!--вид выбранной кнопки-->
+    <Style Selector="RadioButton.Figure2:checked /template/ Border#ButtFig">
+      <Setter Property="Background" Value="#a8a8a8"/>
+    </Style>
+    <!--вид кнопки при наведенном курсоре-->
+    <Style Selector="RadioButton.Figure2:pointerover /template/ Border#ButtFig">
+      <Setter Property="Background" Value="#bdbdbd"/>
+    </Style>
+  </Window.Styles>
 	<Grid Background="White">
 		<Canvas Background="AliceBlue">
 			<!--рабочая поляна(тут будет полотно)-->
-			<Panel Background="#646464" 
+			<Panel Background="#a8a8a8" 
 				   Height="828" 
 				   Width="1400"
 				   Canvas.Bottom="0"
@@ -58,7 +87,7 @@
 				   Canvas.Left="0"
 				   Canvas.Bottom="0">
 				<!--контейнер кнопок для фигур-->
-				<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center">
+				<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" >
 					<RadioButton Classes="Figure" Margin="0 20 0 0">
 						<Image Source="avares://GraphicEditor/Assets/Img/slash.png"
 							Height="27"
@@ -111,6 +140,8 @@
 				   Canvas.Right="0">
 				
 			</Panel>
+      
+      
 			<!--просто полосчка один горизонтальная-->
 			<Panel Background="#404040"
 				   Height="2"
@@ -129,7 +160,18 @@
 				   Width="1400"
 				   Canvas.Top="42"
 				   Canvas.Right="0">
-				
+
+        <StackPanel Margin="0 0 0 0" Orientation="Horizontal" HorizontalAlignment="Left" >
+          <RadioButton Classes="Figure2" Content="Проект 1" Margin="0 8 0 0"> 
+            Проект 1
+          </RadioButton>
+          <RadioButton Classes="Figure2" Content="Проект 2" Margin="10 8 0 0">
+            Проект 2
+          </RadioButton>
+          <RadioButton Classes="Figure2" Content="Проект 3" Margin="10 8 0 0">
+            Проект 3
+          </RadioButton>
+          </StackPanel>
 			</Panel>
 		</Canvas>
 	</Grid>
