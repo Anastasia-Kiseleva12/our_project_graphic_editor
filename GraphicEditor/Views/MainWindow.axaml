@@ -138,9 +138,29 @@
 				   Width="1600"
 				   Canvas.Top="0"
 				   Canvas.Right="0">
-				
+				   <DockPanel>
+						<Menu DockPanel.Dock="Top">
+						<MenuItem Header="_Файл">
+						<MenuItem Header="_Открыть"/>
+						<Separator/>
+						<MenuItem Header="_Выйти"/>
+					</MenuItem>
+						<MenuItem Header="_Правка">
+						<MenuItem Header="Копировать"/>
+						<MenuItem Header="Вставить"/>
+					</MenuItem>
+						<MenuItem Header="_Вид">
+						<MenuItem Header=" "/>
+						<MenuItem Header=" "/>
+					</MenuItem>
+						<MenuItem Header="_Помощь">
+						<MenuItem Header="Документация"/>
+					</MenuItem>
+					</Menu>
+					<TextBlock/>
+				</DockPanel>
 			</Panel>
-      
+     
       
 			<!--просто полосчка один горизонтальная-->
 			<Panel Background="#404040"
