@@ -7,6 +7,7 @@ namespace GraphicEditor.Views
         public MainWindow()
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
     }
 }

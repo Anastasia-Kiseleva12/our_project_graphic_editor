@@ -3,8 +3,8 @@
         xmlns:vm="using:GraphicEditor.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
-		Height="1080"		Width="1920"
+        mc:Ignorable="d" d:DesignWidth="1600" d:DesignHeight="900"
+		Height="900"		Width="1600"
 		x:Class="GraphicEditor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -13,39 +13,121 @@
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+	<Window.Styles>
+		<!--переопределяем вид радио-кнопок для выбора фигуры-->
+		<Style Selector="RadioButton.Figure">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Grid>
+							<Border Name="ButtFig" Width="130" Height="50"
+									CornerRadius="10"
+									Background="#646464">
+							</Border>
+							<ContentPresenter Content="{TemplateBinding Content}"
+											  HorizontalAlignment="Center"
+											  VerticalAlignment="Center"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<!--вид выбранной кнопки-->
+		<Style Selector="RadioButton.Figure:checked /template/ Border#ButtFig">
+			<Setter Property="Background" Value="#5a5a5a"/>
+		</Style>
+		<!--вид кнопки при наведенном курсоре-->
+		<Style Selector="RadioButton.Figure:pointerover /template/ Border#ButtFig">
+			<Setter Property="Background" Value="#555555"/>
+		</Style>
+	</Window.Styles>
 	<Grid Background="White">
 		<Canvas Background="AliceBlue">
-			<Panel Background="Black" 
-				   Height="980" 
-				   Width="1670"
+			<!--рабочая поляна(тут будет полотно)-->
+			<Panel Background="#646464" 
+				   Height="828" 
+				   Width="1400"
 				   Canvas.Bottom="0"
 				   Canvas.Right="0">
 				
 			</Panel>
-			<Panel Background="Blue"
-				   Height="1010"
-				   Width="250"
+			<!--поле с выбором фигуры и цветовой схемой-->
+			<Panel Background="#4b4b4b"
+				   Height="858"
+				   Width="198"
 				   Canvas.Left="0"
 				   Canvas.Bottom="0">
-				<StackPanel>
-					<RadioButton Content="Кнопка1" Margin="10 10 0 0"/>
-					<RadioButton Content="Кнопка2" Margin="10 10 0 0"/>
-					<RadioButton Content="Кнопка3" Margin="10 10 0 0"/>
-					<RadioButton Content="Кнопка4" Margin="10 10 0 0"/>
-
+				<!--контейнер кнопок для фигур-->
+				<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center">
+					<RadioButton Classes="Figure" Margin="0 20 0 0">
+						<Image Source="avares://GraphicEditor/Assets/Img/slash.png"
+							Height="27"
+							Width="27"
+							Margin="5"/>
+						<ToolTip.Tip>
+							<TextBlock Text="Ломаная"/>
+						</ToolTip.Tip>
+					</RadioButton>
+					<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0">
+						<Image Source="avares://GraphicEditor/Assets/Img/no-people.png"
+							Height="27"
+							Width="27"
+							Margin="5"/>
+						<ToolTip.Tip>
+							<TextBlock Text="Квадрат"/>
+						</ToolTip.Tip>
+					</RadioButton>
+					<RadioButton Classes="Figure" Content="Треугольник" Margin="0 20 0 0">
+						<Image Source="avares://GraphicEditor/Assets/Img/triangle.png"
+							Height="27"
+							Width="27"
+							Margin="5"/>
+						<ToolTip.Tip>
+							<TextBlock Text="Треугольник"/>
+						</ToolTip.Tip>
+					</RadioButton>
+					<RadioButton Classes="Figure" Content="Круг" Margin="0 20 0 0">
+						<Image Source="avares://GraphicEditor/Assets/Img/circle.png"
+							Height="27"
+							Width="27"
+							Margin="5"/>
+						<ToolTip.Tip>
+							<TextBlock Text="Круг"/>
+						</ToolTip.Tip>
+					</RadioButton>
 				</StackPanel>
+				<!--цветовая схема-->
+				<Rectangle Fill="DarkGoldenrod"
+				   Height="180"
+				   Width="180"
+				   VerticalAlignment="Bottom"
+				   Margin="0 0 0 10"/>
 			</Panel>
-			<Panel  Background="Red" 
-				   Height="70" 
-				   Width="1920"
+			<!--тут выпадающий список-->
+			<Panel  Background="#646464" 
+				   Height="40" 
+				   Width="1600"
 				   Canvas.Top="0"
 				   Canvas.Right="0">
 				
 			</Panel>
-			<Panel Background="Green"
+			<!--просто полосчка один горизонтальная-->
+			<Panel Background="#404040"
+				   Height="2"
+				   Width="1600"
+				   Canvas.Top="40"
+				   Canvas.Right="0"/>
+			<!--просто полосчка два вертикальная-->
+			<Panel Background="#404040"
+				   Height="858"
+				   Width="2"
+				   Canvas.Left="198"
+				   Canvas.Bottom="0"/>
+			<!--тут переключаемся между окнами-->
+			<Panel Background="#4b4b4b"
 				   Height="30"
-				   Width="1670"
-				   Canvas.Top="70"
+				   Width="1400"
+				   Canvas.Top="42"
 				   Canvas.Right="0">
 				
 			</Panel>
