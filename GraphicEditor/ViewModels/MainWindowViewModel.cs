@@ -1,9 +1,12 @@
-﻿namespace GraphicEditor.ViewModels
+﻿using System.Collections.ObjectModel;
+
+namespace GraphicEditor.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-#pragma warning disable CA1822 // Mark members as static
-        public string Greeting => "Welcome to Avalonia!";
-#pragma warning restore CA1822 // Mark members as static
+        private readonly ILogic _figureService;
+        private ObservableCollection<IFigure> _figures;
+        private IFigure _selectedFigure;
+
     }
 }

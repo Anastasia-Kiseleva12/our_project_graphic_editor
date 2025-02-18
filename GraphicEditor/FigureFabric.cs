@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
@@ -15,7 +15,7 @@ namespace GraphicEditor
         class ImportInfo
         {
             [ImportMany]
-            public IEnumerable<Lazy<IFigure, FigureMetadata>> AvailableFigures { get; set; } = [];
+            public IEnumerable<Lazy<IFigure, FigureMetadata>> AvailableFigures { get; set; } = []; //коллекция доступных фигур
         }
         static ImportInfo info;
         static FigureFabric()
@@ -36,7 +36,7 @@ namespace GraphicEditor
             cont.SatisfyImports(info);
         }
 
-        public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
+        public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name); //возвращает имена доступных фигур
         public static IFigure CreateFigure(string FigureName)
         {
             return info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value;
@@ -47,10 +47,15 @@ namespace GraphicEditor
     [ExportMetadata("Name", nameof(Circle))]
     public class Circle : IFigure
     {
+        public Point Center { get; }
+        public Point PointOnCircle { get; }
+        public Circle(Point center, Point pointOnCircle)
+        {
+            Center = center;
+            PointOnCircle = pointOnCircle;
+        }
         public void Move(Point vector) => throw new NotImplementedException();
         public void Rotate(Point center, double angle) => throw new NotImplementedException();
-
-        public Point Center { get; }
 
         public void Scale(double dx, double dy) => throw new NotImplementedException();
         public void Scale(Point center, double dr) => throw new NotImplementedException();

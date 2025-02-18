@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +12,7 @@ namespace GraphicEditor
         public double Y { get; set; }
     }
 
-    public interface Idrawing
+    public interface IDrawing
     {
         void DrawLine(Point a, Point b);
         void DrawCircle(Point Center, double r);
@@ -40,10 +40,10 @@ namespace GraphicEditor
 
     public interface ILogic
     {
-        IEnumerable<IFigure> Figures { get; }
+        IEnumerable<IFigure> Figures { get; } //список всех фигур
         void Save(string FilePath, string FileFormat);
         void Load(string FilePath, string FileFormat);
-        IEnumerable<string> FigureNamesToCreate { get; }
+        IEnumerable<string> FigureNamesToCreate { get; } //список имен фигур доступных для создания
         IEnumerable<(string, Type)> GetParameters(string figure);
         IFigure Create(string name, IDictionary<string, object> parameters);
         void AddFigure(IFigure figure);
