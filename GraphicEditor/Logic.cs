@@ -5,21 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls.Shapes;
 
+using DynamicData;
+
 namespace GraphicEditor
 {
-    public class FigureService : ILogic
+    public class FigureService 
     {
-        private readonly List<IFigure> _figures = new(); // Все фигуры
+        public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Name); // Все фигуры
         private readonly HashSet<IFigure> _selectedFigures = new(); // Выбранные фигуры
 
-        public IEnumerable<IFigure> Figures => _figures;
+        public IEnumerable<IFigure> Figures => _figures.Items;
 
         public IEnumerable<string> FigureNamesToCreate => FigureFabric.AvailableFigures; //список всех доступных имен фигур
 
         public void AddFigure(IFigure figure)
         {
             if (figure == null) throw new ArgumentNullException(nameof(figure));
-            _figures.Add(figure);
+            _figures.AddOrUpdate(figure);
         }
 
         public void RemoveFigure(IFigure figure)
@@ -29,7 +31,7 @@ namespace GraphicEditor
             _selectedFigures.Remove(figure);
         }
 
-        public IFigure Create(string name, IDictionary<string, object> parameters)
+        public IFigure Create(string name, IDictionary<string, Point> parameters, IDictionary<string, double> doubleparameters)
         {
             if (!FigureFabric.AvailableFigures.Contains(name))
             {
@@ -37,6 +39,7 @@ namespace GraphicEditor
             }
 
             var figure = FigureFabric.CreateFigure(name);
+            figure.SetParameters(doubleparameters, parameters);
 
             if (figure is Circle circle)
             {
@@ -68,9 +71,9 @@ namespace GraphicEditor
             return figure;
         }
 
-        public IFigure Find(Point p, double eps)
+        public IFigure? Find(Point p, double eps)
         {
-            return _figures.FirstOrDefault(f => f.IsIn(p, eps));
+            return Figures.FirstOrDefault(f => f.IsIn(p, eps));
         }
 
 

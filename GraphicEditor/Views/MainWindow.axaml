@@ -78,7 +78,7 @@
 				   Width="1400"
 				   Canvas.Bottom="0"
 				   Canvas.Right="0">
-				
+				<Image x:Name="Picture"/>
 			</Panel>
 			<!--поле с выбором фигуры и цветовой схемой-->
 			<Panel Background="#4b4b4b"

@@ -27,15 +27,22 @@ namespace GraphicEditor
         void Move(Point vector);
         void Rotate(Point center, double angle);
         Point Center { get; }
+        string Name
+        {
+            get;
+        }
+
         void Scale(double dx, double dy);
         void Scale(Point center, double dr);
         void Reflection(Point a, Point b);
         IFigure Clone();
-        IEnumerable<IDrawingFigure> GetAsDrawable();
+        void Draw(IDrawing drawing);
         bool IsIn(Point point, double eps);
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);
         IFigure Subtract(IFigure other);
+        void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
+
     }
 
     public interface ILogic

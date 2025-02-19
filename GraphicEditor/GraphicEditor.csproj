@@ -10,8 +10,13 @@
 
   <ItemGroup>
     <Folder Include="Assets\Img\" />
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
   </ItemGroup>
 
 
@@ -23,6 +28,8 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6" />
+    <PackageReference Include="DynamicData" Version="9.1.2" />
+    <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
     <PackageReference Include="System.Composition.AttributedModel" Version="9.0.2" />
     <PackageReference Include="System.Composition.TypedParts" Version="9.0.2" />
   </ItemGroup>
