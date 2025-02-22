@@ -71,15 +71,11 @@
     </Style>
   </Window.Styles>
 	<Grid Background="White">
-		<Canvas Background="AliceBlue">
+		<Grid Background="AliceBlue">
 			<!--рабочая поляна(тут будет полотно)-->
-			<Panel Background="#a8a8a8" 
-				   Height="828" 
-				   Width="1400"
-				   Canvas.Bottom="0"
-				   Canvas.Right="0">
-				<Image x:Name="Picture"/>
-			</Panel>
+			<Canvas Name="DrawingCanvas" Background="AliceBlue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+				<!-- В этом Canvas будут отображаться все фигуры -->
+			</Canvas>
 			<!--поле с выбором фигуры и цветовой схемой-->
 			<Panel Background="#4b4b4b"
 				   Height="858"
@@ -88,13 +84,10 @@
 				   Canvas.Bottom="0">
 				<!--контейнер кнопок для фигур-->
 				<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" >
-					<RadioButton Classes="Figure" Margin="0 20 0 0">
-						<Image Source="avares://GraphicEditor/Assets/Img/slash.png"
-							Height="27"
-							Width="27"
-							Margin="5"/>
+					<RadioButton Classes="Figure" Margin="0 20 0 0" Command="{Binding CreatePolylineCommand}">
+						<Image Source="avares://GraphicEditor/Assets/Img/slash.png" Height="27" Width="27" Margin="5"/>
 						<ToolTip.Tip>
-							<TextBlock Text="Ломаная"/>
+							<TextBlock Text="Линия"/>
 						</ToolTip.Tip>
 					</RadioButton>
 					<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0">
@@ -133,35 +126,35 @@
 				   Margin="0 0 0 10"/>
 			</Panel>
 			<!--тут выпадающий список-->
-			<Panel  Background="#646464" 
-				   Height="40" 
+			<Panel  Background="#646464"
+				   Height="40"
 				   Width="1600"
 				   Canvas.Top="0"
 				   Canvas.Right="0">
-				   <DockPanel>
-						<Menu DockPanel.Dock="Top">
+				<DockPanel>
+					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="_Файл">
-						<MenuItem Header="_Открыть"/>
-						<Separator/>
-						<MenuItem Header="_Выйти"/>
-					</MenuItem>
+							<MenuItem Header="_Открыть"/>
+							<Separator/>
+							<MenuItem Header="_Выйти"/>
+						</MenuItem>
 						<MenuItem Header="_Правка">
-						<MenuItem Header="Копировать"/>
-						<MenuItem Header="Вставить"/>
-					</MenuItem>
+							<MenuItem Header="Копировать"/>
+							<MenuItem Header="Вставить"/>
+						</MenuItem>
 						<MenuItem Header="_Вид">
-						<MenuItem Header=" "/>
-						<MenuItem Header=" "/>
-					</MenuItem>
+							<MenuItem Header=" "/>
+							<MenuItem Header=" "/>
+						</MenuItem>
 						<MenuItem Header="_Помощь">
-						<MenuItem Header="Документация"/>
-					</MenuItem>
+							<MenuItem Header="Документация"/>
+						</MenuItem>
 					</Menu>
 					<TextBlock/>
 				</DockPanel>
 			</Panel>
-     
-      
+
+
 			<!--просто полосчка один горизонтальная-->
 			<Panel Background="#404040"
 				   Height="2"
@@ -181,18 +174,18 @@
 				   Canvas.Top="42"
 				   Canvas.Right="0">
 
-        <StackPanel Margin="0 0 0 0" Orientation="Horizontal" HorizontalAlignment="Left" >
-          <RadioButton Classes="Figure2" Content="Проект 1" Margin="0 8 0 0"> 
-            Проект 1
-          </RadioButton>
-          <RadioButton Classes="Figure2" Content="Проект 2" Margin="10 8 0 0">
-            Проект 2
-          </RadioButton>
-          <RadioButton Classes="Figure2" Content="Проект 3" Margin="10 8 0 0">
-            Проект 3
-          </RadioButton>
-          </StackPanel>
+				<StackPanel Margin="0 0 0 0" Orientation="Horizontal" HorizontalAlignment="Left" >
+					<RadioButton Classes="Figure2" Content="Проект 1" Margin="0 8 0 0">
+						Проект 1
+					</RadioButton>
+					<RadioButton Classes="Figure2" Content="Проект 2" Margin="10 8 0 0">
+						Проект 2
+					</RadioButton>
+					<RadioButton Classes="Figure2" Content="Проект 3" Margin="10 8 0 0">
+						Проект 3
+					</RadioButton>
+				</StackPanel>
 			</Panel>
-		</Canvas>
+		</Grid>
 	</Grid>
 </Window>

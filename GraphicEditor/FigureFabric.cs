@@ -2,30 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 
 namespace GraphicEditor
 {
     public class FigureMetadata
     {
-        public string Name { get; }
-        public int NumberOfDoubleParameters
-        {
-            get;
-        }
-        public int NumberOfPointParameters
-        {
-            get;
-        }
-        public IEnumerable<string> PointParametersNames
-        {
-            get;
-        }
-        public IEnumerable<string> DoubleParametersNames
-        {
-            get;
-        }
+        public string Name { get; set; }
+        public int NumberOfPointParameters { get; set; }
+        public int NumberOfDoubleParameters { get; set; }
+        public IEnumerable<string> PointParametersNames { get; set; }
+        public IEnumerable<string> DoubleParametersNames { get; set; }
     }
+
     public static class FigureFabric
     {
         class ImportInfo
@@ -63,12 +54,17 @@ namespace GraphicEditor
     [ExportMetadata(nameof(FigureMetadata.Name), nameof(Line))]
     [ExportMetadata(nameof(FigureMetadata.NumberOfPointParameters), 2)]
     [ExportMetadata(nameof(FigureMetadata.NumberOfDoubleParameters), 0)]
-    [ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] {"First","Second" })]
+    [ExportMetadata(nameof(FigureMetadata.DoubleParametersNames), new string[] { })]  
+    [ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] { "First", "Second" })]
     public class Line: IFigure
     {
+        public string Name => "Line";
         public Point Start { get; private set; }
         public Point End { get; private set; }
         public Point Center => new Point { X = (Start.X + End.X) / 2, Y = (Start.Y + End.Y) / 2 };
+
+        public string Id { get; } = Guid.NewGuid().ToString();
+        public Line() {}
         public Line(Point start, Point end)
         {
             Start = start;
@@ -146,30 +142,78 @@ namespace GraphicEditor
     }
 
     [Export(typeof(IFigure))]
-    [ExportMetadata("Name", nameof(Circle))]
-    public class Circle : IFigure
-    {
-        public Point Center { get; }
-        public Point PointOnCircle { get; }
-        public Circle(Point center, Point pointOnCircle)
-        {
-            Center = center;
-            PointOnCircle = pointOnCircle;
-        }
-        public void Move(Point vector) => throw new NotImplementedException();
-        public void Rotate(Point center, double angle) => throw new NotImplementedException();
+    [ExportMetadata(nameof(FigureMetadata.Name), "Circle")]
+    [ExportMetadata(nameof(FigureMetadata.NumberOfPointParameters), 2)]
+    [ExportMetadata(nameof(FigureMetadata.NumberOfDoubleParameters), 0)]
+    [ExportMetadata(nameof(FigureMetadata.DoubleParametersNames), new string[] { })]
+    [ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] { "Center", "Radius" })]
 
-        public void Scale(double dx, double dy) => throw new NotImplementedException();
-        public void Scale(Point center, double dr) => throw new NotImplementedException();
-        public void Reflection(Point a, Point b) => throw new NotImplementedException();
-        public IFigure Clone() => throw new NotImplementedException();
-        public IEnumerable<IDrawingFigure> GetAsDrawable() => throw new NotImplementedException();
-        public bool IsIn(Point point, double eps) => throw new NotImplementedException();
-        public IFigure Intersect(IFigure other) => throw new NotImplementedException();
-        public IFigure Union(IFigure other) => throw new NotImplementedException();
-        public IFigure Subtract(IFigure other) => throw new NotImplementedException();
+    public class Circle : IFigure
+{
+    public Point Center { get; private set; }
+    public Point PointOnCircle { get; private set; }
+
+    public string Id { get; } = Guid.NewGuid().ToString();
+
+    public Circle() { }
+
+    public Circle(Point center, Point pointOnCircle)
+    {
+        Center = center;
+        PointOnCircle = pointOnCircle;
+    }
+
+        public void Move(Point vector)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Rotate(Point center, double angle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Scale(double dx, double dy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Scale(Point center, double dr)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Reflection(Point a, Point b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFigure Clone()
+        {
+            throw new NotImplementedException();
+        }
 
         public void Draw(IDrawing drawing)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsIn(Point point, double eps)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFigure Intersect(IFigure other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFigure Union(IFigure other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFigure Subtract(IFigure other)
         {
             throw new NotImplementedException();
         }

@@ -1,61 +1,72 @@
 using System.Collections.ObjectModel;
-
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Media;
-
+using Avalonia.Threading;
 using DynamicData;
-
 using GraphicEditor.ViewModels;
 
 namespace GraphicEditor.Views
 {
     public partial class MainWindow : Window
     {
-        ReadOnlyObservableCollection<string> figures;
-        public ReadOnlyObservableCollection<string> Figures => figures;
-        FigureService fs= new();
-        public MainWindow()
+        public MainWindowViewModel _viewModel;
+
+        public MainWindow(MainWindowViewModel viewModel)
         {
             InitializeComponent();
+            Debug.WriteLine("MainWindow constructor called!");
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            fs._figures.Connect().Transform(f => f.Name).SortAndBind(out figures);
-          
-            Draw();
-        }
-        void Draw()
-        {
-            Pen shapeOutlinePen = new Pen(Brushes.Black, 2);
+            // Устанавливаем ViewModel
+            _viewModel = viewModel;
+            DataContext = _viewModel;
 
-            // Create a DrawingGroup
-            DrawingGroup dGroup = new DrawingGroup();
-
-            // Obtain a DrawingContext from 
-            // the DrawingGroup.
-            using (DrawingContext dc = dGroup.Open())
+            _viewModel.FiguresChanged += () =>
             {
-                // Draw a rectangle at full opacity.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(0, 0, 25, 25));
-
-                // This rectangle is drawn at 50% opacity.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(25, 25, 25, 25));
-
-                // This rectangle is blurred and drawn at 50% opacity (0.5 x 0.5). 
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(50, 50, 25, 25));
-
-                // This rectangle is also blurred and drawn at 50% opacity.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(75, 75, 25, 25));
-
-
-                // This rectangle is drawn at 50% opacity with no blur effect.
-                dc.DrawRectangle(Brushes.Blue, shapeOutlinePen, new Rect(100, 100, 25, 25));
-                //                dc.DrawGeometry(Brushes.Red, shapeOutlinePen,new PathGeometry();
-                //https://learn.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/path-markup-syntax?view=netframeworkdesktop-4.8
-            }
-            DrawingImage drawing = new(dGroup);
-            Picture.Source = drawing;
+                Debug.WriteLine("FiguresChanged event triggered!");
+                Dispatcher.UIThread.Post(() => Draw());
+            };
         }
 
+        private void Draw()
+        {
+
+            // Очищаем Canvas перед отрисовкой новых фигур
+            DrawingCanvas.Children.Clear();
+
+            // Получаем фигуры из FigureService
+            var figures = _viewModel._figureService.Figures;
+
+            // Проходим по всем фигурам и рисуем их
+            foreach (var figure in figures)
+            {
+                if (figure is Line line)
+                {
+                    Debug.WriteLine($"Drawing line from ({line.Start.X}, {line.Start.Y}) to ({line.End.X}, {line.End.Y})");
+
+                    // Создаем LineGeometry
+                    var lineGeometry = new LineGeometry
+                    {
+                        StartPoint = new Avalonia.Point(line.Start.X, line.Start.Y),
+                        EndPoint = new Avalonia.Point(line.End.X, line.End.Y)
+                    };
+
+                    // Создаем Path
+                    var lineShape = new Path
+                    {
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 2,
+                        Data = lineGeometry
+                    };
+
+                    // Добавляем Path на Canvas
+                    DrawingCanvas.Children.Add(lineShape);
+                    DrawingCanvas.InvalidateVisual();
+                }
+            }
+        }
     }
 }

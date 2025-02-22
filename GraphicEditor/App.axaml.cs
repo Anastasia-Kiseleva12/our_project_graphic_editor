@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -17,10 +18,15 @@ namespace GraphicEditor
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
+                var viewModel = new MainWindowViewModel();
+                var mainWindow = new MainWindow(viewModel)
                 {
-                    DataContext = new MainWindowViewModel(),
+                    DataContext = viewModel,
                 };
+
+                desktop.MainWindow = mainWindow;
+
+                Debug.WriteLine($"DataContext set to MainWindowViewModel: {viewModel.GetHashCode()}");
             }
 
             base.OnFrameworkInitializationCompleted();

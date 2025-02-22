@@ -11,7 +11,7 @@ namespace GraphicEditor
 {
     public class FigureService 
     {
-        public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Name); // Все фигуры
+        public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Id); // Все фигуры
         private readonly HashSet<IFigure> _selectedFigures = new(); // Выбранные фигуры
 
         public IEnumerable<IFigure> Figures => _figures.Items;
@@ -39,34 +39,7 @@ namespace GraphicEditor
             }
 
             var figure = FigureFabric.CreateFigure(name);
-            figure.SetParameters(doubleparameters, parameters);
-
-            if (figure is Circle circle)
-            {
-                var center = (Point)parameters["Center"];
-                var pointOnCircle = (Point)parameters["PointOnCircle"];
-                figure = new Circle(center, pointOnCircle);
-            }
-            //пример создания остальных фигур
-            //else if (figure is Rectangle rectangle)
-            //{
-            //    var topLeft = (Point)parameters["TopLeft"];
-            //    var bottomRight = (Point)parameters["BottomRight"];
-            //    figure = new Rectangle(topLeft, bottomRight);
-            //}
-            //else if (figure is Triangle triangle)
-            //{
-            //    var a = (Point)parameters["A"];
-            //    var b = (Point)parameters["B"];
-            //    var c = (Point)parameters["C"];
-            //    figure = new Triangle(a, b, c);
-            //}
-            //else if (figure is Line line)
-            //{
-            //    var start = (Point)parameters["Start"];
-            //    var end = (Point)parameters["End"];
-            //    figure = new Line(start, end);
-            //}
+            figure.SetParameters(doubleparameters, parameters);        
 
             return figure;
         }

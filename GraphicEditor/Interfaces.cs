@@ -27,10 +27,7 @@ namespace GraphicEditor
         void Move(Point vector);
         void Rotate(Point center, double angle);
         Point Center { get; }
-        string Name
-        {
-            get;
-        }
+        string Id { get; }
 
         void Scale(double dx, double dy);
         void Scale(Point center, double dr);
