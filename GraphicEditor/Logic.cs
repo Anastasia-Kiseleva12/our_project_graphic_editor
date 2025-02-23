@@ -68,7 +68,8 @@ namespace GraphicEditor
 
         public void Select(IFigure f)
         {
-            throw new NotImplementedException();
+            if (f == null) throw new ArgumentNullException(nameof(f));
+            _selectedFigures.Add(f);
         }
 
         public IEnumerable<IFigure> Selected()
@@ -78,7 +79,8 @@ namespace GraphicEditor
 
         public void UnSelect(IFigure f)
         {
-            throw new NotImplementedException();
+            if (f == null) throw new ArgumentNullException(nameof(f));
+            _selectedFigures.Remove(f);
         }
     }
 }

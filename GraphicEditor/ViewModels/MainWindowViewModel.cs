@@ -11,6 +11,15 @@ namespace GraphicEditor.ViewModels
     public class MainWindowViewModel : ReactiveObject
     {
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
+        public ReactiveCommand<IFigure, Unit> SelectFigureCommand { get; }
+        public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
+
+        private IFigure _selectedFigure;
+        public IFigure SelectedFigure
+        {
+            get => _selectedFigure;
+            set => this.RaiseAndSetIfChanged(ref _selectedFigure, value);
+        }
 
         public FigureService _figureService;
 
@@ -39,7 +48,26 @@ namespace GraphicEditor.ViewModels
                 });
 
             CreatePolylineCommand = ReactiveCommand.Create(CreateLine);
+
+            SelectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
+            {
+                _figureService.Select(figure);
+                SelectedFigure = figure; 
+            });
+
+            // Команда для отмены выбора фигуры
+            UnselectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
+            {
+                _figureService.UnSelect(figure);
+                if (SelectedFigure == figure)
+                {
+                    SelectedFigure = null;
+                }
+            });
+
+
         }
+
 
         private void CreateLine()
         {
