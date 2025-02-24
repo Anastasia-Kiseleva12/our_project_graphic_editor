@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
@@ -99,35 +100,10 @@ namespace GraphicEditor
         {
             return new Line(new Point { X = Start.X, Y = Start.Y }, new Point { X = End.X, Y = End.Y });
         }
-        public IEnumerable<IDrawingFigure> GetAsDrawable() => throw new NotImplementedException();
-        public bool IsIn(Point point, double eps) => throw new NotImplementedException();
+        public bool IsIn(Point point, double eps) => Math.Abs((point.Y - Start.Y)*(End.X - Start.X) - (End.Y - Start.Y)*(point.X - Start.X)) < eps;
         public IFigure Intersect(IFigure other) => throw new NotImplementedException();
         public IFigure Union(IFigure other) => throw new NotImplementedException();
         public IFigure Subtract(IFigure other) => throw new NotImplementedException();
-        public IEnumerable<Point> GetLinePoints() 
-        {
-
-            int x0 = (int)Math.Round(Start.X);
-            int y0 = (int)Math.Round(Start.Y);
-            int x1 = (int)Math.Round(End.X);
-            int y1 = (int)Math.Round(End.Y);
-
-            int dx = Math.Abs(x1 - x0);
-            int dy = Math.Abs(y1 - y0);
-            int sx = x0 < x1 ? 1 : -1;
-            int sy = y0 < y1 ? 1 : -1;
-            int err = dx - dy;
-
-            while (true)
-            {
-                yield return new Point { X = x0, Y = y0 };
-
-                if (x0 == x1 && y0 == y1) break;
-                int e2 = 2 * err;
-                if (e2 > -dy) { err -= dy; x0 += sx; }
-                if (e2 < dx) { err += dx; y0 += sy; }
-            }
-        }
 
         public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
         {
@@ -155,8 +131,6 @@ namespace GraphicEditor
 
     public string Id { get; } = Guid.NewGuid().ToString();
 
-    public Circle() { }
-
     public Circle(Point center, Point pointOnCircle)
     {
         Center = center;
@@ -165,12 +139,8 @@ namespace GraphicEditor
 
         public void Move(Point vector)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Rotate(Point center, double angle)
-        {
-            throw new NotImplementedException();
+            Center = new Point { X = Center.X + vector.X, Y = Center.Y + vector.Y };
+            PointOnCircle = new Point { X = PointOnCircle.X + vector.X, Y = PointOnCircle.Y + vector.Y };
         }
 
         public void Scale(double dx, double dy)
@@ -179,11 +149,6 @@ namespace GraphicEditor
         }
 
         public void Scale(Point center, double dr)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Reflection(Point a, Point b)
         {
             throw new NotImplementedException();
         }
@@ -219,6 +184,14 @@ namespace GraphicEditor
         }
 
         public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
+        {
+            throw new NotImplementedException();
+        }
+        public void Reflection(Point a, Point b)
+        {
+            throw new NotImplementedException();
+        }
+        public void Rotate(Point center, double angle)
         {
             throw new NotImplementedException();
         }
