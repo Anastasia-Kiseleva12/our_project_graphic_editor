@@ -9,10 +9,11 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="GraphicEditor">
-        
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
 	<Window.Styles>
 		<!--переопределяем вид радио-кнопок для выбора фигуры-->
 		<Style Selector="RadioButton.Figure">
@@ -38,154 +39,100 @@
 		</Style>
 		<!--вид кнопки при наведенном курсоре-->
 		<Style Selector="RadioButton.Figure:pointerover /template/ Border#ButtFig">
-      <Setter Property="Background" Value="#787878"/>
+			<Setter Property="Background" Value="#787878"/>
+		</Style>
+
+		<Style Selector="MenuItem">
+			<Setter Property="Foreground" Value="WhiteSmoke"/>
 		</Style>
 	</Window.Styles>
 
-  <Window.Styles>
-    <!--переопределяем вид радио-кнопок для переключениями между вкладок-->
-    <Style Selector="RadioButton.Figure2">
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate>
-            <Grid>
-              <Border Name="ButtFig" Width="300" Height="22"
-									CornerRadius="10,10,0,0"
-									Background="#c4c4c4">
-              </Border>
-              <ContentPresenter Content="{TemplateBinding Content}"
-											  HorizontalAlignment="Center"
-											  VerticalAlignment="Center"/>
-            </Grid>
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
-    <!--вид выбранной кнопки-->
-    <Style Selector="RadioButton.Figure2:checked /template/ Border#ButtFig">
-      <Setter Property="Background" Value="#a8a8a8"/>
-    </Style>
-    <!--вид кнопки при наведенном курсоре-->
-    <Style Selector="RadioButton.Figure2:pointerover /template/ Border#ButtFig">
-      <Setter Property="Background" Value="#bdbdbd"/>
-    </Style>
-  </Window.Styles>
 	<Grid Background="White">
-		<Grid Background="AliceBlue">
-			<!--рабочая поляна(тут будет полотно)-->
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="22*"/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="7*"/>
+		</Grid.ColumnDefinitions>
+
+		<Grid Grid.Row = "0" Grid.ColumnSpan="2"  Background="#606060" >
+			<!--тут выпадающий список-->
+			<DockPanel>
+				<Menu DockPanel.Dock="Top">
+					<MenuItem Header="_Файл">
+						<MenuItem Header="_Открыть"/>
+						<Separator/>
+						<MenuItem Header="_Выйти"/>
+					</MenuItem>
+					<MenuItem Header="_Правка">
+						<MenuItem Header="Копировать"/>
+						<MenuItem Header="Вставить"/>
+					</MenuItem>
+					<MenuItem Header="_Вид">
+						<MenuItem Header=" "/>
+						<MenuItem Header=" "/>
+					</MenuItem>
+					<MenuItem Header="_Помощь">
+						<MenuItem Header="Документация"/>
+					</MenuItem>
+				</Menu>
+				<TextBlock/>
+			</DockPanel>
+		</Grid>
+
+		<Grid Grid.Row="1" Grid.Column="0" Background="#9b9b9b">
+			<!--контейнер кнопок для фигур-->
+			<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" >
+				<RadioButton Classes="Figure" Margin="0 20 0 0" Command="{Binding CreatePolylineCommand}">
+					<Image Source="avares://GraphicEditor/Assets/Img/slash.png" Height="27" Width="27" Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Линия"/>
+					</ToolTip.Tip>
+				</RadioButton>
+				<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0">
+					<Image Source="avares://GraphicEditor/Assets/Img/no-people.png"
+						Height="27"
+						Width="27"
+						Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Квадрат"/>
+					</ToolTip.Tip>
+				</RadioButton>
+				<RadioButton Classes="Figure" Content="Треугольник" Margin="0 20 0 0">
+					<Image Source="avares://GraphicEditor/Assets/Img/triangle.png"
+						Height="27"
+						Width="27"
+						Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Треугольник"/>
+					</ToolTip.Tip>
+				</RadioButton>
+				<RadioButton Classes="Figure" Content="Круг" Margin="0 20 0 0">
+					<Image Source="avares://GraphicEditor/Assets/Img/circle.png"
+						Height="27"
+						Width="27"
+						Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Круг"/>
+					</ToolTip.Tip>
+				</RadioButton>
+			</StackPanel>
+			<!--цветовая схема-->
+			<Rectangle Fill="DarkGoldenrod"
+			   Height="180"
+			   Width="180"
+			   VerticalAlignment="Bottom"
+			   Margin="0 0 0 10"/>
+
+		</Grid>
+
+		<Grid Grid.Row = "1" Grid.Column="1">
 			<Canvas Name="DrawingCanvas" Background="AliceBlue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 				<!-- В этом Canvas будут отображаться все фигуры -->
 			</Canvas>
-			<!--поле с выбором фигуры и цветовой схемой-->
-			<Panel Background="#4b4b4b"
-				   Height="858"
-				   Width="198"
-				   Canvas.Left="0"
-				   Canvas.Bottom="0">
-				<!--контейнер кнопок для фигур-->
-				<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" >
-					<RadioButton Classes="Figure" Margin="0 20 0 0" Command="{Binding CreatePolylineCommand}">
-						<Image Source="avares://GraphicEditor/Assets/Img/slash.png" Height="27" Width="27" Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Линия"/>
-						</ToolTip.Tip>
-					</RadioButton>
-					<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0">
-						<Image Source="avares://GraphicEditor/Assets/Img/no-people.png"
-							Height="27"
-							Width="27"
-							Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Квадрат"/>
-						</ToolTip.Tip>
-					</RadioButton>
-					<RadioButton Classes="Figure" Content="Треугольник" Margin="0 20 0 0">
-						<Image Source="avares://GraphicEditor/Assets/Img/triangle.png"
-							Height="27"
-							Width="27"
-							Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Треугольник"/>
-						</ToolTip.Tip>
-					</RadioButton>
-					<RadioButton Classes="Figure" Content="Круг" Margin="0 20 0 0">
-						<Image Source="avares://GraphicEditor/Assets/Img/circle.png"
-							Height="27"
-							Width="27"
-							Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Круг"/>
-						</ToolTip.Tip>
-					</RadioButton>
-				</StackPanel>
-				<!--цветовая схема-->
-				<Rectangle Fill="DarkGoldenrod"
-				   Height="180"
-				   Width="180"
-				   VerticalAlignment="Bottom"
-				   Margin="0 0 0 10"/>
-			</Panel>
-			<!--тут выпадающий список-->
-			<Panel  Background="#646464"
-				   Height="40"
-				   Width="1600"
-				   Canvas.Top="0"
-				   Canvas.Right="0">
-				<DockPanel>
-					<Menu DockPanel.Dock="Top">
-						<MenuItem Header="_Файл">
-							<MenuItem Header="_Открыть"/>
-							<Separator/>
-							<MenuItem Header="_Выйти"/>
-						</MenuItem>
-						<MenuItem Header="_Правка">
-							<MenuItem Header="Копировать"/>
-							<MenuItem Header="Вставить"/>
-						</MenuItem>
-						<MenuItem Header="_Вид">
-							<MenuItem Header=" "/>
-							<MenuItem Header=" "/>
-						</MenuItem>
-						<MenuItem Header="_Помощь">
-							<MenuItem Header="Документация"/>
-						</MenuItem>
-					</Menu>
-					<TextBlock/>
-				</DockPanel>
-			</Panel>
-
-
-			<!--просто полосчка один горизонтальная-->
-			<Panel Background="#404040"
-				   Height="2"
-				   Width="1600"
-				   Canvas.Top="40"
-				   Canvas.Right="0"/>
-			<!--просто полосчка два вертикальная-->
-			<Panel Background="#404040"
-				   Height="858"
-				   Width="2"
-				   Canvas.Left="198"
-				   Canvas.Bottom="0"/>
-			<!--тут переключаемся между окнами-->
-			<Panel Background="#4b4b4b"
-				   Height="30"
-				   Width="1400"
-				   Canvas.Top="42"
-				   Canvas.Right="0">
-
-				<StackPanel Margin="0 0 0 0" Orientation="Horizontal" HorizontalAlignment="Left" >
-					<RadioButton Classes="Figure2" Content="Проект 1" Margin="0 8 0 0">
-						Проект 1
-					</RadioButton>
-					<RadioButton Classes="Figure2" Content="Проект 2" Margin="10 8 0 0">
-						Проект 2
-					</RadioButton>
-					<RadioButton Classes="Figure2" Content="Проект 3" Margin="10 8 0 0">
-						Проект 3
-					</RadioButton>
-				</StackPanel>
-			</Panel>
 		</Grid>
 	</Grid>
 </Window>
