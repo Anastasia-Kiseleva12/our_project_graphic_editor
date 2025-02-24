@@ -11,8 +11,8 @@ namespace GraphicEditor
 {
     public class FigureService 
     {
-        public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Id); // Все фигуры
-        private readonly HashSet<IFigure> _selectedFigures = new(); // Выбранные фигуры
+        public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Id); //Все фигуры
+        private readonly HashSet<IFigure> _selectedFigures = new(); //Выбранные фигуры
 
         public IEnumerable<IFigure> Figures => _figures.Items;
 
@@ -69,6 +69,7 @@ namespace GraphicEditor
         public void Select(IFigure f)
         {
             if (f == null) throw new ArgumentNullException(nameof(f));
+            f.IsSelected = true;
             _selectedFigures.Add(f);
         }
 
@@ -79,8 +80,23 @@ namespace GraphicEditor
 
         public void UnSelect(IFigure f)
         {
-            if (f == null) throw new ArgumentNullException(nameof(f));
-            _selectedFigures.Remove(f);
+            if (f == null)
+            {
+                //Снимаем выделение со всех фигур
+                foreach (var figure in _selectedFigures)
+                {
+                    figure.IsSelected = false;
+                }
+                _selectedFigures.Clear();
+            }
+            else
+            {
+                if (_selectedFigures.Contains(f)) //Проверяем что фигура была выделена
+                {
+                    f.IsSelected = false;
+                    _selectedFigures.Remove(f);
+                }
+            }
         }
     }
 }

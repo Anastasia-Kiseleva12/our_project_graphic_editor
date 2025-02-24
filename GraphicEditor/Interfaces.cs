@@ -28,7 +28,9 @@ namespace GraphicEditor
         void Rotate(Point center, double angle);
         Point Center { get; }
         string Id { get; }
+        string Name { get; }
 
+        bool IsSelected { get; set; }
         void Scale(double dx, double dy);
         void Scale(Point center, double dr);
         void Reflection(Point a, Point b);

@@ -71,6 +71,7 @@ namespace GraphicEditor
             Start = start;
             End = end;
         }
+        public bool IsSelected { get; set; }
         public void Move(Point vector)
         {
             Start = new Point { X = Start.X + vector.X, Y = Start.Y + vector.Y };
@@ -122,21 +123,20 @@ namespace GraphicEditor
     [ExportMetadata(nameof(FigureMetadata.NumberOfPointParameters), 2)]
     [ExportMetadata(nameof(FigureMetadata.NumberOfDoubleParameters), 0)]
     [ExportMetadata(nameof(FigureMetadata.DoubleParametersNames), new string[] { })]
-    [ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] { "Center", "Radius" })]
-
+    [ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] { "Center", "PointOnCircle" })]
     public class Circle : IFigure
-{
-    public Point Center { get; private set; }
-    public Point PointOnCircle { get; private set; }
-
-    public string Id { get; } = Guid.NewGuid().ToString();
-
-    public Circle(Point center, Point pointOnCircle)
     {
-        Center = center;
-        PointOnCircle = pointOnCircle;
-    }
-
+        public Point Center { get; private set; }
+        public Point PointOnCircle { get; private set; }
+        public string Name => "Circle";
+        public string Id { get; } = Guid.NewGuid().ToString();
+        public Circle() { }
+        public Circle(Point center, Point pointOnCircle)
+        {
+            Center = center;
+            PointOnCircle = pointOnCircle;
+        }
+        public bool IsSelected { get; set; }
         public void Move(Point vector)
         {
             Center = new Point { X = Center.X + vector.X, Y = Center.Y + vector.Y };
@@ -165,7 +165,12 @@ namespace GraphicEditor
 
         public bool IsIn(Point point, double eps)
         {
-            throw new NotImplementedException();
+
+            double radius = Math.Sqrt(Math.Pow(PointOnCircle.X - Center.X, 2) + Math.Pow(PointOnCircle.Y - Center.Y, 2));
+
+            double distance = Math.Sqrt(Math.Pow(point.X - Center.X, 2) + Math.Pow(point.Y - Center.Y, 2));
+
+            return Math.Abs(distance - radius) <= eps;
         }
 
         public IFigure Intersect(IFigure other)
@@ -185,7 +190,8 @@ namespace GraphicEditor
 
         public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
         {
-            throw new NotImplementedException();
+            Center = pointParams["Center"];
+            PointOnCircle = pointParams["PointOnCircle"];
         }
         public void Reflection(Point a, Point b)
         {
@@ -195,5 +201,6 @@ namespace GraphicEditor
         {
             throw new NotImplementedException();
         }
+
     }
 }
