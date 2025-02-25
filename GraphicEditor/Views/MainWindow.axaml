@@ -148,12 +148,9 @@
         
 			</StackPanel>
       
-			<!--цветовая схема-->
-			<Rectangle Fill="DarkGoldenrod"
-			   Height="180"
-			   Width="180"
-			   VerticalAlignment="Bottom"
-			   Margin="0 0 0 10"/>
+			<!--цветовая палитра-->
+			<ColorPicker Name="colorPicker" Width="200" Height="200" VerticalAlignment="Bottom"/>
+				
 
 		</Grid>
     
