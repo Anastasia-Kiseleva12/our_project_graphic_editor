@@ -128,8 +128,8 @@
           </Grid.RowDefinitions>
           <TextBlock Text="Размер" HorizontalAlignment="Center" Margin="0 0 0 5"/>
           <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Slider Width="110" Minimum="10" Maximum="100" Value="50" HorizontalAlignment="Center"/>
-            <TextBlock Text="50" Margin="10 0 0 0" VerticalAlignment="Center"/>
+            <Slider x:Name="s1" Width="110" Minimum="10" Maximum="100" Value="50" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding Value,ElementName=s1,StringFormat=F0}" Margin="10 0 0 0" VerticalAlignment="Center"/>
           </StackPanel>
         </Grid>
 

@@ -14,8 +14,8 @@ namespace GraphicEditor
 
     public interface IDrawing
     {
-        void DrawLine(Point a, Point b);
-        void DrawCircle(Point Center, double r);
+        void DrawLine(bool selected,Point a, Point b);
+        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle);
     }
     public interface IDrawingFigure
     {
@@ -40,8 +40,6 @@ namespace GraphicEditor
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);
         IFigure Subtract(IFigure other);
-        void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
-
     }
 
     public interface ILogic
@@ -51,7 +49,8 @@ namespace GraphicEditor
         void Load(string FilePath, string FileFormat);
         IEnumerable<string> FigureNamesToCreate { get; } //список имен фигур доступных для создания
         IEnumerable<(string, Type)> GetParameters(string figure);
-        IFigure Create(string name, IDictionary<string, object> parameters);
+        public IFigure Create(string name, IDictionary<string, Point> parameters, IDictionary<string, double> doubleparameters);
+        public IFigure CreateDefault(string name);
         void AddFigure(IFigure figure);
         void RemoveFigure(IFigure figure);
         IFigure Find(Point p, double eps);

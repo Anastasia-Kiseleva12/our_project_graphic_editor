@@ -37,146 +37,130 @@ namespace GraphicEditor.Views
             var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y }; 
             _viewModel.HandleCanvasClick(point); 
         }
-        private void Draw()
+        class Drawer(Canvas DrawingCanvas) : IDrawing
         {
-            DrawingCanvas.Children.Clear();
-            var figures = _viewModel._figureService.Figures;
-
-            foreach (var figure in figures)
+            public void DrawLine(bool IsSelected, Point Start,Point End)
             {
-                DrawFigure(figure);
-            }
-        }
-
-        private void DrawFigure(IFigure figure)
-        {
-            switch (figure)
-            {
-                case Line line:
-                    DrawLine(line);
-                    break;
-                case Circle circle:
-                    DrawCircle(circle);
-                    break;
-            }
-        }
-
-        private void DrawLine(Line line)
-        {
-            if (line.IsSelected)
-            {
-                var highlightGeometry = new LineGeometry
+                if (IsSelected)
                 {
-                    StartPoint = new Avalonia.Point(line.Start.X, line.Start.Y),
-                    EndPoint = new Avalonia.Point(line.End.X, line.End.Y)
+                    var highlightGeometry = new LineGeometry
+                    {
+                        StartPoint = new Avalonia.Point(Start.X, Start.Y),
+                        EndPoint = new Avalonia.Point(End.X, End.Y)
+                    };
+
+                    var highlightShape = new Path
+                    {
+                        Stroke = Brushes.LightBlue,
+                        StrokeThickness = 6,
+                        Data = highlightGeometry
+                    };
+
+                    DrawingCanvas.Children.Add(highlightShape);
+                }
+
+                var lineGeometry = new LineGeometry
+                {
+                    StartPoint = new Avalonia.Point(Start.X, Start.Y),
+                    EndPoint = new Avalonia.Point(End.X, End.Y)
                 };
 
-                var highlightShape = new Path
+                var lineShape = new Path
                 {
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 6,
-                    Data = highlightGeometry
-                };
-
-                DrawingCanvas.Children.Add(highlightShape);
-            }
-
-            var lineGeometry = new LineGeometry
-            {
-                StartPoint = new Avalonia.Point(line.Start.X, line.Start.Y),
-                EndPoint = new Avalonia.Point(line.End.X, line.End.Y)
-            };
-
-            var lineShape = new Path
-            {
-                Stroke = Brushes.Black,
-                StrokeThickness = 2,
-                Data = lineGeometry
-            };
-
-            DrawingCanvas.Children.Add(lineShape);
-
-            if (line.IsSelected)
-            {
-                var startPoint = new Ellipse
-                {
-                    Width = 10,
-                    Height = 10,
-                    Fill = Brushes.Blue,
                     Stroke = Brushes.Black,
-                    StrokeThickness = 1,
-                    Margin = new Thickness(line.Start.X - 5, line.Start.Y - 5, 0, 0)
+                    StrokeThickness = 2,
+                    Data = lineGeometry
                 };
 
-                var endPoint = new Ellipse
+                DrawingCanvas.Children.Add(lineShape);
+
+                if (IsSelected)
                 {
-                    Width = 10,
-                    Height = 10,
-                    Fill = Brushes.Blue,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1,
-                    Margin = new Thickness(line.End.X - 5, line.End.Y - 5, 0, 0)
-                };
+                    var startPoint = new Ellipse
+                    {
+                        Width = 10,
+                        Height = 10,
+                        Fill = Brushes.Blue,
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 1,
+                        Margin = new Thickness(Start.X - 5, Start.Y - 5, 0, 0)
+                    };
 
-                DrawingCanvas.Children.Add(startPoint);
-                DrawingCanvas.Children.Add(endPoint);
+                    var endPoint = new Ellipse
+                    {
+                        Width = 10,
+                        Height = 10,
+                        Fill = Brushes.Blue,
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 1,
+                        Margin = new Thickness(End.X - 5, End.Y - 5, 0, 0)
+                    };
+
+                    DrawingCanvas.Children.Add(startPoint);
+                    DrawingCanvas.Children.Add(endPoint);
+                }
             }
-        }
 
-        private void DrawCircle(Circle circle)
-        {
-            double radius = Math.Sqrt(Math.Pow(circle.PointOnCircle.X - circle.Center.X, 2) +
-                            Math.Pow(circle.PointOnCircle.Y - circle.Center.Y, 2));
-
-            if (circle.IsSelected)
+            public void DrawCircle( bool IsSelected, Point Center, double radius, Point PointOnCircle)
             {
-                var highlightGeometry = new EllipseGeometry
+                if (IsSelected)
                 {
-                    Center = new Avalonia.Point(circle.Center.X, circle.Center.Y),
+                    var highlightGeometry = new EllipseGeometry
+                    {
+                        Center = new Avalonia.Point(Center.X, Center.Y),
+                        RadiusX = radius,
+                        RadiusY = radius
+                    };
+
+                    var highlightShape = new Path
+                    {
+                        Stroke = Brushes.LightBlue,
+                        StrokeThickness = 6,
+                        Data = highlightGeometry
+                    };
+
+                    DrawingCanvas.Children.Add(highlightShape);
+                }
+
+                var circleGeometry = new EllipseGeometry
+                {
+                    Center = new Avalonia.Point(Center.X, Center.Y),
                     RadiusX = radius,
                     RadiusY = radius
                 };
 
-                var highlightShape = new Path
+                var circleShape = new Path
                 {
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 6,
-                    Data = highlightGeometry
-                };
-
-                DrawingCanvas.Children.Add(highlightShape);
-            }
-
-            var circleGeometry = new EllipseGeometry
-            {
-                Center = new Avalonia.Point(circle.Center.X, circle.Center.Y),
-                RadiusX = radius,
-                RadiusY = radius
-            };
-
-            var circleShape = new Path
-            {
-                Stroke = Brushes.Black,
-                StrokeThickness = 2,
-                Data = circleGeometry
-            };
-
-            DrawingCanvas.Children.Add(circleShape);
-
-            if (circle.IsSelected)
-            {
-                var pointOnCircle = new Ellipse
-                {
-                    Width = 10,
-                    Height = 10,
-                    Fill = Brushes.Blue,
                     Stroke = Brushes.Black,
-                    StrokeThickness = 1,
-                    Margin = new Thickness(circle.PointOnCircle.X - 5, circle.PointOnCircle.Y - 5, 0, 0)
+                    StrokeThickness = 2,
+                    Data = circleGeometry
                 };
 
-                DrawingCanvas.Children.Add(pointOnCircle);
+                DrawingCanvas.Children.Add(circleShape);
+
+                if (IsSelected)
+                {
+                    var pointOnCircle = new Ellipse
+                    {
+                        Width = 10,
+                        Height = 10,
+                        Fill = Brushes.Blue,
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 1,
+                        Margin = new Thickness(PointOnCircle.X - 5, PointOnCircle.Y - 5, 0, 0)
+                    };
+
+                    DrawingCanvas.Children.Add(pointOnCircle);
+                }
             }
+        }
+        private void Draw()
+        {
+            DrawingCanvas.Children.Clear();
+            var figures = _viewModel._figureService.Figures;
+            var drawer = new Drawer(DrawingCanvas);
+            foreach (var figure in figures)
+                figure.Draw(drawer);
         }
     }
 }

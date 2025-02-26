@@ -9,7 +9,7 @@ using DynamicData;
 
 namespace GraphicEditor
 {
-    public class FigureService 
+    public class FigureService: ILogic
     {
         public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Id); //Все фигуры
         private readonly HashSet<IFigure> _selectedFigures = new(); //Выбранные фигуры
@@ -38,8 +38,18 @@ namespace GraphicEditor
                 throw new ArgumentException($"Фигура с именем {name} не найдена.", nameof(name));
             }
 
-            var figure = FigureFabric.CreateFigure(name);
-            figure.SetParameters(doubleparameters, parameters);        
+            var figure = FigureFabric.CreateFigure(name,doubleparameters, parameters);        
+
+            return figure;
+        }
+        public IFigure CreateDefault(string name)
+        {
+            if (!FigureFabric.AvailableFigures.Contains(name))
+            {
+                throw new ArgumentException($"Фигура с именем {name} не найдена.", nameof(name));
+            }
+
+            var figure = FigureFabric.CreateFigureDefault(name);
 
             return figure;
         }

@@ -101,28 +101,13 @@ namespace GraphicEditor.ViewModels
         }
         private void CreateLine()
         {
-            var pointParameters = new Dictionary<string, Point>
-            {
-                { "First", new Point { X = 50, Y = 50 } },
-                { "Second", new Point { X = 150, Y = 150 } }
-            };
 
-            var doubleParameters = new Dictionary<string, double>();
-
-            var line = _figureService.Create("Line", pointParameters, doubleParameters);
+            var line = _figureService.CreateDefault("Line");
             _figureService.AddFigure(line);
         }
         private void CreateCircle()
         {
-            var pointParameters = new Dictionary<string, Point>
-            {
-                { "Center",  new Point { X = 250, Y = 250 } },
-                { "PointOnCircle", new Point { X = 200, Y = 200 } }
-            };
-
-            var doubleParameters = new Dictionary<string, double>();
-
-            var circle = _figureService.Create("Circle", pointParameters, doubleParameters);
+            var circle = _figureService.CreateDefault("Circle");
             _figureService.AddFigure(circle); // Добавляем фигуру в SourceCache
         }
     }
