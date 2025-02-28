@@ -23,7 +23,7 @@
 						<Grid>
 							<Border Name="ButtFig" Width="130" Height="50"
 									CornerRadius="10"
-									Background="#646464">
+									Background="#707070">
 							</Border>
 							<ContentPresenter Content="{TemplateBinding Content}"
 											  HorizontalAlignment="Center"
@@ -35,11 +35,37 @@
 		</Style>
 		<!--вид выбранной кнопки-->
 		<Style Selector="RadioButton.Figure:checked /template/ Border#ButtFig">
-			<Setter Property="Background" Value="#999999"/>
+			<Setter Property="Background" Value="#606060"/>
 		</Style>
 		<!--вид кнопки при наведенном курсоре-->
 		<Style Selector="RadioButton.Figure:pointerover /template/ Border#ButtFig">
-			<Setter Property="Background" Value="#787878"/>
+			<Setter Property="Background" Value="#808080"/>
+		</Style>
+		<!--переопределение кнопки режима-->
+		<Style Selector="ToggleButton.Mode">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Grid>
+							<Border Height="40" Width="180"
+									CornerRadius="10"
+									Background="#707070">
+							</Border>
+							<TextBlock Text="Вручную"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<!--меняем текст если нажата-->
+		<Style Selector="ToggleButton.Mode:checked /template/ TextBlock" >
+			<Setter Property="Text" Value="По умолчанию"/>
+		</Style>
+		<!--вид кнопки при наведенном курсоре-->
+		<Style Selector="ToggleButton.Mode:pointerover /template/ Border" >
+			<Setter Property="Background" Value="#808080"/>
 		</Style>
 
 		<Style Selector="MenuItem">
@@ -60,8 +86,8 @@
 
 		<Grid Grid.Row = "0" Grid.ColumnSpan="2"  Background="#606060" >
 			<!--тут выпадающий список-->
-			<DockPanel>
-				<Menu DockPanel.Dock="Top">
+			<DockPanel >
+				<Menu DockPanel.Dock="Top" >
 					<MenuItem Header="_Файл">
 						<MenuItem Header="_Открыть"/>
 						<Separator/>
@@ -79,20 +105,36 @@
 						<MenuItem Header="Документация"/>
 					</MenuItem>
 				</Menu>
-				<TextBlock/>
 			</DockPanel>
 		</Grid>
 
 		<Grid Grid.Row="1" Grid.Column="0" Background="#9b9b9b">
-			<!--контейнер кнопок для фигур-->
-			<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" >
-				<RadioButton Classes="Figure" Margin="0 20 0 0" Command="{Binding CreatePolylineCommand}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="0.3*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="auto"/>
+				<RowDefinition Height="auto"/>
+			</Grid.RowDefinitions>
+			
+			<!--кнопка с режимом создания фигуры-->
+			<RelativePanel Grid.Row="0" HorizontalAlignment="Center">
+				<TextBlock x:Name="ModeText" Text="Способ создания фигуры:"
+						  Margin="0 20 0 0"/>
+				<ToggleButton Classes="Mode" Margin="0 10 0 0"
+							  RelativePanel.Below="ModeText"/>
+			</RelativePanel>
+
+				<!--контейнер кнопок для фигур-->
+			<StackPanel Margin="0 10 0 10" Grid.Row="1">
+				<RadioButton Classes="Figure" Margin="0 20 0 0"
+							 Command="{Binding CreatePolylineCommand}" HorizontalAlignment="Center">
 					<Image Source="avares://GraphicEditor/Assets/Img/slash.png" Height="27" Width="27" Margin="5"/>
 					<ToolTip.Tip>
 						<TextBlock Text="Линия"/>
 					</ToolTip.Tip>
 				</RadioButton>
-				<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0">
+				<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0"
+							 HorizontalAlignment="Center">
 					<Image Source="avares://GraphicEditor/Assets/Img/no-people.png"
 						Height="27"
 						Width="27"
@@ -101,7 +143,8 @@
 						<TextBlock Text="Квадрат"/>
 					</ToolTip.Tip>
 				</RadioButton>
-				<RadioButton Classes="Figure" Content="Треугольник" Margin="0 20 0 0">
+				<RadioButton Classes="Figure" Content="Треугольник" Margin="0 20 0 0"
+							 HorizontalAlignment="Center">
 					<Image Source="avares://GraphicEditor/Assets/Img/triangle.png"
 						Height="27"
 						Width="27"
@@ -110,7 +153,8 @@
 						<TextBlock Text="Треугольник"/>
 					</ToolTip.Tip>
 				</RadioButton>
-				<RadioButton Classes="Figure" Content="Круг" Margin="0 20 0 0" Command="{Binding CreateCircleCommand}">
+				<RadioButton Classes="Figure" Content="Круг" Margin="0 20 0 0"
+							 Command="{Binding CreateCircleCommand}" HorizontalAlignment="Center">
 					<Image Source="avares://GraphicEditor/Assets/Img/circle.png"
 						Height="27"
 						Width="27"
@@ -119,39 +163,27 @@
 						<TextBlock Text="Круг"/>
 					</ToolTip.Tip>
 				</RadioButton>
-
-        <!-- Размер фигуры -->
-        <Grid Margin="0 20 0 0">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
-          <TextBlock Text="Размер" HorizontalAlignment="Center" Margin="0 0 0 5"/>
-          <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Slider x:Name="s1" Width="110" Minimum="10" Maximum="100" Value="50" HorizontalAlignment="Center"/>
-            <TextBlock Text="{Binding Value,ElementName=s1,StringFormat=F0}" Margin="10 0 0 0" VerticalAlignment="Center"/>
-          </StackPanel>
-        </Grid>
-
-        <!-- Толщина фигуры -->
-        <Grid Margin="0 20 0 0">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
-          <TextBlock Text="Толщина" HorizontalAlignment="Center" Margin="0 0 0 5"/>
-          <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Slider Width="110" Minimum="10" Maximum="100" Value="50" HorizontalAlignment="Center"/>
-            <TextBlock Text="50" Margin="10 0 0 0" VerticalAlignment="Center"/>
-          </StackPanel>
-        </Grid>
-        
 			</StackPanel>
-      
-			<!--цветовая палитра-->
-			<ColorPicker Name="colorPicker" Width="200" Height="200" VerticalAlignment="Bottom"/>
-				
+			
+			<StackPanel Grid.Row="2" Margin="0 0 0 20">
+				<!-- Размер и толщина фигуры -->
+				<TextBlock Text="Размер" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<Slider x:Name="s1" Width="110" Minimum="10" Maximum="100" Value="50"/>
+					<TextBlock Text="{Binding Value,ElementName=s1,StringFormat=F0}" Margin="10 0 0 0" VerticalAlignment="Center"/>
+				</StackPanel>
+				<TextBlock Text="Толщина" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<Slider Width="110" Minimum="10" Maximum="100" Value="50"/>
+					<TextBlock Text="50" Margin="10 0 0 0" VerticalAlignment="Center"/>
+				</StackPanel>
+			</StackPanel>
 
+			<DockPanel Grid.Row="3">
+				<!--цветовая палитра-->
+				<ColorPicker Name="colorPicker" Width="180" Height="180"
+							 Margin="0 0 0 10" DockPanel.Dock="Bottom"/>
+			</DockPanel>
 		</Grid>
     
 
