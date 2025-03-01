@@ -79,11 +79,18 @@ namespace GraphicEditor
                 .Value
                 .CreateDefault();
         }
+
+        public static IEnumerable<string> PointParameters(string FigureName) =>
+            info.AvailableFigures
+                .First(f => f.Metadata.Name == FigureName)
+                .Value.PointParametersNames;
+
         public static IEnumerable<string> DoubleParameters(string FigureName) =>
             info.AvailableFigures
                 .First(f => f.Metadata.Name == FigureName)
                 .Value.DoubleParametersNames;
     }
+
     public class Line: IFigure
     {
         [Export(typeof(IFigureCreator))]
@@ -96,14 +103,14 @@ namespace GraphicEditor
             {
                 get
                 {
-                    yield return "P1";
-                    yield return "P2";
+                    yield return "Start";
+                    yield return "End";
                 }
             }
             public IEnumerable<string> DoubleParametersNames => Enumerable.Empty<string>();
             public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
             {
-                return new Line(pointParams["P1"], pointParams["P2"]);
+                return new Line(pointParams["Start"], pointParams["End"]);
             }
             public IFigure CreateDefault()
             {
@@ -157,7 +164,6 @@ namespace GraphicEditor
         public IFigure Intersect(IFigure other) => throw new NotImplementedException();
         public IFigure Union(IFigure other) => throw new NotImplementedException();
         public IFigure Subtract(IFigure other) => throw new NotImplementedException();
-
 
         public void Draw(IDrawing drawing)
         {

@@ -14,6 +14,7 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
         public ReactiveCommand<IFigure, Unit> SelectFigureCommand { get; }
         public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
         private IFigure _selectedFigure;
         public IFigure SelectedFigure
@@ -34,6 +35,7 @@ namespace GraphicEditor.ViewModels
         public MainWindowViewModel()
         {
             _figureService = new FigureService();
+            
 
             //подписываемся на изменения коллекции фигур из FigureService
             _figureService._figures
@@ -53,6 +55,8 @@ namespace GraphicEditor.ViewModels
             CreatePolylineCommand = ReactiveCommand.Create(CreateLine);
 
             CreateCircleCommand = ReactiveCommand.Create(CreateCircle);
+
+            SaveCommand = ReactiveCommand.Create(Save);
 
             SelectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
             {
@@ -99,16 +103,22 @@ namespace GraphicEditor.ViewModels
 
             FiguresChanged?.Invoke();
         }
+
         private void CreateLine()
         {
-
             var line = _figureService.CreateDefault("Line");
             _figureService.AddFigure(line);
         }
+
         private void CreateCircle()
         {
             var circle = _figureService.CreateDefault("Circle");
             _figureService.AddFigure(circle); // Добавляем фигуру в SourceCache
+        }
+
+        private void Save()
+        {
+            IO.SaveToFile(_figureService.Figures, "test.json");
         }
     }
 }
