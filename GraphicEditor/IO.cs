@@ -63,5 +63,63 @@ namespace GraphicEditor
             var jsonString = JsonSerializer.Serialize(figuresInfo, jsonOptions);
             File.WriteAllText(filePath, jsonString);
         }
+
+        public static void LoadFromFile(FigureService figures, string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException("File not found.", filePath);
+            }
+
+            var jsonString = File.ReadAllText(filePath);
+            using var document = JsonDocument.Parse(jsonString);
+            var root = document.RootElement;
+
+            if (root.ValueKind != JsonValueKind.Array)
+            {
+                throw new InvalidDataException("Incorrect JSON file.");
+            }
+
+            foreach (var figureElement in root.EnumerateArray())
+            {
+                if (!figureElement.TryGetProperty("Name", out var nameElement) || nameElement.ValueKind != JsonValueKind.String)
+                    continue;
+
+                string name = nameElement.GetString();
+
+                var pointParams = new Dictionary<string, Point>();
+                var doubleParams = new Dictionary<string, double>();
+
+                if (figureElement.TryGetProperty("PointParameters", out var pointParamsElement) &&
+                    pointParamsElement.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var param in pointParamsElement.EnumerateObject())
+                    {
+                        if (param.Value.TryGetProperty("X", out var xElement) &&
+                            param.Value.TryGetProperty("Y", out var yElement) &&
+                            xElement.TryGetDouble(out var x) &&
+                            yElement.TryGetDouble(out var y))
+                        {
+                            pointParams[param.Name] = new Point { X = x, Y = y };
+                        }
+                    }
+                }
+
+                if (figureElement.TryGetProperty("DoubleParameters", out var doubleParamsElement) &&
+                    doubleParamsElement.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var param in doubleParamsElement.EnumerateObject())
+                    {
+                        if (param.Value.TryGetDouble(out var value))
+                        {
+                            doubleParams[param.Name] = value;
+                        }
+                    }
+                }
+
+                var figure = figures.Create(name, pointParams, doubleParams);
+                figures.AddFigure(figure);
+            }
+        }
     }
 }

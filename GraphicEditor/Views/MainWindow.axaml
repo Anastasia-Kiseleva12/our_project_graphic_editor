@@ -89,7 +89,7 @@
 			<DockPanel >
 				<Menu DockPanel.Dock="Top" >
 					<MenuItem Header="_Файл">
-						<MenuItem Header="_Открыть"/>
+						<MenuItem Header="_Открыть" Command="{Binding LoadCommand}"/>
 						<MenuItem Header="_Сохранить" Command="{Binding SaveCommand}"/>
 						<Separator/>
 						<MenuItem Header="_Выйти"/>

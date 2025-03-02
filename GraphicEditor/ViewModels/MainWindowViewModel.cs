@@ -15,6 +15,7 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<IFigure, Unit> SelectFigureCommand { get; }
         public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private IFigure _selectedFigure;
         public IFigure SelectedFigure
@@ -57,6 +58,7 @@ namespace GraphicEditor.ViewModels
             CreateCircleCommand = ReactiveCommand.Create(CreateCircle);
 
             SaveCommand = ReactiveCommand.Create(Save);
+            LoadCommand = ReactiveCommand.Create(Load);
 
             SelectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
             {
@@ -119,6 +121,11 @@ namespace GraphicEditor.ViewModels
         private void Save()
         {
             IO.SaveToFile(_figureService.Figures, "test.json");
+        }
+
+        private void Load()
+        {
+            IO.LoadFromFile(_figureService, "test.json");
         }
     }
 }
