@@ -23,6 +23,7 @@ namespace GraphicEditor.Views
 
             _viewModel = viewModel;
             DataContext = _viewModel;
+            this.KeyDown += OnKeyDown;
 
             _viewModel.FiguresChanged += () =>
             {
@@ -30,15 +31,69 @@ namespace GraphicEditor.Views
             };
 
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
+            DrawingCanvas.PointerMoved += OnCanvasPointerMoved; 
+        }
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                _viewModel.RemoveSelectedFiguresCommand.Execute().Subscribe();
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            // Отписываемся от событий при закрытии окна
+            this.KeyDown -= OnKeyDown;
+            base.OnClosed(e);
         }
         private void OnCanvasPointerPressed(object sender, PointerPressedEventArgs e)
         {
-            var avaloniaPoint = e.GetPosition(DrawingCanvas); 
-            var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y }; 
-            _viewModel.HandleCanvasClick(point); 
+            var avaloniaPoint = e.GetPosition(DrawingCanvas);
+            var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
+            _viewModel.HandleCanvasClick(point);
+        }
+        private void OnCanvasPointerMoved(object sender, PointerEventArgs e)
+        {
+            var avaloniaPoint = e.GetPosition(DrawingCanvas);
+            var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
+            _viewModel.HandleCanvasMove(point);
+            Draw(); // Перерисовываем canvas
         }
         class Drawer(Canvas DrawingCanvas) : IDrawing
         {
+            //отрисовка временных точек
+            public void DrawTemporaryPoint(Point point, IImmutableSolidColorBrush fillBrush) 
+            {
+                var ellipse = new Ellipse
+                {
+                    Width = 10,
+                    Height = 10,
+                    Fill = fillBrush,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1,
+                    Margin = new Thickness(point.X - 5, point.Y - 5, 0, 0)
+                };
+                DrawingCanvas.Children.Add(ellipse);
+            }
+            //отрисовка временных линий
+            public void DrawTemporaryLine(Point start, Point end, IImmutableSolidColorBrush strokeBrush)
+            {
+                var lineGeometry = new LineGeometry
+                {
+                    StartPoint = new Avalonia.Point(start.X, start.Y),
+                    EndPoint = new Avalonia.Point(end.X, end.Y)
+                };
+
+                var lineShape = new Path
+                {
+                    Stroke = strokeBrush,
+                    StrokeThickness = 2,
+                    Data = lineGeometry
+                };
+
+                DrawingCanvas.Children.Add(lineShape);
+            }
             public void DrawLine(bool IsSelected, Point Start,Point End)
             {
                 if (IsSelected)
@@ -302,6 +357,26 @@ namespace GraphicEditor.Views
             var drawer = new Drawer(DrawingCanvas);
             foreach (var figure in figures)
                 figure.Draw(drawer);
+            //отрисовка временных элементов (если идет создание фигуры)
+            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle)
+            {
+                if (_viewModel.StartPoint != null)
+                {
+                    //отрисовка первой точки
+                    drawer.DrawTemporaryPoint(_viewModel.StartPoint, Brushes.Red);
+
+                    //отрисовка временной линии (если есть текущая точка)
+                    if (_viewModel.CurrentPoint != null)
+                    {
+                        drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
+
+                        //отрисовка текущей точки
+                        drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Blue);
+                    }
+                }
+            }
         }
+      
     }
+  
 }

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using DynamicData;
+using System.Linq;
 
 namespace GraphicEditor.ViewModels
 {
@@ -20,11 +21,38 @@ namespace GraphicEditor.ViewModels
                 this.RaiseAndSetIfChanged(ref _isManualMode, value);
             }
         }
-        private bool _isDrawingLine = false; // Флаг ожидания для ручной отрисовка
-        private bool _isDrawingCircle = false;
-        private Point? _startPoint;
+        private Point? _startPoint; //временная точка для отрисовка
+        private Point? _currentPoint;
+        private bool _isDrawingLine;
+        private bool _isDrawingCircle;
+
+        public Point? StartPoint
+        {
+            get => _startPoint;
+            set => this.RaiseAndSetIfChanged(ref _startPoint, value);
+        }
+
+        public Point? CurrentPoint
+        {
+            get => _currentPoint;
+            set => this.RaiseAndSetIfChanged(ref _currentPoint, value);
+        }
+
+        public bool IsDrawingLine
+        {
+            get => _isDrawingLine;
+            set => this.RaiseAndSetIfChanged(ref _isDrawingLine, value);
+        }
+
+        public bool IsDrawingCircle
+        {
+            get => _isDrawingCircle;
+            set => this.RaiseAndSetIfChanged(ref _isDrawingCircle, value);
+        }
+
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveSelectedFiguresCommand { get; }
         public ReactiveCommand<IFigure, Unit> SelectFigureCommand { get; }
         public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
@@ -71,6 +99,8 @@ namespace GraphicEditor.ViewModels
 
             CreateCircleCommand = ReactiveCommand.Create(CreateCircle);
 
+            RemoveSelectedFiguresCommand = ReactiveCommand.Create(RemoveSelectedFigures);
+
             SaveCommand = ReactiveCommand.Create(Save);
             LoadCommand = ReactiveCommand.Create(Load);
 
@@ -94,63 +124,66 @@ namespace GraphicEditor.ViewModels
         }
         public void HandleCanvasClick(Point point)
         {
-            if(_isDrawingLine) //типа ручная отрисовка, надо вынести в отдельный метод.
+            if (IsDrawingLine)
             {
-                if (_startPoint == null)
+                if (StartPoint == null)
                 {
-                    _startPoint = point;
-                    Debug.WriteLine($"Start point set at: {_startPoint}");
+                    StartPoint = point;
+                    Debug.WriteLine($"Start point set at: {StartPoint}");
                 }
                 else
                 {
                     var parameters = new Dictionary<string, Point>
-                    {
-                    { "Start", _startPoint },
+                {
+                    { "Start", StartPoint },
                     { "End", point }
-                    };
+                };
                     var doubleParameters = new Dictionary<string, double>();
 
                     var line = _figureService.Create("Line", parameters, doubleParameters);
                     _figureService.AddFigure(line);
 
-                    Debug.WriteLine($"Line created: {_startPoint} -> {point}");
+                    Debug.WriteLine($"Line created: {StartPoint} -> {point}");
 
-                    _isDrawingLine = false;
-                    _startPoint = null;
+                    IsDrawingLine = false;
+                    StartPoint = null;
+                    CurrentPoint = null;
 
                     FiguresChanged?.Invoke();
                 }
                 return;
             }
-            if (_isDrawingCircle) // вынести в отдельный метод
+
+            if (IsDrawingCircle)
             {
-                if (_startPoint == null)
+                if (StartPoint == null)
                 {
-                    _startPoint = point;
-                    Debug.WriteLine($"Start point set at: {_startPoint}");
+                    StartPoint = point;
+                    Debug.WriteLine($"Start point set at: {StartPoint}");
                 }
                 else
                 {
                     var parameters = new Dictionary<string, Point>
-                    {
-                    { "Center", _startPoint },
+                {
+                    { "Center", StartPoint},
                     { "PointOnCircle", point }
-                    };
+                };
                     var doubleParameters = new Dictionary<string, double>();
 
-                    var line = _figureService.Create("Circle", parameters, doubleParameters);
-                    _figureService.AddFigure(line);
+                    var circle = _figureService.Create("Circle", parameters, doubleParameters);
+                    _figureService.AddFigure(circle);
 
-                    Debug.WriteLine($"Circle created: {_startPoint} -> {point}");
+                    Debug.WriteLine($"Circle created: {StartPoint} -> {point}");
 
-                    _isDrawingCircle = false;
-                    _startPoint = null;
+                    IsDrawingCircle = false;
+                    StartPoint = null;
+                    CurrentPoint = null;
 
                     FiguresChanged?.Invoke();
                 }
                 return;
             }
-            var eps = 145; //допустимая погрешность
+            var eps = 80; //допустимая погрешность
             var figure = _figureService.Find(new Point { X = point.X, Y = point.Y }, eps);
 
             if (figure != null)
@@ -175,7 +208,24 @@ namespace GraphicEditor.ViewModels
 
             FiguresChanged?.Invoke();
         }
+        public void HandleCanvasMove(Point point)
+        {
+            if (IsDrawingLine || IsDrawingCircle)
+            {
+                CurrentPoint = point;
+            }
+        }
+        private void RemoveSelectedFigures()
+        {
+            //удаляем все выделенные фигуры
+            var selectedFigures = _figureService._selectedFigures.ToList();
+            foreach (var figure in selectedFigures)
+            {
+                _figureService.RemoveFigure(figure);
+            }
 
+            FiguresChanged?.Invoke();
+        }
         private void CreateLine()
         {
             if (IsManualMode) //создание либо дефолтной фигуры либо в ручную

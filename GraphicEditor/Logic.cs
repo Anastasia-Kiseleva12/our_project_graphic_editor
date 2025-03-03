@@ -12,7 +12,7 @@ namespace GraphicEditor
     public class FigureService: ILogic
     {
         public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Id); //Все фигуры
-        private readonly HashSet<IFigure> _selectedFigures = new(); //Выбранные фигуры
+        public readonly HashSet<IFigure> _selectedFigures = new(); //Выбранные фигуры
 
         public IEnumerable<IFigure> Figures => _figures.Items;
 
