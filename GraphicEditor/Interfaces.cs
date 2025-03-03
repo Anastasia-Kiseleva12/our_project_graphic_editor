@@ -14,8 +14,8 @@ namespace GraphicEditor
 
     public interface IDrawing
     {
-        void DrawLine(bool selected,Point a, Point b);
-        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle);
+        void DrawLine(bool selected, Point a, Point b, double strokeThickness);
+        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle, double strokeThickness);
     }
     public interface IDrawingFigure
     {
@@ -31,6 +31,7 @@ namespace GraphicEditor
         string Name { get; }
 
         bool IsSelected { get; set; }
+        public double StrokeThickness { get; set; }
         void Scale(double dx, double dy);
         void Scale(Point center, double dr);
         void Reflection(Point a, Point b);

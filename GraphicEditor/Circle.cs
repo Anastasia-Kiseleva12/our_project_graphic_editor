@@ -40,6 +40,7 @@ namespace GraphicEditor
             PointOnCircle = pointOnCircle;
         }
         public bool IsSelected { get; set; }
+        public double StrokeThickness { get; set; } = 2;
         public void Move(Point vector)
         {
             Center = new Point { X = Center.X + vector.X, Y = Center.Y + vector.Y };
@@ -71,7 +72,7 @@ namespace GraphicEditor
         }
         public void Draw(IDrawing drawing)
         {
-            drawing.DrawCircle(IsSelected, Center, Radius, PointOnCircle);
+            drawing.DrawCircle(IsSelected, Center, Radius, PointOnCircle, StrokeThickness);
         }
 
         public bool IsIn(Point point, double eps)

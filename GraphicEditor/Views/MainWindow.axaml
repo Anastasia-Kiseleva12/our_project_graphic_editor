@@ -176,8 +176,8 @@
 				</StackPanel>
 				<TextBlock Text="Толщина" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<Slider Width="110" Minimum="10" Maximum="100" Value="50"/>
-					<TextBlock Text="50" Margin="10 0 0 0" VerticalAlignment="Center"/>
+               <Slider x:Name="thicknessSlider" Width="110" Minimum="1" Maximum="100" Value="1"/>
+               <TextBlock x:Name="thicknessValueText" Text="1" Margin="10 0 0 0" VerticalAlignment="Center"/>
 				</StackPanel>
 			</StackPanel>
 

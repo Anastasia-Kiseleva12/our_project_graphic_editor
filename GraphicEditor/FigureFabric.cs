@@ -131,6 +131,7 @@ namespace GraphicEditor
             End = end;
         }
         public bool IsSelected { get; set; }
+        public double StrokeThickness { get; set; } = 2;
         public void Move(Point vector)
         {
             Start = new Point { X = Start.X + vector.X, Y = Start.Y + vector.Y };
@@ -167,7 +168,7 @@ namespace GraphicEditor
 
         public void Draw(IDrawing drawing)
         {
-            drawing.DrawLine(IsSelected, Start, End);
+            drawing.DrawLine(IsSelected, Start, End, StrokeThickness);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -25,14 +26,29 @@ namespace GraphicEditor.Views
             DataContext = _viewModel;
             this.KeyDown += OnKeyDown;
 
+            thicknessSlider.ValueChanged += ThicknessSlider_ValueChanged;
+
             _viewModel.FiguresChanged += () =>
             {
-                Dispatcher.UIThread.Post(() => Draw());
+                Dispatcher.UIThread.Post(() => Draw(false, 1));
             };
 
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
             DrawingCanvas.PointerMoved += OnCanvasPointerMoved; 
         }
+
+        private void ThicknessSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            // Получаем новое значение толщины из слайдера
+            double newThickness = e.NewValue;
+
+            // Обновляем текст, отображающий текущее значение толщины
+            thicknessValueText.Text = newThickness.ToString("F0");
+
+            // Вызываем метод Draw с новой толщиной
+            Draw(_viewModel.SelectedFigure?.IsSelected ?? false, newThickness);
+        }
+
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
@@ -58,7 +74,7 @@ namespace GraphicEditor.Views
             var avaloniaPoint = e.GetPosition(DrawingCanvas);
             var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
             _viewModel.HandleCanvasMove(point);
-            Draw(); // Перерисовываем canvas
+            Draw(false, 1); // Перерисовываем canvas
         }
         class Drawer(Canvas DrawingCanvas) : IDrawing
         {
@@ -94,7 +110,7 @@ namespace GraphicEditor.Views
 
                 DrawingCanvas.Children.Add(lineShape);
             }
-            public void DrawLine(bool IsSelected, Point Start,Point End)
+            public void DrawLine(bool IsSelected, Point Start,Point End, double strokeThickness)
             {
                 if (IsSelected)
                 {
@@ -107,7 +123,7 @@ namespace GraphicEditor.Views
                     var highlightShape = new Path
                     {
                         Stroke = Brushes.LightBlue,
-                        StrokeThickness = 6,
+                        StrokeThickness = strokeThickness + 4,
                         Data = highlightGeometry
                     };
 
@@ -123,7 +139,7 @@ namespace GraphicEditor.Views
                 var lineShape = new Path
                 {
                     Stroke = Brushes.Black,
-                    StrokeThickness = 2,
+                    StrokeThickness = strokeThickness,
                     Data = lineGeometry
                 };
 
@@ -156,7 +172,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawCircle( bool IsSelected, Point Center, double radius, Point PointOnCircle)
+            public void DrawCircle( bool IsSelected, Point Center, double radius, Point PointOnCircle, double strokeThickness)
             {
                 if (IsSelected)
                 {
@@ -170,7 +186,7 @@ namespace GraphicEditor.Views
                     var highlightShape = new Path
                     {
                         Stroke = Brushes.LightBlue,
-                        StrokeThickness = 6,
+                        StrokeThickness = strokeThickness + 4,
                         Data = highlightGeometry
                     };
 
@@ -187,7 +203,7 @@ namespace GraphicEditor.Views
                 var circleShape = new Path
                 {
                     Stroke = Brushes.Black,
-                    StrokeThickness = 2,
+                    StrokeThickness = strokeThickness,
                     Data = circleGeometry
                 };
 
@@ -209,7 +225,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3)
+            public void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness)
             {
                 if (IsSelected)
                 {
@@ -226,7 +242,7 @@ namespace GraphicEditor.Views
                     var highlightShape = new Path
                     {
                         Stroke = Brushes.LightBlue,
-                        StrokeThickness = 6,
+                        StrokeThickness = strokeThickness + 4,
                         Data = highlightGeometry
                     };
 
@@ -246,7 +262,7 @@ namespace GraphicEditor.Views
                 var triangleShape = new Path
                 {
                     Stroke = Brushes.Black,
-                    StrokeThickness = 2,
+                    StrokeThickness = strokeThickness,
                     Data = triangleGeometry
                 };
 
@@ -290,7 +306,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawRectangle(bool IsSelected, Point TopLeft, Point BottomRight)
+            public void DrawRectangle(bool IsSelected, Point TopLeft, Point BottomRight, double strokeThickness)
             {
                 if (IsSelected)
                 {
@@ -302,7 +318,7 @@ namespace GraphicEditor.Views
                     var highlightShape = new Path
                     {
                         Stroke = Brushes.LightBlue,
-                        StrokeThickness = 6,
+                        StrokeThickness = strokeThickness + 4,
                         Data = highlightGeometry
                     };
 
@@ -317,7 +333,7 @@ namespace GraphicEditor.Views
                 var rectangleShape = new Path
                 {
                     Stroke = Brushes.Black,
-                    StrokeThickness = 2,
+                    StrokeThickness = strokeThickness,
                     Data = rectangleGeometry
                 };
 
@@ -350,13 +366,19 @@ namespace GraphicEditor.Views
                 }
             }
         }
-        private void Draw()
+        private void Draw(bool IsSelected, double strokeThickness)
         {
             DrawingCanvas.Children.Clear();
             var figures = _viewModel._figureService.Figures;
             var drawer = new Drawer(DrawingCanvas);
             foreach (var figure in figures)
+            {
+                if (figure.IsSelected)
+                {
+                    figure.StrokeThickness = strokeThickness;
+                }
                 figure.Draw(drawer);
+            }
             //отрисовка временных элементов (если идет создание фигуры)
             if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle)
             {
