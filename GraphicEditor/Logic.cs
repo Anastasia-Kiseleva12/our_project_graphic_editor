@@ -24,7 +24,7 @@ namespace GraphicEditor
             _figures.AddOrUpdate(figure);
         }
 
-        public void RemoveFigure(IFigure figure)
+        public void RemoveFigure(IFigure figure)// удаление
         {
             if (figure == null) return;
             _figures.Remove(figure);
