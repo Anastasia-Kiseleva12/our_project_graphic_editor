@@ -30,7 +30,7 @@ namespace GraphicEditor.Views
 
             _viewModel.FiguresChanged += () =>
             {
-                Dispatcher.UIThread.Post(() => Draw(false, 1));
+                Dispatcher.UIThread.Post(() => Draw(false, thicknessSlider.Value));
             };
 
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
@@ -74,7 +74,7 @@ namespace GraphicEditor.Views
             var avaloniaPoint = e.GetPosition(DrawingCanvas);
             var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
             _viewModel.HandleCanvasMove(point);
-            Draw(false, 1); // Перерисовываем canvas
+            Draw(false, thicknessSlider.Value); // Перерисовываем canvas
         }
         class Drawer(Canvas DrawingCanvas) : IDrawing
         {
