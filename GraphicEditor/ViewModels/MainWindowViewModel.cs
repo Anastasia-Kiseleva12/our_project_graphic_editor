@@ -50,6 +50,20 @@ namespace GraphicEditor.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isDrawingCircle, value);
         }
 
+        private bool _isCheckedLine;
+        public bool IsCheckedLine
+        {
+            get => _isCheckedLine;
+            set => this.RaiseAndSetIfChanged(ref _isCheckedLine, value);
+        }
+
+        private bool _isCheckedCircle;
+        public bool IsCheckedCircle
+        {
+            get => _isCheckedCircle;
+            set => this.RaiseAndSetIfChanged(ref _isCheckedCircle, value);
+        }
+
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
         public ReactiveCommand<Unit, Unit> RemoveSelectedFiguresCommand { get; }
@@ -150,6 +164,8 @@ namespace GraphicEditor.ViewModels
                     CurrentPoint = null;
 
                     FiguresChanged?.Invoke();
+
+                    IsCheckedLine = false;
                 }
                 return;
             }
@@ -180,6 +196,8 @@ namespace GraphicEditor.ViewModels
                     CurrentPoint = null;
 
                     FiguresChanged?.Invoke();
+
+                    IsCheckedCircle = false;
                 }
                 return;
             }
@@ -234,6 +252,7 @@ namespace GraphicEditor.ViewModels
                 Debug.WriteLine("Auto mode: Create default line.");
                 var line = _figureService.CreateDefault("Line");
                 _figureService.AddFigure(line);
+                IsCheckedLine = false;
             }
             else
             {
@@ -249,6 +268,7 @@ namespace GraphicEditor.ViewModels
                 Debug.WriteLine("Auto mode: Create default circle.");
                 var circle = _figureService.CreateDefault("Circle");
                 _figureService.AddFigure(circle);
+                IsCheckedCircle = false;
             }
             else
             {

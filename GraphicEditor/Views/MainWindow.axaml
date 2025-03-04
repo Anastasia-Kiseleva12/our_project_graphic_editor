@@ -129,7 +129,8 @@
 				<!--контейнер кнопок для фигур-->
 			<StackPanel Margin="0 10 0 10" Grid.Row="1">
 				<RadioButton Classes="Figure" Margin="0 20 0 0"
-							 Command="{Binding CreatePolylineCommand}" HorizontalAlignment="Center">
+							 Command="{Binding CreatePolylineCommand}" HorizontalAlignment="Center"
+							 IsChecked="{Binding IsCheckedLine}">
 					<Image Source="avares://GraphicEditor/Assets/Img/slash.png" Height="27" Width="27" Margin="5"/>
 					<ToolTip.Tip>
 						<TextBlock Text="Линия"/>
@@ -156,7 +157,8 @@
 					</ToolTip.Tip>
 				</RadioButton>
 				<RadioButton Classes="Figure" Content="Круг" Margin="0 20 0 0"
-							 Command="{Binding CreateCircleCommand}" HorizontalAlignment="Center">
+							 Command="{Binding CreateCircleCommand}" HorizontalAlignment="Center"
+							 IsChecked="{Binding IsCheckedCircle}">
 					<Image Source="avares://GraphicEditor/Assets/Img/circle.png"
 						Height="27"
 						Width="27"
