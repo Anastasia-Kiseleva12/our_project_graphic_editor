@@ -1,0 +1,28 @@
+[
+  {
+    "Name": "Line",
+    "PointParameters": {
+      "Start": {
+        "X": 289,
+        "Y": 233
+      },
+      "End": {
+        "X": 490,
+        "Y": 261
+      }
+    }
+  },
+  {
+    "Name": "Circle",
+    "PointParameters": {
+      "Center": {
+        "X": 323,
+        "Y": 478
+      },
+      "PointOnCircle": {
+        "X": 451,
+        "Y": 413
+      }
+    }
+  }
+]

@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using DynamicData;
 using System.Linq;
+using System.IO;
 
 namespace GraphicEditor.ViewModels
 {
@@ -280,12 +281,17 @@ namespace GraphicEditor.ViewModels
 
         private void Save()
         {
-            IO.SaveToFile(_figureService.Figures, "test.json");
+            // сохранение файла в корень проекта (временно)
+            string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
+            string filePath = Path.Combine(projectRoot, "test.json");
+            IO.SaveToFile(_figureService.Figures, filePath);
         }
 
         private void Load()
         {
-            IO.LoadFromFile(_figureService, "test.json");
+            string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
+            string filePath = Path.Combine(projectRoot, "test.json");
+            IO.LoadFromFile(_figureService, filePath);
         }
     }
 }
