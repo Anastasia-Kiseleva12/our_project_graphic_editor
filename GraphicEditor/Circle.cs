@@ -49,12 +49,16 @@ namespace GraphicEditor
 
         public void Scale(double dx, double dy)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // недопустимый метод, изменится тип фигуры
         }
 
         public void Scale(Point center, double dr)
         {
-            throw new NotImplementedException();
+            PointOnCircle = new Point
+            {
+                X = Center.X + (PointOnCircle.X - Center.X) * dr,
+                Y = Center.Y + (PointOnCircle.Y - Center.Y) * dr
+            };
         }
 
         public IFigure Clone()
