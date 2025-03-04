@@ -170,12 +170,7 @@
 			</StackPanel>
 			
 			<StackPanel Grid.Row="2" Margin="0 0 0 20">
-				<!-- Размер и толщина фигуры -->
-				<TextBlock Text="Размер" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<Slider x:Name="s1" Width="110" Minimum="10" Maximum="100" Value="50"/>
-					<TextBlock Text="{Binding Value,ElementName=s1,StringFormat=F0}" Margin="10 0 0 0" VerticalAlignment="Center"/>
-				</StackPanel>
+				<!-- Толщина фигуры -->
 				<TextBlock Text="Толщина" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                <Slider x:Name="thicknessSlider" Width="110" Minimum="1" Maximum="20" Value="1"/>
