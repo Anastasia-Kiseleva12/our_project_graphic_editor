@@ -16,6 +16,7 @@ namespace GraphicEditor
     {
         void DrawLine(bool selected, Point a, Point b, double strokeThickness);
         void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle, double strokeThickness);
+        void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness);
     }
     public interface IDrawingFigure
     {
