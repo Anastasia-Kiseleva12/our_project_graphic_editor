@@ -90,5 +90,4 @@ namespace GraphicEditor
                 .First(f => f.Metadata.Name == FigureName)
                 .Value.DoubleParametersNames;
     }
-    }
 }
