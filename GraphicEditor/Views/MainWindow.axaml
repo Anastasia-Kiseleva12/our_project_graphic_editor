@@ -187,7 +187,8 @@
     
 
 		<Grid Grid.Row = "1" Grid.Column="1">
-			<Canvas Name="DrawingCanvas" Background="AliceBlue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<Canvas ClipToBounds="True" Name="DrawingCanvas" Background="AliceBlue" 
+					HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 				<!-- В этом Canvas будут отображаться все фигуры -->
 			</Canvas>
 		</Grid>
