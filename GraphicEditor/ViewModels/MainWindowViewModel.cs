@@ -4,9 +4,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using DynamicData;
 using System.Linq;
 using System.IO;
+using Avalonia.Controls;
+using Avalonia.Controls.Chrome;
+using Avalonia.Platform.Storage;
+using Avalonia.Controls.ApplicationLifetimes;
+using Splat;
 
 namespace GraphicEditor.ViewModels
 {
@@ -71,6 +77,7 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<IFigure, Unit> SelectFigureCommand { get; }
         public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private IFigure _selectedFigure;
@@ -117,7 +124,8 @@ namespace GraphicEditor.ViewModels
             RemoveSelectedFiguresCommand = ReactiveCommand.Create(RemoveSelectedFigures);
 
             SaveCommand = ReactiveCommand.Create(Save);
-            LoadCommand = ReactiveCommand.Create(Load);
+            SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
+            LoadCommand = ReactiveCommand.CreateFromTask(Load);
 
             SelectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
             {
@@ -287,11 +295,63 @@ namespace GraphicEditor.ViewModels
             IO.SaveToFile(_figureService.Figures, filePath);
         }
 
-        private void Load()
+        private async Task SaveAs()
+        { 
+            if (Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop || desktop.MainWindow is null)
+                return;
+            // получаем главное окно
+            var storageProvider = desktop.MainWindow.StorageProvider;
+            if (storageProvider == null)
+                return;
+
+            var filePickerOptions = new FilePickerSaveOptions
+            {
+                Title = "Сохранить как",
+                SuggestedFileName = "picture", //дефолтное имя файла
+                ShowOverwritePrompt = true, // предупреждение о перезаписи файла
+                FileTypeChoices = new[] // забиваем доступные форматы в выпадающий список
+                {
+                    new FilePickerFileType("Файл") { Patterns = new[] { "*.json" } }
+                }
+            };
+           //открываем проводник
+            var res = await storageProvider.SaveFilePickerAsync(filePickerOptions);
+
+            if (res != null)
+            {
+                var filePath = res.Path.LocalPath; // получаем путь
+                IO.SaveToFile(_figureService.Figures, filePath);
+            }
+
+        }
+
+        private async Task Load()
         {
-            string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
-            string filePath = Path.Combine(projectRoot, "test.json");
-            IO.LoadFromFile(_figureService, filePath);
+            if (Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop || desktop.MainWindow is null)
+                return;
+            // получаем главное окно
+            var storageProvider = desktop.MainWindow.StorageProvider;
+            if (storageProvider == null)
+                return;
+
+            var filePickerOptions = new FilePickerOpenOptions
+            {
+                Title = "Открыть файл",
+                AllowMultiple = false, // только один файл
+                FileTypeFilter = new[] // забиваем доступные форматы в выпадающий список
+                {
+                        new FilePickerFileType("Файл") { Patterns = new[] { "*.json" } },
+                    }
+            };
+            //открываем проводник
+            var res = await storageProvider.OpenFilePickerAsync(filePickerOptions);
+
+            if (res.Count > 0)
+            {
+                var filePath = res[0].Path.LocalPath; // получаем путь
+                IO.LoadFromFile(_figureService, filePath);
+            }
+
         }
     }
 }
