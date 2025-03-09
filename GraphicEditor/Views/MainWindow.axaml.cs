@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -35,6 +36,14 @@ namespace GraphicEditor.Views
 
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
             DrawingCanvas.PointerMoved += OnCanvasPointerMoved; 
+        }
+
+        private void HidePopup(object sender, PointerEventArgs e)
+        {
+            if (sender is Border border && border.Parent is Popup popup)
+            {
+                popup.IsOpen = false; // Скрываем Popup при наведении
+            }
         }
 
         private void ThicknessSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

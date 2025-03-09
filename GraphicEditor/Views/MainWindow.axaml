@@ -194,5 +194,22 @@
 				<!-- В этом Canvas будут отображаться все фигуры -->
 			</Canvas>
 		</Grid>
+
+		<Popup x:Name="LinePopup" IsOpen="{Binding IsCheckedLine, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+               VerticalOffset="-70" PlacementTarget="{Binding ElementName=LineButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+					PointerEntered="HidePopup">
+				<TextBlock Text="Выберите две точки на холсте, чтобы нарисовать линию."/>
+			</Border>
+		</Popup>
+
+		<Popup x:Name="CirclePopup" IsOpen="{Binding IsCheckedCircle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+               VerticalOffset="-70" PlacementTarget="{Binding ElementName=CircleButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+					PointerEntered="HidePopup">
+				<TextBlock Text="Выберите центр и точку лежащую на окружности, чтобы нарисовать круг."/>
+			</Border>
+		</Popup>
+
 	</Grid>
 </Window>
