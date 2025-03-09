@@ -379,26 +379,43 @@ namespace GraphicEditor.Views
                 }
                 figure.Draw(drawer);
             }
-            //отрисовка временных элементов (если идет создание фигуры)
-            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle)
+
+            // Отрисовка временных элементов (если идет создание фигуры)
+            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle)
             {
                 if (_viewModel.StartPoint != null)
                 {
-                    //отрисовка первой точки
+                    // Отрисовка первой точки
                     drawer.DrawTemporaryPoint(_viewModel.StartPoint, Brushes.Red);
 
-                    //отрисовка временной линии (если есть текущая точка)
+                    // Отрисовка второй точки (если есть)
+                    if (_viewModel.SecondPoint != null)
+                    {
+                        drawer.DrawTemporaryPoint(_viewModel.SecondPoint, Brushes.Blue);
+                    }
+
+                    // Отрисовка текущей точки (если есть)
                     if (_viewModel.CurrentPoint != null)
                     {
-                        drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
+                        if (_viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle)
+                        {
+                            drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Green);
+                        }
+                        else
+                        {
+                            drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Blue);
+                        }
 
-                        //отрисовка текущей точки
-                        drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Blue);
+                        // Отрисовка временной линии для линии и круга
+                        if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle)
+                        {
+                            drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
+                        }
                     }
                 }
             }
         }
-      
+
     }
   
 }

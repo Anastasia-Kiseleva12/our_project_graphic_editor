@@ -148,7 +148,8 @@
 					</ToolTip.Tip>
 				</RadioButton>
 				<RadioButton Classes="Figure" Content="Треугольник" Margin="0 20 0 0"
-							 HorizontalAlignment="Center">
+							  Command="{Binding CreateTriangleCommand}" HorizontalAlignment="Center"
+							  IsChecked="{Binding IsCheckedTriangle}">
 					<Image Source="avares://GraphicEditor/Assets/Img/triangle.png"
 						Height="27"
 						Width="27"

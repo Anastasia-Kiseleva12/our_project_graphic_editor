@@ -30,15 +30,23 @@ namespace GraphicEditor.ViewModels
         }
         private Point? _startPoint; //временная точка для отрисовка
         private Point? _currentPoint;
+
         private bool _isDrawingLine;
         private bool _isDrawingCircle;
+        private bool _isDrawingTriangle;
+        private bool _isDrawingRectangle;
 
         public Point? StartPoint
         {
             get => _startPoint;
             set => this.RaiseAndSetIfChanged(ref _startPoint, value);
         }
-
+        private Point? _secondPoint;
+        public Point? SecondPoint
+        {
+            get => _secondPoint;
+            set => this.RaiseAndSetIfChanged(ref _secondPoint, value);
+        }
         public Point? CurrentPoint
         {
             get => _currentPoint;
@@ -57,6 +65,18 @@ namespace GraphicEditor.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isDrawingCircle, value);
         }
 
+        public bool IsDrawingTriangle
+        {
+            get => _isDrawingTriangle;
+            set => this.RaiseAndSetIfChanged(ref _isDrawingTriangle, value);
+        }
+
+        public bool IsDrawingRectangle
+        {
+            get => _isDrawingRectangle;
+            set => this.RaiseAndSetIfChanged(ref _isDrawingRectangle, value);
+        }
+
         private bool _isCheckedLine;
         public bool IsCheckedLine
         {
@@ -71,8 +91,24 @@ namespace GraphicEditor.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isCheckedCircle, value);
         }
 
+        private bool _isCheckedTriangle;
+        public bool IsCheckedTriangle
+        {
+            get => _isCheckedTriangle;
+            set => this.RaiseAndSetIfChanged(ref _isCheckedTriangle, value);
+        }
+
+        private bool _isCheckedRectangle;
+        public bool IsCheckedRectangle
+        {
+            get => _isCheckedRectangle;
+            set => this.RaiseAndSetIfChanged(ref _isCheckedRectangle, value);
+        }
+
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
+        public ReactiveCommand<Unit, Unit> CreateTriangleCommand { get; }
+        public ReactiveCommand<Unit, Unit> CreateRectangleCommand { get; }
         public ReactiveCommand<Unit, Unit> RemoveSelectedFiguresCommand { get; }
         public ReactiveCommand<IFigure, Unit> SelectFigureCommand { get; }
         public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
@@ -121,6 +157,10 @@ namespace GraphicEditor.ViewModels
 
             CreateCircleCommand = ReactiveCommand.Create(CreateCircle);
 
+            CreateTriangleCommand = ReactiveCommand.Create(CreateTriangle);
+
+            CreateRectangleCommand = ReactiveCommand.Create(CreateRectangle);
+
             RemoveSelectedFiguresCommand = ReactiveCommand.Create(RemoveSelectedFigures);
 
             SaveCommand = ReactiveCommand.Create(Save);
@@ -145,72 +185,119 @@ namespace GraphicEditor.ViewModels
 
 
         }
+        private void CreateDefaultFigure(string figureType, Action<bool> setIsChecked)
+        {
+            Debug.WriteLine($"Auto mode: Create default {figureType}.");
+            var figure = _figureService.CreateDefault(figureType);
+            _figureService.AddFigure(figure);
+            setIsChecked(false); // Сбрасываем флаг IsChecked
+        }
+        private void CreateFigure(string figureType, Dictionary<string, Point> parameters, Dictionary<string, double> doubleParameters)
+        {
+            var figure = _figureService.Create(figureType, parameters, doubleParameters);
+            _figureService.AddFigure(figure);
+            FiguresChanged?.Invoke();
+        }
         public void HandleCanvasClick(Point point)
         {
             if (IsDrawingLine)
             {
-                if (StartPoint == null)
-                {
-                    StartPoint = point;
-                    Debug.WriteLine($"Start point set at: {StartPoint}");
-                }
-                else
-                {
-                    var parameters = new Dictionary<string, Point>
-                {
-                    { "Start", StartPoint },
-                    { "End", point }
-                };
-                    var doubleParameters = new Dictionary<string, double>();
-
-                    var line = _figureService.Create("Line", parameters, doubleParameters);
-                    _figureService.AddFigure(line);
-
-                    Debug.WriteLine($"Line created: {StartPoint} -> {point}");
-
-                    IsDrawingLine = false;
-                    StartPoint = null;
-                    CurrentPoint = null;
-
-                    FiguresChanged?.Invoke();
-
-                    IsCheckedLine = false;
-                }
+                HandleLineClick(point);
                 return;
             }
 
             if (IsDrawingCircle)
             {
-                if (StartPoint == null)
-                {
-                    StartPoint = point;
-                    Debug.WriteLine($"Start point set at: {StartPoint}");
-                }
-                else
-                {
-                    var parameters = new Dictionary<string, Point>
-                {
-                    { "Center", StartPoint},
-                    { "PointOnCircle", point }
-                };
-                    var doubleParameters = new Dictionary<string, double>();
-
-                    var circle = _figureService.Create("Circle", parameters, doubleParameters);
-                    _figureService.AddFigure(circle);
-
-                    Debug.WriteLine($"Circle created: {StartPoint} -> {point}");
-
-                    IsDrawingCircle = false;
-                    StartPoint = null;
-                    CurrentPoint = null;
-
-                    FiguresChanged?.Invoke();
-
-                    IsCheckedCircle = false;
-                }
+                HandleCircleClick(point);
                 return;
             }
-            var eps = 80; //допустимая погрешность
+
+            if (IsDrawingTriangle)
+            {
+                HandleTriangleClick(point);
+                return;
+            }
+            HandleFigureSelection(point);
+        }
+        private void HandleLineClick(Point point)
+        {
+            if (StartPoint == null)
+            {
+                StartPoint = point;
+                Debug.WriteLine($"Start point set at: {StartPoint}");
+            }
+            else
+            {
+                var parameters = new Dictionary<string, Point>
+        {
+            { "Start", StartPoint },
+            { "End", point }
+        };
+                CreateFigure("Line", parameters, new Dictionary<string, double>());
+
+                IsDrawingLine = false;
+                StartPoint = null;
+                CurrentPoint = null;
+                IsCheckedLine = false;
+            }
+        }
+
+        private void HandleCircleClick(Point point)
+        {
+            if (StartPoint == null)
+            {
+                StartPoint = point;
+                Debug.WriteLine($"Start point set at: {StartPoint}");
+            }
+            else
+            {
+                var parameters = new Dictionary<string, Point>
+        {
+            { "Center", StartPoint },
+            { "PointOnCircle", point }
+        };
+                CreateFigure("Circle", parameters, new Dictionary<string, double>());
+
+                IsDrawingCircle = false;
+                StartPoint = null;
+                CurrentPoint = null;
+                IsCheckedCircle = false;
+            }
+        }
+
+        private void HandleTriangleClick(Point point)
+        {
+            if (StartPoint == null)
+            {
+                StartPoint = point;
+                Debug.WriteLine($"Start point set at: {StartPoint}");
+            }
+            else if (SecondPoint == null)
+            {
+                SecondPoint = point;
+                Debug.WriteLine($"Second point set at: {SecondPoint}");
+            }
+            else
+            {
+                var parameters = new Dictionary<string, Point>
+        {
+            { "P1", StartPoint },
+            { "P2", SecondPoint },
+            { "P3", point }
+        };
+                CreateFigure("Triangle", parameters, new Dictionary<string, double>());
+
+                IsDrawingTriangle = false;
+                StartPoint = null;
+                SecondPoint = null;
+                CurrentPoint = null;
+                IsCheckedTriangle = false;
+            }
+        }
+
+        private void HandleFigureSelection(Point point)
+        {
+            var eps = 80; // допустимая погрешность
             var figure = _figureService.Find(new Point { X = point.X, Y = point.Y }, eps);
 
             if (figure != null)
@@ -218,18 +305,15 @@ namespace GraphicEditor.ViewModels
                 Debug.WriteLine($"Figure found: {figure.Name}");
                 if (_selectedFigure == figure)
                 {
-                    //если кликнули на уже выделенную фигуру снимаем выделение
                     UnselectFigureCommand.Execute(figure).Subscribe();
                 }
                 else
                 {
-                    //если кликнули на другую фигуру выделяем её
                     SelectFigureCommand.Execute(figure).Subscribe();
                 }
             }
             else
             {
-                //если кликнули на пустую область снимаем выделение со всех фигур
                 UnselectFigureCommand.Execute(null).Subscribe();
             }
 
@@ -237,31 +321,16 @@ namespace GraphicEditor.ViewModels
         }
         public void HandleCanvasMove(Point point)
         {
-            if (IsDrawingLine || IsDrawingCircle)
+            if (IsDrawingLine || IsDrawingCircle || IsDrawingTriangle)
             {
                 CurrentPoint = point;
             }
-        }
-        private void RemoveSelectedFigures()
-        {
-            //удаляем все выделенные фигуры
-            var selectedFigures = _figureService._selectedFigures.ToList();
-            foreach (var figure in selectedFigures)
-            {
-                _figureService.RemoveFigure(figure);
-            }
-
-            FiguresChanged?.Invoke();
-        }
+        }      
         private void CreateLine()
         {
-            if (IsManualMode) //создание либо дефолтной фигуры либо в ручную
+            if (IsManualMode)
             {
-
-                Debug.WriteLine("Auto mode: Create default line.");
-                var line = _figureService.CreateDefault("Line");
-                _figureService.AddFigure(line);
-                IsCheckedLine = false;
+                CreateDefaultFigure("Line", value => IsCheckedLine = value);
             }
             else
             {
@@ -274,19 +343,54 @@ namespace GraphicEditor.ViewModels
         {
             if (IsManualMode)
             {
-                Debug.WriteLine("Auto mode: Create default circle.");
-                var circle = _figureService.CreateDefault("Circle");
-                _figureService.AddFigure(circle);
-                IsCheckedCircle = false;
+                CreateDefaultFigure("Circle", value => IsCheckedCircle = value);
             }
             else
             {
-
                 _isDrawingCircle = !_isDrawingCircle;
                 _startPoint = null;
             }
         }
 
+        private void CreateTriangle()
+        {
+            if (IsManualMode)
+            {
+                CreateDefaultFigure("Triangle", value => IsCheckedTriangle = value);
+            }
+            else
+            {
+                _isDrawingTriangle = !_isDrawingTriangle;
+                _startPoint = null;
+            }
+        }
+
+        private void CreateRectangle()
+        {
+            if (IsManualMode)
+            {
+                // Пока не реализовано создание прямоугольника по умолчанию
+                Debug.WriteLine("Auto mode: Create default rectangle.");
+                // CreateDefaultFigure("Rectangle", value => IsCheckedRectangle = value);
+            }
+            else
+            {
+                _isDrawingRectangle = !_isDrawingRectangle;
+                _startPoint = null;
+            }
+        }
+
+        private void RemoveSelectedFigures()
+        {
+            //удаляем все выделенные фигуры
+            var selectedFigures = _figureService._selectedFigures.ToList();
+            foreach (var figure in selectedFigures)
+            {
+                _figureService.RemoveFigure(figure);
+            }
+
+            FiguresChanged?.Invoke();
+        }
         private void Save()
         {
             // сохранение файла в корень проекта (временно)
