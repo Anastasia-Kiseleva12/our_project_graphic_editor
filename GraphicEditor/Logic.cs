@@ -65,17 +65,6 @@ namespace GraphicEditor
             throw new NotImplementedException();
         }
 
-        public void Load(string FilePath, string FileFormat)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public void Save(string FilePath, string FileFormat)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Select(IFigure f)
         {
             if (f == null) throw new ArgumentNullException(nameof(f));
