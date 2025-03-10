@@ -33,6 +33,7 @@ namespace GraphicEditor
 
         bool IsSelected { get; set; }
         public double StrokeThickness { get; set; }
+        void SetColor(byte a, byte r, byte g, byte b);
         void Scale(double dx, double dy);
         void Scale(Point center, double dr);
         void Reflection(Point a, Point b);

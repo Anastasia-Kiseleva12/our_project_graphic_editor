@@ -46,6 +46,11 @@ namespace GraphicEditor
         }
         public bool IsSelected { get; set; }
         public double StrokeThickness { get; set; } = 2;
+        public int Color { get; set; } = unchecked((int)0xFF000000);
+        public void SetColor(byte a, byte r, byte g, byte b)
+        {
+            Color = (a << 24) | (r << 16) | (g << 8) | b;
+        }
         public void Move(Point vector)
         {
             Start = new Point { X = Start.X + vector.X, Y = Start.Y + vector.Y };
@@ -93,7 +98,7 @@ namespace GraphicEditor
 
         public void Draw(IDrawing drawing)
         {
-            drawing.DrawLine(IsSelected, Start, End, StrokeThickness);
+            drawing.DrawLine(IsSelected, Start, End, StrokeThickness, Color);
         }
     }
 }
