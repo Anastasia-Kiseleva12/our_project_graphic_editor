@@ -41,6 +41,12 @@ namespace GraphicEditor
         }
         public bool IsSelected { get; set; }
         public double StrokeThickness { get; set; } = 2;
+        public int Color { get; set; } = unchecked((int)0xFF000000);
+        public void SetColor(byte a, byte r, byte g, byte b)
+        {
+            Color = (a << 24) | (r << 16) | (g << 8) | b;
+        }
+
         public void Move(Point vector)
         {
             Center = new Point { X = Center.X + vector.X, Y = Center.Y + vector.Y };
@@ -76,7 +82,7 @@ namespace GraphicEditor
         }
         public void Draw(IDrawing drawing)
         {
-            drawing.DrawCircle(IsSelected, Center, Radius, PointOnCircle, StrokeThickness);
+            drawing.DrawCircle(IsSelected, Center, Radius, PointOnCircle, StrokeThickness, Color);
         }
 
         public bool IsIn(Point point, double eps)
