@@ -53,6 +53,12 @@ namespace GraphicEditor
             PointOnCircle = new Point { X = PointOnCircle.X + vector.X, Y = PointOnCircle.Y + vector.Y };
         }
 
+        public bool ContainsPoint(Point point)
+    {
+        double distance = Math.Sqrt(Math.Pow(point.X - Center.X, 2) + Math.Pow(point.Y - Center.Y, 2));
+        return distance <= Radius;
+    }
+
         public void Scale(double dx, double dy)
         {
             throw new NotImplementedException(); // недопустимый метод, изменится тип фигуры

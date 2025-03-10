@@ -17,6 +17,9 @@ namespace GraphicEditor.Views
     public partial class MainWindow : Window
     {
         public MainWindowViewModel _viewModel;
+        private bool _isDragging = false;
+        private GraphicEditor.Point _dragStartPoint;
+        private IFigure _draggedFigure;
 
         public MainWindow(MainWindowViewModel viewModel)
         {
@@ -35,7 +38,8 @@ namespace GraphicEditor.Views
             };
 
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
-            DrawingCanvas.PointerMoved += OnCanvasPointerMoved; 
+            DrawingCanvas.PointerMoved += OnCanvasPointerMoved;
+            DrawingCanvas.PointerReleased += OnCanvasPointerReleased;
         }
 
         private void HidePopup(object sender, PointerEventArgs e)
@@ -76,14 +80,57 @@ namespace GraphicEditor.Views
         {
             var avaloniaPoint = e.GetPosition(DrawingCanvas);
             var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
-            _viewModel.HandleCanvasClick(point);
+
+            // Проверяем, была ли нажата фигура
+            _draggedFigure = _viewModel.GetFigureAtPoint(point);
+            if (_draggedFigure != null)
+            {
+                _isDragging = true;
+                _dragStartPoint = point;
+                _viewModel.SelectFigure(_draggedFigure);
+            }
+            else
+            {
+                _viewModel.HandleCanvasClick(point);
+            }
         }
         private void OnCanvasPointerMoved(object sender, PointerEventArgs e)
         {
-            var avaloniaPoint = e.GetPosition(DrawingCanvas);
-            var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
-            _viewModel.HandleCanvasMove(point);
-            Draw(false, thicknessSlider.Value); // Перерисовываем canvas
+            if (_isDragging && _draggedFigure != null)
+            {
+                var avaloniaPoint = e.GetPosition(DrawingCanvas);
+                var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
+
+                var vector = new GraphicEditor.Point
+                {
+                    X = point.X - _dragStartPoint.X,
+                    Y = point.Y - _dragStartPoint.Y
+                };
+
+                _viewModel.SelectedFigure.Move(vector);
+
+                // Обновляем начальную точку для следующего перемещения
+                _dragStartPoint = point;
+
+                // Перерисовываем холст
+                Draw(_viewModel.SelectedFigure?.IsSelected ?? false, thicknessSlider.Value);
+            }
+            else
+            {
+                var avaloniaPoint = e.GetPosition(DrawingCanvas);
+                var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
+                _viewModel.HandleCanvasMove(point);
+                Draw(false, thicknessSlider.Value); // Перерисовываем canvas
+            }
+        }
+        private void OnCanvasPointerReleased(object sender, PointerReleasedEventArgs e)
+        {
+            if (_isDragging)
+            {
+                _isDragging = false;
+                
+                _draggedFigure = null;
+            }
         }
         class Drawer(Canvas DrawingCanvas) : IDrawing
         {

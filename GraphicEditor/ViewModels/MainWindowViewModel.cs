@@ -198,6 +198,26 @@ namespace GraphicEditor.ViewModels
             _figureService.AddFigure(figure);
             FiguresChanged?.Invoke();
         }
+        public void SelectFigure(IFigure figure)
+        {
+            if (figure == null)
+                return;
+
+            // Снимаем выделение с предыдущей фигуры (если есть)
+            if (_selectedFigure != null)
+            {
+                _selectedFigure.IsSelected = false;
+                _selectedFigure = null;
+            }
+
+            // Выделяем новую фигуру
+            _selectedFigure = figure;
+            _selectedFigure.IsSelected = true;
+
+            // Уведомляем об изменении
+            this.RaisePropertyChanged(nameof(SelectedFigure));
+            FiguresChanged?.Invoke(); // Обновляем отрисовку
+        }
         public void HandleCanvasClick(Point point)
         {
             if (IsDrawingLine)
@@ -305,7 +325,7 @@ namespace GraphicEditor.ViewModels
                 Debug.WriteLine($"Figure found: {figure.Name}");
                 if (_selectedFigure == figure)
                 {
-                    UnselectFigureCommand.Execute(figure).Subscribe();
+                   UnselectFigureCommand.Execute(figure).Subscribe();
                 }
                 else
                 {
@@ -391,6 +411,19 @@ namespace GraphicEditor.ViewModels
 
             FiguresChanged?.Invoke();
         }
+
+        public IFigure GetFigureAtPoint(Point point)
+        {
+            foreach (var figure in _figureService.Figures)
+            {
+                if (figure.IsIn(point, 5))
+                {
+                    return figure;
+                }
+            }
+            return null;
+        }
+
         private void Save()
         {
             // сохранение файла в корень проекта (временно)

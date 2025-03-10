@@ -91,7 +91,12 @@ namespace GraphicEditor
         {
             return new Line(new Point { X = Start.X, Y = Start.Y }, new Point { X = End.X, Y = End.Y });
         }
-        public bool IsIn(Point point, double eps) => Math.Abs((point.Y - Start.Y) * (End.X - Start.X) - (End.Y - Start.Y) * (point.X - Start.X)) < eps;
+        public bool IsIn(Point point, double tolerance = 5)
+        {
+            double distance = Math.Abs((End.Y - Start.Y) * point.X - (End.X - Start.X) * point.Y + End.X * Start.Y - End.Y * Start.X) / Math.Sqrt(Math.Pow(End.Y - Start.Y, 2) + Math.Pow(End.X - Start.X, 2));
+            return distance <= tolerance && point.X >= Math.Min(Start.X, End.X) - tolerance && point.X <= Math.Max(Start.X, End.X) + tolerance &&
+                   point.Y >= Math.Min(Start.Y, End.Y) - tolerance && point.Y <= Math.Max(Start.Y, End.Y) + tolerance;
+        }
         public IFigure Intersect(IFigure other) => throw new NotImplementedException();
         public IFigure Union(IFigure other) => throw new NotImplementedException();
         public IFigure Subtract(IFigure other) => throw new NotImplementedException();

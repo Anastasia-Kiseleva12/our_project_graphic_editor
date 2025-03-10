@@ -64,7 +64,6 @@ namespace GraphicEditor
             P2 = new Point { X = P2.X + vector.X, Y = P2.Y + vector.Y };
             P3 = new Point { X = P3.X + vector.X, Y = P3.Y + vector.Y };
         }
-
         public void Rotate(Point center, double angle)
         {
             double radians = angle * Math.PI / 180;
