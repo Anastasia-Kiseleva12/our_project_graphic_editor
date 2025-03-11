@@ -339,6 +339,23 @@
       </Border>
     </Popup>
 
+		<Popup x:Name="RectanglePopup" IsOpen="{Binding IsCheckedRectangle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+               VerticalOffset="-70" PlacementTarget="{Binding ElementName=RectangleButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+					PointerEntered="HidePopup">
+				<TextBlock Text="Выберите две точки - противоположные углы прямоугольника."/>
+			</Border>
+		</Popup>
+
+		<Popup x:Name="TrianglePopup" IsOpen="{Binding IsCheckedTriangle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+               VerticalOffset="-70" PlacementTarget="{Binding ElementName=TriangleButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+					PointerEntered="HidePopup">
+				<TextBlock Text="Выберите три точки на холсте, чтобы нарисовать треугольник."/>
+			</Border>
+		</Popup>
+
+		<Popup x:Name="CirclePopup" IsOpen="{Binding IsCheckedCircle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
     <Popup x:Name="CirclePopup" IsOpen="{Binding IsCheckedCircle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
                VerticalOffset="-70" PlacementTarget="{Binding ElementName=CircleButton}">
       <Border Background="Gray" Padding="20" CornerRadius="10"
