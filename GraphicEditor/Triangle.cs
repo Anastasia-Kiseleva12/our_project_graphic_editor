@@ -12,7 +12,7 @@ namespace GraphicEditor
         class TriangleCreator : IFigureCreator
         {
             public int NumberOfPointParameters => 3;
-            public int NumberOfDoubleParameters => 0;
+            public int NumberOfDoubleParameters => 1;
             public IEnumerable<string> PointParametersNames
             {
                 get
