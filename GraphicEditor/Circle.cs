@@ -12,35 +12,39 @@ namespace GraphicEditor
         class CircleCreator:IFigureCreator
         {
             public int NumberOfPointParameters => 2;
-            public int NumberOfDoubleParameters => 0;
+            public int NumberOfDoubleParameters => 1;
             public IEnumerable<string> PointParametersNames
             {
                 get;
             } = ["Center", "PointOnCircle"];
-            public IEnumerable<string> DoubleParametersNames => Enumerable.Empty<string>();
+            public IEnumerable<string> DoubleParametersNames
+            {
+                get;
+            } = ["StrokeThickness"];
 
             public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
             {
-                return new Circle(pointParams["Center"], pointParams["PointOnCircle"]);
+                return new Circle(pointParams["Center"], pointParams["PointOnCircle"], doubleParams["StrokeThickness"]);
             }
 
             public IFigure CreateDefault()
             {
                 return new Circle(new Point { X = 250, Y = 250 },
-                    new Point { X = 200, Y = 200 });
+                    new Point { X = 200, Y = 200 }, 2);
             }
         }
         public Point Center { get; private set; }
         public Point PointOnCircle { get; private set; }
+        public double StrokeThickness { get; set; }
         public string Name => "Circle";
         public string Id { get; } = Guid.NewGuid().ToString();
-        Circle(Point center, Point pointOnCircle)
+        Circle(Point center, Point pointOnCircle, double strokeThickness)
         {
             Center = center;
             PointOnCircle = pointOnCircle;
+            StrokeThickness = strokeThickness;
         }
         public bool IsSelected { get; set; }
-        public double StrokeThickness { get; set; } = 2;
         public int Color { get; set; } = unchecked((int)0xFF000000);
         public void SetColor(byte a, byte r, byte g, byte b)
         {

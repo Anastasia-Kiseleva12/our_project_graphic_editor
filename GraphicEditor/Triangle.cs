@@ -22,17 +22,24 @@ namespace GraphicEditor
                     yield return "P3";
                 }
             }
-            public IEnumerable<string> DoubleParametersNames => Enumerable.Empty<string>();
+            public IEnumerable<string> DoubleParametersNames
+            {
+                get
+                {
+                    yield return "StrokeThickness";
+                }
+            }
             public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
             {
-                return new Triangle(pointParams["P1"], pointParams["P2"], pointParams["P3"]);
+                return new Triangle(pointParams["P1"], pointParams["P2"], pointParams["P3"], doubleParams["StrokeThickness"]);
             }
             public IFigure CreateDefault()
             {
                 return new Triangle(
                     new Point { X = 50, Y = 50 },
                     new Point { X = 150, Y = 50 },
-                    new Point { X = 100, Y = 150 }
+                    new Point { X = 100, Y = 150 },
+                    2
                 );
             }
         }
@@ -43,11 +50,12 @@ namespace GraphicEditor
         public Point P3 { get; private set; }
 
         public string Id { get; } = Guid.NewGuid().ToString();
-        Triangle(Point p1, Point p2, Point p3)
+        Triangle(Point p1, Point p2, Point p3, double strokeThickness)
         {
             P1 = p1;
             P2 = p2;
             P3 = p3;
+            StrokeThickness = strokeThickness;
         }
         public bool IsSelected { get; set; }
         public double StrokeThickness { get; set; } = 2;
@@ -112,7 +120,8 @@ namespace GraphicEditor
             return new Triangle(
                 new Point { X = P1.X, Y = P1.Y },
                 new Point { X = P2.X, Y = P2.Y },
-                new Point { X = P3.X, Y = P3.Y }
+                new Point { X = P3.X, Y = P3.Y },
+                StrokeThickness
             );
         }
 

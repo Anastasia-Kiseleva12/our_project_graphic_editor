@@ -248,12 +248,17 @@ namespace GraphicEditor.ViewModels
             }
             else
             {
-                var parameters = new Dictionary<string, Point>
-        {
-            { "Start", StartPoint },
-            { "End", point }
-        };
-                CreateFigure("Line", parameters, new Dictionary<string, double>());
+                var pointParameters = new Dictionary<string, Point>
+                {
+                    { "Start", StartPoint },
+                    { "End", point }
+                };
+                var doubleParameters = new Dictionary<string, double>
+                {
+                    { "StrokeThickness", 2}
+                };
+
+                CreateFigure("Line", pointParameters, doubleParameters);
 
                 IsDrawingLine = false;
                 StartPoint = null;
@@ -271,12 +276,16 @@ namespace GraphicEditor.ViewModels
             }
             else
             {
-                var parameters = new Dictionary<string, Point>
-        {
-            { "Center", StartPoint },
-            { "PointOnCircle", point }
-        };
-                CreateFigure("Circle", parameters, new Dictionary<string, double>());
+                var pointParameters = new Dictionary<string, Point>
+                {
+                    { "Center", StartPoint },
+                    { "PointOnCircle", point }
+                };
+                var doubleParameters = new Dictionary<string, double>
+                {
+                    { "StrokeThickness", 2}
+                };
+                CreateFigure("Circle", pointParameters, doubleParameters);
 
                 IsDrawingCircle = false;
                 StartPoint = null;
@@ -299,13 +308,17 @@ namespace GraphicEditor.ViewModels
             }
             else
             {
-                var parameters = new Dictionary<string, Point>
-        {
-            { "P1", StartPoint },
-            { "P2", SecondPoint },
-            { "P3", point }
-        };
-                CreateFigure("Triangle", parameters, new Dictionary<string, double>());
+                var pointParameters = new Dictionary<string, Point>
+                {
+                    { "P1", StartPoint },
+                    { "P2", SecondPoint },
+                    { "P3", point }
+                };
+                var doubleParameters = new Dictionary<string, double>
+                {
+                    { "StrokeThickness", 2}
+                };
+                CreateFigure("Triangle", pointParameters, doubleParameters);
 
                 IsDrawingTriangle = false;
                 StartPoint = null;

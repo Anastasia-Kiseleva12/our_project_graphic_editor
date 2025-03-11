@@ -12,7 +12,7 @@ namespace GraphicEditor
         class LineCreator : IFigureCreator
         {
             public int NumberOfPointParameters => 2;
-            public int NumberOfDoubleParameters => 0;
+            public int NumberOfDoubleParameters => 1;
             public IEnumerable<string> PointParametersNames
             {
                 get
@@ -21,31 +21,38 @@ namespace GraphicEditor
                     yield return "End";
                 }
             }
-            public IEnumerable<string> DoubleParametersNames => Enumerable.Empty<string>();
+            public IEnumerable<string> DoubleParametersNames
+            {
+                get
+                {
+                    yield return "StrokeThickness";
+                }
+            }
             public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
             {
-                return new Line(pointParams["Start"], pointParams["End"]);
+                return new Line(pointParams["Start"], pointParams["End"], doubleParams["StrokeThickness"]);
             }
             public IFigure CreateDefault()
             {
                 return new Line(new Point { X = 50, Y = 50 },
-                new Point { X = 150, Y = 150 });
+                new Point { X = 150, Y = 150 }, 2);
             }
         }
 
         public string Name => "Line";
         public Point Start { get; private set; }
         public Point End { get; private set; }
+        public double StrokeThickness { get; set; }
         public Point Center => new Point { X = (Start.X + End.X) / 2, Y = (Start.Y + End.Y) / 2 };
 
         public string Id { get; } = Guid.NewGuid().ToString();
-        Line(Point start, Point end)
+        Line(Point start, Point end, double strokeThickness)
         {
             Start = start;
             End = end;
+            StrokeThickness = strokeThickness;
         }
         public bool IsSelected { get; set; }
-        public double StrokeThickness { get; set; } = 2;
         public int Color { get; set; } = unchecked((int)0xFF000000);
         public void SetColor(byte a, byte r, byte g, byte b)
         {
@@ -89,7 +96,7 @@ namespace GraphicEditor
         }
         public IFigure Clone()
         {
-            return new Line(new Point { X = Start.X, Y = Start.Y }, new Point { X = End.X, Y = End.Y });
+            return new Line(new Point { X = Start.X, Y = Start.Y }, new Point { X = End.X, Y = End.Y }, StrokeThickness);
         }
         public bool IsIn(Point point, double tolerance = 5)
         {

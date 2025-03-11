@@ -51,14 +51,6 @@ namespace GraphicEditor
                     }
                 }
 
-                // Добавляем толщину, если она есть
-                var strokeThicknessProperty = figureType.GetProperty("StrokeThickness");
-                if (strokeThicknessProperty != null && strokeThicknessProperty.PropertyType == typeof(double))
-                {
-                    var strokeThicknessValue = (double)strokeThicknessProperty.GetValue(figure);
-                    doubleParams["StrokeThickness"] = strokeThicknessValue;
-                }
-
                 if (doubleParams.Any())
                 {
                     figureInfo["DoubleParameters"] = doubleParams;
@@ -121,17 +113,6 @@ namespace GraphicEditor
                 }
 
                 var figure = figures.Create(name, pointParams, doubleParams);
-
-                // Устанавливаем толщину, если она есть
-                if (doubleParams.TryGetValue("StrokeThickness", out var strokeThickness))
-                {
-                    var strokeThicknessProperty = figure.GetType().GetProperty("StrokeThickness");
-                    if (strokeThicknessProperty != null && strokeThicknessProperty.PropertyType == typeof(double))
-                    {
-                        strokeThicknessProperty.SetValue(figure, strokeThickness);
-                    }
-                }
-
                 figures.AddFigure(figure); // создаем фигуру и добавляем ее
             }
         }
