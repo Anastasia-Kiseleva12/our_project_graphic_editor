@@ -84,12 +84,6 @@ namespace GraphicEditor.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isCheckedLine, value);
         }
         private bool _isSelectedLine;
-        public bool IsSelectedLine
-        {
-            get => _isSelectedLine;
-            set => this.RaiseAndSetIfChanged(ref _isSelectedLine, value);
-        }
-
         private bool _isCheckedCircle;
         public bool IsCheckedCircle
         {
@@ -109,6 +103,12 @@ namespace GraphicEditor.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isCheckedRectangle, value);
         }
 
+        private bool _isPanelOpen;
+        public bool IsPanelOpen
+        {
+            get => _isPanelOpen;
+            set => this.RaiseAndSetIfChanged(ref _isPanelOpen, value);
+        }
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateTriangleCommand { get; }
@@ -128,7 +128,10 @@ namespace GraphicEditor.ViewModels
             set
             {
                 Debug.WriteLine($"SelectedFigure changed from {_selectedFigure?.Name} to {value?.Name}");
-                this.RaiseAndSetIfChanged(ref _selectedFigure, value); }
+                this.RaiseAndSetIfChanged(ref _selectedFigure, value);
+
+                IsPanelOpen = value != null;
+            }
         }
 
         public FigureService _figureService;
@@ -363,7 +366,6 @@ namespace GraphicEditor.ViewModels
                 }
                 else
                 {
-                    IsSelectedLine = false;
                     // Если фигура не выделена, выделяем её
                     SelectFigureCommand.Execute(figure).Subscribe();
                 }
@@ -465,19 +467,6 @@ namespace GraphicEditor.ViewModels
 
             FiguresChanged?.Invoke();
         }
-
-        public IFigure GetFigureAtPoint(Point point)
-        {
-            foreach (var figure in _figureService.Figures)
-            {
-                if (figure.IsIn(point, 5))
-                {
-                    return figure;
-                }
-            }
-            return null;
-        }
-
         private void Save()
         {
             // сохранение файла в корень проекта (временно)
