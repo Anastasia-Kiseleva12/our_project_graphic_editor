@@ -332,22 +332,55 @@ namespace GraphicEditor.ViewModels
         {
             var eps = 80; // допустимая погрешность
             var figure = _figureService.Find(new Point { X = point.X, Y = point.Y }, eps);
+            //Предыдущее решение, пока не удаляю, может понадобится
+            //if (figure != null)
+            //{
+            //    Debug.WriteLine($"Figure found: {figure.Name}");
+            //    if (_selectedFigure == figure)
+            //    {
+            //       UnselectFigureCommand.Execute(figure).Subscribe();
+            //    }
+            //    else
+            //    {
+            //        SelectFigureCommand.Execute(figure).Subscribe();
+            //    }
+            //}
+            //else
+            //{
+            //    UnselectFigureCommand.Execute(null).Subscribe();
+            //}
 
+            //FiguresChanged?.Invoke();
             if (figure != null)
             {
                 Debug.WriteLine($"Figure found: {figure.Name}");
                 if (_selectedFigure == figure)
                 {
-                   UnselectFigureCommand.Execute(figure).Subscribe();
+                    // Снимаем выделение с текущей фигуры
+                    _selectedFigure.IsSelected = false;
+                    _selectedFigure = null;
                 }
                 else
                 {
-                    SelectFigureCommand.Execute(figure).Subscribe();
+                    // Снимаем выделение с предыдущей фигуры (если есть)
+                    if (_selectedFigure != null)
+                    {
+                        _selectedFigure.IsSelected = false;
+                    }
+
+                    // Выделяем новую фигуру
+                    _selectedFigure = figure;
+                    _selectedFigure.IsSelected = true;
                 }
             }
             else
             {
-                UnselectFigureCommand.Execute(null).Subscribe();
+                // Снимаем выделение с текущей фигуры (если есть)
+                if (_selectedFigure != null)
+                {
+                    _selectedFigure.IsSelected = false;
+                    _selectedFigure = null;
+                }
             }
 
             FiguresChanged?.Invoke();
