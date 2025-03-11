@@ -36,6 +36,9 @@ namespace GraphicEditor.ViewModels
         private bool _isDrawingTriangle;
         private bool _isDrawingRectangle;
 
+        private bool _isDragging; // Флаг перемещения
+        private Point? _dragStartPoint; // Начальная точка перемещения
+        private IFigure _draggedFigure; // Перемещаемая фигура
         public Point? StartPoint
         {
             get => _startPoint;
@@ -58,19 +61,16 @@ namespace GraphicEditor.ViewModels
             get => _isDrawingLine;
             set => this.RaiseAndSetIfChanged(ref _isDrawingLine, value);
         }
-
         public bool IsDrawingCircle
         {
             get => _isDrawingCircle;
             set => this.RaiseAndSetIfChanged(ref _isDrawingCircle, value);
         }
-
         public bool IsDrawingTriangle
         {
             get => _isDrawingTriangle;
             set => this.RaiseAndSetIfChanged(ref _isDrawingTriangle, value);
         }
-
         public bool IsDrawingRectangle
         {
             get => _isDrawingRectangle;
@@ -83,21 +83,18 @@ namespace GraphicEditor.ViewModels
             get => _isCheckedLine;
             set => this.RaiseAndSetIfChanged(ref _isCheckedLine, value);
         }
-
         private bool _isCheckedCircle;
         public bool IsCheckedCircle
         {
             get => _isCheckedCircle;
             set => this.RaiseAndSetIfChanged(ref _isCheckedCircle, value);
         }
-
         private bool _isCheckedTriangle;
         public bool IsCheckedTriangle
         {
             get => _isCheckedTriangle;
             set => this.RaiseAndSetIfChanged(ref _isCheckedTriangle, value);
         }
-
         private bool _isCheckedRectangle;
         public bool IsCheckedRectangle
         {
@@ -198,26 +195,6 @@ namespace GraphicEditor.ViewModels
             _figureService.AddFigure(figure);
             FiguresChanged?.Invoke();
         }
-        public void SelectFigure(IFigure figure)
-        {
-            if (figure == null)
-                return;
-
-            // Снимаем выделение с предыдущей фигуры (если есть)
-            if (_selectedFigure != null)
-            {
-                _selectedFigure.IsSelected = false;
-                _selectedFigure = null;
-            }
-
-            // Выделяем новую фигуру
-            _selectedFigure = figure;
-            _selectedFigure.IsSelected = true;
-
-            // Уведомляем об изменении
-            this.RaisePropertyChanged(nameof(SelectedFigure));
-            FiguresChanged?.Invoke(); // Обновляем отрисовку
-        }
         public void HandleCanvasClick(Point point)
         {
             if (IsDrawingLine)
@@ -237,7 +214,13 @@ namespace GraphicEditor.ViewModels
                 HandleTriangleClick(point);
                 return;
             }
+            if (IsDrawingRectangle)
+            {
+                HandleRectangleClick(point);
+                return;
+            }
             HandleFigureSelection(point);
+
         }
         private void HandleLineClick(Point point)
         {
@@ -328,59 +311,58 @@ namespace GraphicEditor.ViewModels
             }
         }
 
+        private void HandleRectangleClick(Point point)
+        {
+            if (StartPoint == null)
+            {
+                StartPoint = point;
+                Debug.WriteLine($"Start point set at: {StartPoint}");
+            }
+            else
+            {
+                var pointParameters = new Dictionary<string, Point>
+                {
+                    { "TopLeft", StartPoint },
+                    { "BottomRight", point }
+                };
+                var doubleParameters = new Dictionary<string, double>
+                {
+                    { "StrokeThickness", 2}
+                };
+
+                CreateFigure("Rectangle", pointParameters, doubleParameters);
+
+                IsDrawingRectangle = false;
+                StartPoint = null;
+                CurrentPoint = null;
+                IsCheckedRectangle = false;
+            }
+        }
         private void HandleFigureSelection(Point point)
         {
             var eps = 80; // допустимая погрешность
             var figure = _figureService.Find(new Point (point.X, point.Y), eps);
             //Предыдущее решение, пока не удаляю, может понадобится
-            //if (figure != null)
-            //{
-            //    Debug.WriteLine($"Figure found: {figure.Name}");
-            //    if (_selectedFigure == figure)
-            //    {
-            //       UnselectFigureCommand.Execute(figure).Subscribe();
-            //    }
-            //    else
-            //    {
-            //        SelectFigureCommand.Execute(figure).Subscribe();
-            //    }
-            //}
-            //else
-            //{
-            //    UnselectFigureCommand.Execute(null).Subscribe();
-            //}
-
-            //FiguresChanged?.Invoke();
             if (figure != null)
             {
                 Debug.WriteLine($"Figure found: {figure.Name}");
                 if (_selectedFigure == figure)
                 {
-                    // Снимаем выделение с текущей фигуры
-                    _selectedFigure.IsSelected = false;
-                    _selectedFigure = null;
+                    // Если фигура уже выделена, начинаем перемещение
+                    _isDragging = true;
+                    _dragStartPoint = point;
+                    _draggedFigure = figure;
                 }
                 else
                 {
-                    // Снимаем выделение с предыдущей фигуры (если есть)
-                    if (_selectedFigure != null)
-                    {
-                        _selectedFigure.IsSelected = false;
-                    }
-
-                    // Выделяем новую фигуру
-                    _selectedFigure = figure;
-                    _selectedFigure.IsSelected = true;
+                    // Если фигура не выделена, выделяем её
+                    SelectFigureCommand.Execute(figure).Subscribe();
                 }
             }
             else
             {
-                // Снимаем выделение с текущей фигуры (если есть)
-                if (_selectedFigure != null)
-                {
-                    _selectedFigure.IsSelected = false;
-                    _selectedFigure = null;
-                }
+                // Если кликнули на пустую область, снимаем выделение
+                UnselectFigureCommand.Execute(null).Subscribe();
             }
 
             FiguresChanged?.Invoke();
@@ -391,7 +373,25 @@ namespace GraphicEditor.ViewModels
             {
                 CurrentPoint = point;
             }
-        }      
+            else if (_isDragging && _draggedFigure != null && _dragStartPoint != null)
+            {
+                var deltaX = point.X - _dragStartPoint.X;
+                var deltaY = point.Y - _dragStartPoint.Y;
+                var vector = new Point(deltaX, deltaY);
+
+                _draggedFigure.Move(vector);
+
+                _dragStartPoint = point;
+
+                FiguresChanged?.Invoke();
+            }
+        }
+        public void HandleCanvasRelease()
+        {
+            _isDragging = false;
+            _dragStartPoint = null;
+            _draggedFigure = null;
+        }
         private void CreateLine()
         {
             if (IsManualMode)
@@ -435,9 +435,8 @@ namespace GraphicEditor.ViewModels
         {
             if (IsManualMode)
             {
-                // Пока не реализовано создание прямоугольника по умолчанию
-                Debug.WriteLine("Auto mode: Create default rectangle.");
-                // CreateDefaultFigure("Rectangle", value => IsCheckedRectangle = value);
+
+                CreateDefaultFigure("Rectangle", value => IsCheckedRectangle = value);
             }
             else
             {

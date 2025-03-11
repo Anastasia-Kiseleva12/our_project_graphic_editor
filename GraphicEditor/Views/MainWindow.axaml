@@ -137,8 +137,10 @@
 						<TextBlock Text="Линия"/>
 					</ToolTip.Tip>
 				</RadioButton>
-				<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0"
-							 HorizontalAlignment="Center">
+				<RadioButton Classes="Figure"  Margin="0 20 0 0"
+							 Command="{Binding CreateRectangleCommand}" 
+							 HorizontalAlignment="Center"
+						 IsChecked="{Binding IsCheckedRectangle}">
 					<Image Source="avares://GraphicEditor/Assets/Img/no-people.png"
 						Height="27"
 						Width="27"

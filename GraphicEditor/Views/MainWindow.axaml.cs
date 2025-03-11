@@ -17,9 +17,6 @@ namespace GraphicEditor.Views
     public partial class MainWindow : Window
     {
         public MainWindowViewModel _viewModel;
-        private bool _isDragging = false;
-        private GraphicEditor.Point _dragStartPoint;
-        private IFigure _draggedFigure;
 
         public MainWindow(MainWindowViewModel viewModel)
         {
@@ -38,8 +35,8 @@ namespace GraphicEditor.Views
             };
 
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
-            DrawingCanvas.PointerMoved += OnCanvasPointerMoved;
-            DrawingCanvas.PointerReleased += OnCanvasPointerReleased;
+             DrawingCanvas.PointerMoved += OnCanvasPointerMoved;
+             DrawingCanvas.PointerReleased += OnCanvasPointerReleased;
         }
 
         private void HidePopup(object sender, PointerEventArgs e)
@@ -80,53 +77,22 @@ namespace GraphicEditor.Views
         {
             var avaloniaPoint = e.GetPosition(DrawingCanvas);
             var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
+            _viewModel.HandleCanvasClick(point);
 
-            // Проверяем, была ли нажата фигура
-            _draggedFigure = _viewModel.GetFigureAtPoint(point);
-            if (_draggedFigure != null)
-            {
-                _isDragging = true;
-                _dragStartPoint = point;
-                _viewModel.SelectFigure(_draggedFigure);
-            }
-            else
-            {
-                _viewModel.HandleCanvasClick(point);
-            }
         }
         private void OnCanvasPointerMoved(object sender, PointerEventArgs e)
         {
-            if (_isDragging && _draggedFigure != null)
-            {
-                var avaloniaPoint = e.GetPosition(DrawingCanvas);
-                var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
-
-                var vector = new GraphicEditor.Point(point.X - _dragStartPoint.X, point.Y - _dragStartPoint.Y);
-                _viewModel.SelectedFigure.Move(vector);
-
-                // Обновляем начальную точку для следующего перемещения
-                _dragStartPoint = point;
-
-                // Перерисовываем холст
-                Draw(_viewModel.SelectedFigure?.IsSelected ?? false, thicknessSlider.Value);
-            }
-            else
-            {
-                var avaloniaPoint = e.GetPosition(DrawingCanvas);
-                var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
-                _viewModel.HandleCanvasMove(point);
-                Draw(false, thicknessSlider.Value); // Перерисовываем canvas
-            }
+            var avaloniaPoint = e.GetPosition(DrawingCanvas);
+            var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
+            _viewModel.HandleCanvasMove(point);
+            Draw(false, thicknessSlider.Value); // Перерисовываем canvas
         }
         private void OnCanvasPointerReleased(object sender, PointerReleasedEventArgs e)
         {
-            if (_isDragging)
-            {
-                _isDragging = false;
-                
-                _draggedFigure = null;
-            }
+            _viewModel.HandleCanvasRelease();
+            Draw(false, thicknessSlider.Value); 
         }
+
         class Drawer(Canvas DrawingCanvas) : IDrawing
         {
             //отрисовка временных точек
@@ -138,7 +104,7 @@ namespace GraphicEditor.Views
                     Height = 10,
                     Fill = fillBrush,
                     Stroke = Brushes.Black,
-                    StrokeThickness = 1,
+                    StrokeThickness = 2,
                     Margin = new Thickness(point.X - 5, point.Y - 5, 0, 0)
                 };
                 DrawingCanvas.Children.Add(ellipse);
@@ -204,7 +170,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(Start.X - 5, Start.Y - 5, 0, 0)
                     };
 
@@ -214,7 +180,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(End.X - 5, End.Y - 5, 0, 0)
                     };
 
@@ -268,7 +234,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(PointOnCircle.X - 5, PointOnCircle.Y - 5, 0, 0)
                     };
 
@@ -327,7 +293,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(Point1.X - 5, Point1.Y - 5, 0, 0)
                     };
 
@@ -337,7 +303,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(Point2.X - 5, Point2.Y - 5, 0, 0)
                     };
 
@@ -347,7 +313,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(Point3.X - 5, Point3.Y - 5, 0, 0)
                     };
 
@@ -398,7 +364,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(TopLeft.X - 5, TopLeft.Y - 5, 0, 0)
                     };
 
@@ -408,7 +374,7 @@ namespace GraphicEditor.Views
                         Height = 10,
                         Fill = Brushes.Blue,
                         Stroke = Brushes.Black,
-                        StrokeThickness = 1,
+                        StrokeThickness = 2,
                         Margin = new Thickness(BottomRight.X - 5, BottomRight.Y - 5, 0, 0)
                     };
 
