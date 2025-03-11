@@ -83,6 +83,13 @@ namespace GraphicEditor.ViewModels
             get => _isCheckedLine;
             set => this.RaiseAndSetIfChanged(ref _isCheckedLine, value);
         }
+        private bool _isSelectedLine;
+        public bool IsSelectedLine
+        {
+            get => _isSelectedLine;
+            set => this.RaiseAndSetIfChanged(ref _isSelectedLine, value);
+        }
+
         private bool _isCheckedCircle;
         public bool IsCheckedCircle
         {
@@ -350,11 +357,13 @@ namespace GraphicEditor.ViewModels
                 {
                     // Если фигура уже выделена, начинаем перемещение
                     _isDragging = true;
+                    _isSelectedLine = true;
                     _dragStartPoint = point;
                     _draggedFigure = figure;
                 }
                 else
                 {
+                    IsSelectedLine = false;
                     // Если фигура не выделена, выделяем её
                     SelectFigureCommand.Execute(figure).Subscribe();
                 }
