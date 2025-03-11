@@ -95,7 +95,7 @@ namespace GraphicEditor
                             xElement.TryGetDouble(out var x) &&
                             yElement.TryGetDouble(out var y)) // проверяем, что параметры X и Y существуют и являются числами
                         {
-                            pointParams[param.Name] = new Point { X = x, Y = y };
+                            pointParams[param.Name] = new Point(x, y);
                         }
                     }
                 }

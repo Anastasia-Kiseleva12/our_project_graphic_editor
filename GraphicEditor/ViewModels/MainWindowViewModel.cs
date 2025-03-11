@@ -331,7 +331,7 @@ namespace GraphicEditor.ViewModels
         private void HandleFigureSelection(Point point)
         {
             var eps = 80; // допустимая погрешность
-            var figure = _figureService.Find(new Point { X = point.X, Y = point.Y }, eps);
+            var figure = _figureService.Find(new Point (point.X, point.Y), eps);
             //Предыдущее решение, пока не удаляю, может понадобится
             //if (figure != null)
             //{

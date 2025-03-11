@@ -34,8 +34,8 @@ namespace GraphicEditor
             }
             public IFigure CreateDefault()
             {
-                return new Line(new Point { X = 50, Y = 50 },
-                new Point { X = 150, Y = 150 }, 2);
+                return new Line(new Point (50, 50),
+                new Point (150, 150), 2);
             }
         }
 
@@ -43,7 +43,7 @@ namespace GraphicEditor
         public Point Start { get; private set; }
         public Point End { get; private set; }
         public double StrokeThickness { get; set; }
-        public Point Center => new Point { X = (Start.X + End.X) / 2, Y = (Start.Y + End.Y) / 2 };
+        public Point Center => new Point ((Start.X + End.X) / 2, (Start.Y + End.Y) / 2);
 
         public string Id { get; } = Guid.NewGuid().ToString();
         Line(Point start, Point end, double strokeThickness)
@@ -54,33 +54,30 @@ namespace GraphicEditor
         }
         public bool IsSelected { get; set; }
         public int Color { get; set; } = unchecked((int)0xFF000000);
-        public void SetColor(byte a, byte r, byte g, byte b)
-        {
-            Color = (a << 24) | (r << 16) | (g << 8) | b;
-        }
+        public void SetColor(byte a, byte r, byte g, byte b) => Color = (a << 24) | (r << 16) | (g << 8) | b;
         public void Move(Point vector)
         {
-            Start = new Point { X = Start.X + vector.X, Y = Start.Y + vector.Y };
-            End = new Point { X = End.X + vector.X, Y = End.Y + vector.Y };
+            Start += vector;
+            End += vector;
         }
         public void Rotate(Point center, double angle)
         {
             double rad = angle * Math.PI / 180;
             double cosA = Math.Cos(rad);
             double sinA = Math.Sin(rad);
-            Start = new Point { X = center.X + (Start.X - center.X) * cosA - (Start.Y - center.Y) * sinA, Y = center.Y + (Start.X - center.X) * sinA + (Start.Y - center.Y) * cosA };
-            End = new Point { X = center.X + (End.X - center.X) * cosA - (End.Y - center.Y) * sinA, Y = center.Y + (End.X - center.X) * sinA + (End.Y - center.Y) * cosA };
+            Start = new Point (center.X + (Start.X - center.X) * cosA - (Start.Y - center.Y) * sinA, center.Y + (Start.X - center.X) * sinA + (Start.Y - center.Y) * cosA);
+            End = new Point (center.X + (End.X - center.X) * cosA - (End.Y - center.Y) * sinA, center.Y + (End.X - center.X) * sinA + (End.Y - center.Y) * cosA);
         }
 
         public void Scale(double dx, double dy)
         {
-            Start = new Point { X = Start.X * dx, Y = Start.Y * dy };
-            End = new Point { X = End.X * dx, Y = End.Y * dy };
+            Start = new Point (Start.X * dx, Start.Y * dy);
+            End = new Point (End.X * dx, End.Y * dy);
         }
         public void Scale(Point center, double dr)
         {
-            Start = new Point { X = center.X + (Start.X - center.X) * dr, Y = center.Y + (Start.Y - center.Y) * dr };
-            End = new Point { X = center.X + (End.X - center.X) * dr, Y = center.Y + (End.Y - center.Y) * dr };
+            Start = new Point (center.X + (Start.X - center.X) * dr, center.Y + (Start.Y - center.Y) * dr);
+            End = new Point (center.X + (End.X - center.X) * dr, center.Y + (End.Y - center.Y) * dr);
         }
         public void Reflection(Point a, Point b)
         {
@@ -89,14 +86,14 @@ namespace GraphicEditor
             double d = dx * dx + dy * dy;
             double x = ((Start.X * dx + Start.Y * dy - a.X * dx - a.Y * dy) * dx + a.X * d) / d * 2 - Start.X;
             double y = ((Start.X * dx + Start.Y * dy - a.X * dx - a.Y * dy) * dy + a.Y * d) / d * 2 - Start.Y;
-            Start = new Point { X = x, Y = y };
+            Start = new Point (x, y);
             x = ((End.X * dx + End.Y * dy - a.X * dx - a.Y * dy) * dx + a.X * d) / d * 2 - End.X;
             y = ((End.X * dx + End.Y * dy - a.X * dx - a.Y * dy) * dy + a.Y * d) / d * 2 - End.Y;
-            End = new Point { X = x, Y = y };
+            End = new Point (x, y);
         }
         public IFigure Clone()
         {
-            return new Line(new Point { X = Start.X, Y = Start.Y }, new Point { X = End.X, Y = End.Y }, StrokeThickness);
+            return new Line(new Point (Start.X, Start.Y), new Point (End.X, End.Y), StrokeThickness);
         }
         public bool IsIn(Point point, double tolerance = 5)
         {

@@ -79,7 +79,7 @@ namespace GraphicEditor.Views
         private void OnCanvasPointerPressed(object sender, PointerPressedEventArgs e)
         {
             var avaloniaPoint = e.GetPosition(DrawingCanvas);
-            var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
+            var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
 
             // Проверяем, была ли нажата фигура
             _draggedFigure = _viewModel.GetFigureAtPoint(point);
@@ -99,14 +99,9 @@ namespace GraphicEditor.Views
             if (_isDragging && _draggedFigure != null)
             {
                 var avaloniaPoint = e.GetPosition(DrawingCanvas);
-                var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
+                var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
 
-                var vector = new GraphicEditor.Point
-                {
-                    X = point.X - _dragStartPoint.X,
-                    Y = point.Y - _dragStartPoint.Y
-                };
-
+                var vector = new GraphicEditor.Point(point.X - _dragStartPoint.X, point.Y - _dragStartPoint.Y);
                 _viewModel.SelectedFigure.Move(vector);
 
                 // Обновляем начальную точку для следующего перемещения
@@ -118,7 +113,7 @@ namespace GraphicEditor.Views
             else
             {
                 var avaloniaPoint = e.GetPosition(DrawingCanvas);
-                var point = new GraphicEditor.Point { X = avaloniaPoint.X, Y = avaloniaPoint.Y };
+                var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
                 _viewModel.HandleCanvasMove(point);
                 Draw(false, thicknessSlider.Value); // Перерисовываем canvas
             }

@@ -29,8 +29,8 @@ namespace GraphicEditor
 
             public IFigure CreateDefault()
             {
-                return new Circle(new Point { X = 250, Y = 250 },
-                    new Point { X = 200, Y = 200 }, 2);
+                return new Circle(new Point (250, 250),
+                    new Point (200, 200), 2);
             }
         }
         public Point Center { get; private set; }
@@ -53,8 +53,8 @@ namespace GraphicEditor
 
         public void Move(Point vector)
         {
-            Center = new Point { X = Center.X + vector.X, Y = Center.Y + vector.Y };
-            PointOnCircle = new Point { X = PointOnCircle.X + vector.X, Y = PointOnCircle.Y + vector.Y };
+            Center += vector;
+            PointOnCircle += vector;
         }
 
         public bool ContainsPoint(Point point)
@@ -68,14 +68,7 @@ namespace GraphicEditor
             throw new NotImplementedException(); // недопустимый метод, изменится тип фигуры
         }
 
-        public void Scale(Point center, double dr)
-        {
-            PointOnCircle = new Point
-            {
-                X = Center.X + (PointOnCircle.X - Center.X) * dr,
-                Y = Center.Y + (PointOnCircle.Y - Center.Y) * dr
-            };
-        }
+        public void Scale(Point center, double dr) => PointOnCircle = new Point(Center.X + (PointOnCircle.X - Center.X) * dr, Center.Y + (PointOnCircle.Y - Center.Y) * dr);
 
         public IFigure Clone()
         {

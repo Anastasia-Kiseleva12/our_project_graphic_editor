@@ -36,9 +36,9 @@ namespace GraphicEditor
             public IFigure CreateDefault()
             {
                 return new Triangle(
-                    new Point { X = 50, Y = 50 },
-                    new Point { X = 150, Y = 50 },
-                    new Point { X = 100, Y = 150 },
+                    new Point(50,50),
+                    new Point(150,50),
+                    new Point (100, 150),
                     2
                 );
             }
@@ -64,13 +64,13 @@ namespace GraphicEditor
         {
             Color = (a << 24) | (r << 16) | (g << 8) | b;
         }
-        public Point Center => new Point { X = (P1.X + P2.X + P3.X) / 3, Y = (P1.Y + P2.Y + P3.Y) / 3 };
+        public Point Center => new Point((P1.X + P2.X + P3.X) / 3, (P1.Y + P2.Y + P3.Y) / 3 );
 
         public void Move(Point vector)
         {
-            P1 = new Point { X = P1.X + vector.X, Y = P1.Y + vector.Y };
-            P2 = new Point { X = P2.X + vector.X, Y = P2.Y + vector.Y };
-            P3 = new Point { X = P3.X + vector.X, Y = P3.Y + vector.Y };
+            P1 += vector;
+            P2 += vector;
+            P3 += vector;
         }
         public void Rotate(Point center, double angle)
         {
@@ -79,38 +79,24 @@ namespace GraphicEditor
             double sin = Math.Sin(radians);
             center = Center;
 
-            P1 = new Point
-            {
-                X = center.X + (P1.X - center.X) * cos - (P1.Y - center.Y) * sin,
-                Y = center.Y + (P1.X - center.X) * sin + (P1.Y - center.Y) * cos
-            };
-
-            P2 = new Point
-            {
-                X = center.X + (P2.X - center.X) * cos - (P2.Y - center.Y) * sin,
-                Y = center.Y + (P2.X - center.X) * sin + (P2.Y - center.Y) * cos
-            };
-
-            P3 = new Point
-            {
-                X = center.X + (P3.X - center.X) * cos - (P3.Y - center.Y) * sin,
-                Y = center.Y + (P3.X - center.X) * sin + (P3.Y - center.Y) * cos
-            };
+            P1 = new Point(center.X + (P1.X - center.X) * cos - (P1.Y - center.Y) * sin, center.Y + (P1.X - center.X) * sin + (P1.Y - center.Y) * cos);
+            P2 = new Point(center.X + (P2.X - center.X) * cos - (P2.Y - center.Y) * sin, center.Y + (P2.X - center.X) * sin + (P2.Y - center.Y) * cos);
+            P3 = new Point(center.X + (P3.X - center.X) * cos - (P3.Y - center.Y) * sin, center.Y + (P3.X - center.X) * sin + (P3.Y - center.Y) * cos);
         }
         public void Scale(double dx, double dy)
         {
-            P1 = new Point { X = P1.X * dx, Y = P1.Y * dy};
-            P2 = new Point { X = P2.X * dx, Y = P2.Y * dy};
-            P3 = new Point { X = P3.X * dx, Y = P3.Y * dy};
+            P1 = new Point (P1.X * dx, P1.Y * dy);
+            P2 = new Point (P2.X * dx, P2.Y * dy);
+            P3 = new Point (P3.X * dx, P3.Y * dy);
         }
 
         public void Scale(Point center, double dr)
         {
             center = Center;
 
-            P1 = new Point { X = center.X + (P1.X - center.X) * dr, Y = center.Y + (P1.Y - center.Y) * dr };
-            P2 = new Point { X = center.X + (P2.X - center.X) * dr, Y = center.Y + (P2.Y - center.Y) * dr };
-            P3 = new Point { X = center.X + (P3.X - center.X) * dr, Y = center.Y + (P3.Y - center.Y) * dr };
+            P1 = new Point (center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
+            P2 = new Point (center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);
+            P3 = new Point (center.X + (P3.X - center.X) * dr, center.Y + (P3.Y - center.Y) * dr);
         }
 
         public void Reflection(Point a, Point b) => throw new NotImplementedException();
@@ -118,9 +104,9 @@ namespace GraphicEditor
         public IFigure Clone()
         {
             return new Triangle(
-                new Point { X = P1.X, Y = P1.Y },
-                new Point { X = P2.X, Y = P2.Y },
-                new Point { X = P3.X, Y = P3.Y },
+                new Point (P1.X, P1.Y),
+                new Point (P2.X, P2.Y),
+                new Point (P3.X, P3.Y),
                 StrokeThickness
             );
         }
