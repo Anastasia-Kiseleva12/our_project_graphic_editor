@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.IO;
+using System.Diagnostics;
 
 namespace GraphicEditor
 {
@@ -22,17 +22,12 @@ namespace GraphicEditor
 
                 var pointParamsNames = FigureFabric.PointParameters(figure.Name).ToList(); // список имен точечных параметров
                 var doubleParamsNames = FigureFabric.DoubleParameters(figure.Name).ToList(); // список имен числовых параметров
-                var figureType = figure.GetType(); // тип объекта фигуры
 
                 var pointParams = new Dictionary<string, object>();
                 foreach (var paramName in pointParamsNames)
                 {
-                    var property = figureType.GetProperty(paramName); // получение свойства по имени
-                    if (property != null && property.PropertyType == typeof(Point))
-                    {
-                        var value = (Point)property.GetValue(figure); // получение значения свойства
-                        pointParams[paramName] = new { value.X, value.Y };
-                    }
+                    Point value = figure.GetPointParameter(paramName);
+                    pointParams[paramName] = new { value.X, value.Y };
                 }
 
                 if (pointParams.Any())
@@ -41,14 +36,11 @@ namespace GraphicEditor
                 }
 
                 var doubleParams = new Dictionary<string, object>();
-                foreach (var paramName in doubleParamsNames) //аналогично
+                foreach (var paramName in doubleParamsNames)
                 {
-                    var property = figureType.GetProperty(paramName);
-                    if (property != null && property.PropertyType == typeof(double))
-                    {
-                        var value = (double)property.GetValue(figure);
-                        doubleParams[paramName] = value;
-                    }
+
+                    double value = figure.GetDoubleParameter(paramName);
+                    doubleParams[paramName] = value;
                 }
 
                 if (doubleParams.Any())

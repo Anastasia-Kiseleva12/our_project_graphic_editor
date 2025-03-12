@@ -109,5 +109,24 @@ namespace GraphicEditor
         {
             drawing.DrawLine(IsSelected, Start, End, StrokeThickness, Color);
         }
+
+        public Point GetPointParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "Start" => Start,
+                "End" => End,
+                _ => throw new ArgumentException($"Unknown point parameter: {parameterName}")
+            };
+        }
+
+        public double GetDoubleParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "StrokeThickness" => StrokeThickness,
+                _ => throw new ArgumentException($"Unknown double parameter: {parameterName}")
+            };
+        }
     }
 }

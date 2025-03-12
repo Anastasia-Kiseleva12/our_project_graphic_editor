@@ -51,6 +51,8 @@ namespace GraphicEditor
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);
         IFigure Subtract(IFigure other);
+        Point GetPointParameter(string parameterName);
+        double GetDoubleParameter(string parameterName);
     }
 
     public interface ILogic

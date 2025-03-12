@@ -144,5 +144,24 @@ namespace GraphicEditor
         {
             drawing.DrawRectangle(IsSelected, TopLeft, BottomRight, StrokeThickness, Color);
         }
+
+        public Point GetPointParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "TopLeft" => TopLeft,
+                "BottomRight" => BottomRight,
+                _ => throw new ArgumentException($"Unknown point parameter: {parameterName}")
+            };
+        }
+
+        public double GetDoubleParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "StrokeThickness" => StrokeThickness,
+                _ => throw new ArgumentException($"Unknown double parameter: {parameterName}")
+            };
+        }
     }
 }

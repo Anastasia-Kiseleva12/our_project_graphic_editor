@@ -58,10 +58,10 @@ namespace GraphicEditor
         }
 
         public bool ContainsPoint(Point point)
-    {
-        double distance = Math.Sqrt(Math.Pow(point.X - Center.X, 2) + Math.Pow(point.Y - Center.Y, 2));
-        return distance <= Radius;
-    }
+        {
+            double distance = Math.Sqrt(Math.Pow(point.X - Center.X, 2) + Math.Pow(point.Y - Center.Y, 2));
+            return distance <= Radius;
+        }
 
         public void Scale(double dx, double dy)
         {
@@ -127,5 +127,23 @@ namespace GraphicEditor
             throw new NotImplementedException();
         }
 
+        public Point GetPointParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "Center" => Center,
+                "PointOnCircle" => PointOnCircle,
+                _ => throw new ArgumentException($"Unknown point parameter: {parameterName}")
+            };
+        }
+
+        public double GetDoubleParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "StrokeThickness" => StrokeThickness,
+                _ => throw new ArgumentException($"Unknown double parameter: {parameterName}")
+            };
+        }
     }
 }

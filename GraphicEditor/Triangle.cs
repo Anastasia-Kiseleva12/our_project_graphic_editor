@@ -128,5 +128,25 @@ namespace GraphicEditor
         {
             drawing.DrawTriangle(IsSelected,  P1, P2, P3, StrokeThickness, Color);
         }
+
+        public Point GetPointParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "P1" => P1,
+                "P2" => P2,
+                "P3" => P3,
+                _ => throw new ArgumentException($"Unknown point parameter: {parameterName}")
+            };
+        }
+
+        public double GetDoubleParameter(string parameterName)
+        {
+            return parameterName switch
+            {
+                "StrokeThickness" => StrokeThickness,
+                _ => throw new ArgumentException($"Unknown double parameter: {parameterName}")
+            };
+        }
     }
 }
