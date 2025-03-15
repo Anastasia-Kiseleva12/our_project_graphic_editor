@@ -21,6 +21,7 @@ namespace GraphicEditor.Views
         public MainWindow(MainWindowViewModel viewModel)
         {
             InitializeComponent();
+            IO.CanvasToSave = DrawingCanvas;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             _viewModel = viewModel;

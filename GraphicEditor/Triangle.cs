@@ -136,7 +136,7 @@ namespace GraphicEditor
                 "P1" => P1,
                 "P2" => P2,
                 "P3" => P3,
-                _ => throw new ArgumentException($"Unknown point parameter: {parameterName}")
+                _ => new Point(0, 0)
             };
         }
 
@@ -145,7 +145,7 @@ namespace GraphicEditor
             return parameterName switch
             {
                 "StrokeThickness" => StrokeThickness,
-                _ => throw new ArgumentException($"Unknown double parameter: {parameterName}")
+                _ => 0
             };
         }
     }
