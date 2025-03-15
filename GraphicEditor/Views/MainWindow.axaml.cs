@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -129,7 +130,7 @@ namespace GraphicEditor.Views
 
                 DrawingCanvas.Children.Add(lineShape);
             }
-            public void DrawLine(bool IsSelected, Point Start,Point End, double strokeThickness, int Color)
+            public void DrawLine(bool IsSelected, Point Start,Point End, double strokeThickness, int Color, double Angle)
             {
                 if (IsSelected)
                 {
@@ -161,10 +162,14 @@ namespace GraphicEditor.Views
                     StrokeThickness = strokeThickness,
                     Data = lineGeometry
                 };
-
+                if (Angle != 0)
+                {
+                    lineShape.RenderTransform = new RotateTransform(Angle);
+                }
                 DrawingCanvas.Children.Add(lineShape);
 
-                if (IsSelected)
+
+                    if (IsSelected)
                 {
                     var startPoint = new Ellipse
                     {
@@ -191,7 +196,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawCircle( bool IsSelected, Point Center, double radius, Point PointOnCircle, double strokeThickness, int Color)
+            public void DrawCircle( bool IsSelected, Point Center, double radius, Point PointOnCircle, double strokeThickness, int Color, double Angle)
             {
                 if (IsSelected)
                 {
@@ -244,7 +249,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, int Color)
+            public void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, int Color, double Angle)
             {
                 if (IsSelected)
                 {
@@ -325,7 +330,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawRectangle(bool IsSelected, Point TopLeft, Point BottomRight, double strokeThickness, int Color)
+            public void DrawRectangle(bool IsSelected, Point TopLeft, Point BottomRight, double strokeThickness, int Color, double Angle)
             {
                 if (IsSelected)
                 {
@@ -396,7 +401,7 @@ namespace GraphicEditor.Views
                 {
                     figure.StrokeThickness = _viewModel.CurrentThickness;
                 }
-                figure.Draw(drawer);
+                figure.Draw(drawer, _viewModel.Angle);
             }
 
             // Отрисовка временных элементов (если идет создание фигуры)

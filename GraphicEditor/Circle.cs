@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GraphicEditor
@@ -83,9 +84,9 @@ namespace GraphicEditor
                 return Math.Sqrt(dx * dx + dy * dy);
             }
         }
-        public void Draw(IDrawing drawing)
+        public void Draw(IDrawing drawing, double Angle)
         {
-            drawing.DrawCircle(IsSelected, Center, Radius, PointOnCircle, StrokeThickness, Color);
+            drawing.DrawCircle(IsSelected, Center, Radius, PointOnCircle, StrokeThickness, Color, Angle);
         }
 
         public bool IsIn(Point point, double eps)
@@ -122,9 +123,9 @@ namespace GraphicEditor
         {
             throw new NotImplementedException();
         }
-        public void Rotate(Point center, double angle)
+        public void Rotate(double angle)
         {
-            throw new NotImplementedException();
+            Debug.WriteLine($"Rotate method called with angle: {angle}");
         }
 
         public Point GetPointParameter(string parameterName)

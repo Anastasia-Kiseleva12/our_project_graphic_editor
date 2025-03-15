@@ -262,7 +262,7 @@
 
 							<!-- Повернуть -->
 							<Button Classes="Figure" Grid.Row="0" Grid.Column="0"
-									HorizontalAlignment="Center" VerticalAlignment="Center"
+									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding RotateFigureCommand}"
 									Width="60" Height="60"
 									Margin="2.5">
 								<Image Source="avares://GraphicEditor/Assets/Img/rotate-left.png" Width="30" Height="30"/>
@@ -273,7 +273,7 @@
 
 							<!-- Двигать -->
 							<Button Classes="Figure" Grid.Row="0" Grid.Column="1"
-									HorizontalAlignment="Center" VerticalAlignment="Center"
+									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding BackRotateFigureCommand}"
 									Width="60" Height="60"
 									Margin="2.5">
 								<Image Source="avares://GraphicEditor/Assets/Img/rotate-right.png" Width="30" Height="30"/>

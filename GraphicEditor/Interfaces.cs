@@ -21,10 +21,10 @@ namespace GraphicEditor
 
     public interface IDrawing
     {
-        void DrawLine(bool selected, Point a, Point b, double strokeThickness, int Color);
-        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle, double strokeThickness, int Color);
-        void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, int Color);
-        void DrawRectangle(bool IsSelected, Point TopLeft, Point BottomRight, double strokeThickness, int Color);
+        void DrawLine(bool selected, Point a, Point b, double strokeThickness, int Color, double Angle);
+        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle, double strokeThickness, int Color, double Angle);
+        void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, int Color, double Angle);
+        void DrawRectangle(bool IsSelected, Point TopLeft, Point BottomRight, double strokeThickness, int Color, double Angle);
     }
     public interface IDrawingFigure
     {
@@ -34,7 +34,7 @@ namespace GraphicEditor
     public interface IFigure
     {
         void Move(Point vector);
-        void Rotate(Point center, double angle);
+        void Rotate(double angle);
         Point Center { get; }
         string Id { get; }
         string Name { get; }
@@ -46,7 +46,7 @@ namespace GraphicEditor
         void Scale(Point center, double dr);
         void Reflection(Point a, Point b);
         IFigure Clone();
-        void Draw(IDrawing drawing);
+        void Draw(IDrawing drawing, double Angle);
         bool IsIn(Point point, double eps);
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);

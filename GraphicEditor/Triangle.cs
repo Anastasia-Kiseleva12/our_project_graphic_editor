@@ -72,12 +72,12 @@ namespace GraphicEditor
             P2 += vector;
             P3 += vector;
         }
-        public void Rotate(Point center, double angle)
+        public void Rotate(double angle)
         {
             double radians = angle * Math.PI / 180;
             double cos = Math.Cos(radians);
             double sin = Math.Sin(radians);
-            center = Center;
+            Point center = Center;
 
             P1 = new Point(center.X + (P1.X - center.X) * cos - (P1.Y - center.Y) * sin, center.Y + (P1.X - center.X) * sin + (P1.Y - center.Y) * cos);
             P2 = new Point(center.X + (P2.X - center.X) * cos - (P2.Y - center.Y) * sin, center.Y + (P2.X - center.X) * sin + (P2.Y - center.Y) * cos);
@@ -124,9 +124,9 @@ namespace GraphicEditor
         public IFigure Union(IFigure other) => throw new NotImplementedException();
         public IFigure Subtract(IFigure other) => throw new NotImplementedException();
 
-        public void Draw(IDrawing drawing)
+        public void Draw(IDrawing drawing, double Angle)
         {
-            drawing.DrawTriangle(IsSelected,  P1, P2, P3, StrokeThickness, Color);
+            drawing.DrawTriangle(IsSelected,  P1, P2, P3, StrokeThickness, Color, Angle);
         }
 
         public Point GetPointParameter(string parameterName)

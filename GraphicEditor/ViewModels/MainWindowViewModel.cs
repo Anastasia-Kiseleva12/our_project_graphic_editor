@@ -61,6 +61,12 @@ namespace GraphicEditor.ViewModels
             get => _currentThickness;
             set => this.RaiseAndSetIfChanged(ref _currentThickness, value);
         }
+        private double _Angle;
+        public double Angle
+        {
+            get => _Angle;
+            set => this.RaiseAndSetIfChanged(ref _Angle, value);
+        }
         public bool IsDrawingLine
         {
             get => _isDrawingLine;
@@ -121,6 +127,8 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<Unit, Unit> RemoveSelectedFiguresCommand { get; }
         public ReactiveCommand<IFigure, Unit> SelectFigureCommand { get; }
         public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
+        public ReactiveCommand<Unit, Unit> RotateFigureCommand { get; }
+        public ReactiveCommand<Unit, Unit> BackRotateFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
@@ -174,6 +182,10 @@ namespace GraphicEditor.ViewModels
             CreateRectangleCommand = ReactiveCommand.Create(CreateRectangle);
 
             RemoveSelectedFiguresCommand = ReactiveCommand.Create(RemoveSelectedFigures);
+
+            RotateFigureCommand = ReactiveCommand.Create(RotateFigure);
+
+            BackRotateFigureCommand = ReactiveCommand.Create(BackRotateFigure);
 
             SaveCommand = ReactiveCommand.Create(Save);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
@@ -473,6 +485,37 @@ namespace GraphicEditor.ViewModels
             }
 
             FiguresChanged?.Invoke();
+        }
+        private void RotateFigure()
+        {
+            double angle = 0;
+            if (SelectedFigure != null)
+            {
+                // Увеличиваем угол вращения на 10 градусов (можно изменить)
+                angle += 10;
+
+                // Применяем вращение к выбранной фигуре
+                SelectedFigure.Rotate(angle);
+
+                // Вызываем событие для обновления отрисовки
+                FiguresChanged?.Invoke();
+            }
+        }
+
+        private void BackRotateFigure()
+        {
+            double angle = 0;
+            if (SelectedFigure != null)
+            {
+                // Увеличиваем угол вращения на 10 градусов (можно изменить)
+                angle -= 10;
+
+                // Применяем вращение к выбранной фигуре
+                SelectedFigure.Rotate(angle);
+
+                // Вызываем событие для обновления отрисовки
+                FiguresChanged?.Invoke();
+            }
         }
         private void Save()
         {

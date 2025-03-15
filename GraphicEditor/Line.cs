@@ -60,11 +60,12 @@ namespace GraphicEditor
             Start += vector;
             End += vector;
         }
-        public void Rotate(Point center, double angle)
+        public void Rotate(double angle)
         {
             double rad = angle * Math.PI / 180;
             double cosA = Math.Cos(rad);
             double sinA = Math.Sin(rad);
+            Point center = Center;
             Start = new Point (center.X + (Start.X - center.X) * cosA - (Start.Y - center.Y) * sinA, center.Y + (Start.X - center.X) * sinA + (Start.Y - center.Y) * cosA);
             End = new Point (center.X + (End.X - center.X) * cosA - (End.Y - center.Y) * sinA, center.Y + (End.X - center.X) * sinA + (End.Y - center.Y) * cosA);
         }
@@ -105,9 +106,9 @@ namespace GraphicEditor
         public IFigure Union(IFigure other) => throw new NotImplementedException();
         public IFigure Subtract(IFigure other) => throw new NotImplementedException();
 
-        public void Draw(IDrawing drawing)
+        public void Draw(IDrawing drawing, double Angle)
         {
-            drawing.DrawLine(IsSelected, Start, End, StrokeThickness, Color);
+            drawing.DrawLine(IsSelected, Start, End, StrokeThickness, Color, Angle);
         }
 
         public Point GetPointParameter(string parameterName)

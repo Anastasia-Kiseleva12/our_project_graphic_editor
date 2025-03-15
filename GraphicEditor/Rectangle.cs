@@ -71,12 +71,12 @@ namespace GraphicEditor
             BottomRight += vector;
         }
 
-        public void Rotate(Point center, double angle)
+        public void Rotate(double angle)
         {
             double radians = angle * Math.PI / 180;
             double cos = Math.Cos(radians);
             double sin = Math.Sin(radians);
-            center = Center;
+            Point center = Center;
 
             TopLeft = RotatePoint(TopLeft, center, cos, sin);
             BottomRight = RotatePoint(BottomRight, center, cos, sin);
@@ -140,9 +140,9 @@ namespace GraphicEditor
         public IFigure Union(IFigure other) => throw new NotImplementedException();
         public IFigure Subtract(IFigure other) => throw new NotImplementedException();
 
-        public void Draw(IDrawing drawing)
+        public void Draw(IDrawing drawing, double Angle)
         {
-            drawing.DrawRectangle(IsSelected, TopLeft, BottomRight, StrokeThickness, Color);
+            drawing.DrawRectangle(IsSelected, TopLeft, BottomRight, StrokeThickness, Color, Angle);
         }
 
         public Point GetPointParameter(string parameterName)
