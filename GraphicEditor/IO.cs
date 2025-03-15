@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text.Json;
 using System.IO;
 using System.Diagnostics;
+using Avalonia.Controls;
+using Avalonia;
+using Avalonia.Media.Imaging;
 
 namespace GraphicEditor
 {
     public class IO
     {
+        public static Canvas? CanvasToSave;
         public static void SaveToFile(IEnumerable<IFigure> figures, string filePath)
         {
             var figuresInfo = new List<Dictionary<string, object>>(); // список для хранения информации о всех фигурах
