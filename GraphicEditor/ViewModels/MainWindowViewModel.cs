@@ -521,8 +521,8 @@ namespace GraphicEditor.ViewModels
         {
             // сохранение файла в корень проекта (временно)
             string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
-            string filePath = Path.Combine(projectRoot, "test.json");
-            IO.SaveToFile(_figureService.Figures, filePath);
+            string filePath = Path.Combine(projectRoot, "test.svg");
+            IO.SaveToSvg(_figureService.Figures, filePath);
         }
 
         private async Task SaveAs()

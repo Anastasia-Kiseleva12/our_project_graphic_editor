@@ -163,5 +163,21 @@ namespace GraphicEditor
                 _ => 0
             };
         }
+
+        public double Width
+        {
+            get
+            {
+                return (BottomRight.X - TopLeft.X);
+            }
+        }
+
+        public double Height
+        {
+            get
+            {
+                return (BottomRight.Y - TopLeft.Y);
+            }
+        }
     }
 }
