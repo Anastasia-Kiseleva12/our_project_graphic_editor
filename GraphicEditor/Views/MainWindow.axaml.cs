@@ -26,12 +26,11 @@ namespace GraphicEditor.Views
             _viewModel = viewModel;
             DataContext = _viewModel;
             this.KeyDown += OnKeyDown;
-
             thicknessSlider.ValueChanged += ThicknessSlider_ValueChanged;
 
             _viewModel.FiguresChanged += () =>
             {
-                Dispatcher.UIThread.Post(() => Draw(false, thicknessSlider.Value));
+                Dispatcher.UIThread.Post(() => Draw(false));
             };
 
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
@@ -55,8 +54,10 @@ namespace GraphicEditor.Views
             // Обновляем текст, отображающий текущее значение толщины
             thicknessValueText.Text = newThickness.ToString("F0");
 
+            _viewModel.CurrentThickness = newThickness;
+
             // Вызываем метод Draw с новой толщиной
-            Draw(_viewModel.SelectedFigure?.IsSelected ?? false, newThickness);
+            Draw(_viewModel.SelectedFigure?.IsSelected ?? false);
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -85,12 +86,12 @@ namespace GraphicEditor.Views
             var avaloniaPoint = e.GetPosition(DrawingCanvas);
             var point = new GraphicEditor.Point (avaloniaPoint.X, avaloniaPoint.Y);
             _viewModel.HandleCanvasMove(point);
-            Draw(false, thicknessSlider.Value); // Перерисовываем canvas
+            Draw(false); // Перерисовываем canvas
         }
         private void OnCanvasPointerReleased(object sender, PointerReleasedEventArgs e)
         {
             _viewModel.HandleCanvasRelease();
-            Draw(false, thicknessSlider.Value); 
+            Draw(false); 
         }
 
         class Drawer(Canvas DrawingCanvas) : IDrawing
@@ -383,7 +384,7 @@ namespace GraphicEditor.Views
                 }
             }
         }
-        private void Draw(bool IsSelected, double strokeThickness)
+        private void Draw(bool IsSelected)
         {
             DrawingCanvas.Children.Clear();
             var figures = _viewModel._figureService.Figures;
@@ -392,7 +393,7 @@ namespace GraphicEditor.Views
             {
                 if (figure.IsSelected)
                 {
-                    figure.StrokeThickness = strokeThickness;
+                    figure.StrokeThickness = _viewModel.CurrentThickness;
                 }
                 figure.Draw(drawer);
             }

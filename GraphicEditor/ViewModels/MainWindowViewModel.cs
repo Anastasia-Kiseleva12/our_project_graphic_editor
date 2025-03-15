@@ -55,7 +55,12 @@ namespace GraphicEditor.ViewModels
             get => _currentPoint;
             set => this.RaiseAndSetIfChanged(ref _currentPoint, value);
         }
-
+        private double _currentThickness = 1;
+        public double CurrentThickness
+        {
+            get => _currentThickness;
+            set => this.RaiseAndSetIfChanged(ref _currentThickness, value);
+        }
         public bool IsDrawingLine
         {
             get => _isDrawingLine;
@@ -368,12 +373,14 @@ namespace GraphicEditor.ViewModels
                 {
                     // Если фигура не выделена, выделяем её
                     SelectFigureCommand.Execute(figure).Subscribe();
+                    CurrentThickness = figure.StrokeThickness;
                 }
             }
             else
             {
                 // Если кликнули на пустую область, снимаем выделение
                 UnselectFigureCommand.Execute(null).Subscribe();
+                CurrentThickness = 1;
             }
 
             FiguresChanged?.Invoke();
