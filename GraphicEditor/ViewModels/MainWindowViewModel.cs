@@ -521,12 +521,12 @@ namespace GraphicEditor.ViewModels
         {
             // сохранение файла в корень проекта (временно)
             string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
-            string filePath = Path.Combine(projectRoot, "test.svg");
-            IO.SaveToSvg(_figureService.Figures, filePath);
+            string filePath = Path.Combine(projectRoot, "test.json");
+            IO.SaveToFile(_figureService.Figures, filePath);
         }
 
         private async Task SaveAs()
-        { 
+        {
             if (Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop || desktop.MainWindow is null)
                 return;
             // получаем главное окно
@@ -541,18 +541,34 @@ namespace GraphicEditor.ViewModels
                 ShowOverwritePrompt = true, // предупреждение о перезаписи файла
                 FileTypeChoices = new[] // забиваем доступные форматы в выпадающий список
                 {
-                    new FilePickerFileType("Файл") { Patterns = new[] { "*.json" } }
+                    new FilePickerFileType("Файл JSON") { Patterns = new[] { "*.json" } },
+                    new FilePickerFileType("Файл SVG") { Patterns = new[] { "*.svg" } }
                 }
             };
-           //открываем проводник
+
+            //открываем проводник
             var res = await storageProvider.SaveFilePickerAsync(filePickerOptions);
 
             if (res != null)
             {
                 var filePath = res.Path.LocalPath; // получаем путь
-                IO.SaveToFile(_figureService.Figures, filePath);
-            }
+                var extension = Path.GetExtension(filePath).ToLower(); // определяем расширение файла
 
+                switch (extension)
+                {
+                    case ".json":
+                        IO.SaveToFile(_figureService.Figures, filePath);
+                        break;
+                    
+                    case ".svg":
+                        IO.SaveToSvg(_figureService.Figures, filePath);
+                        break;
+
+                    default:
+                        // если формат неизвестен
+                        break;
+                }
+            }
         }
 
         private async Task Load()
