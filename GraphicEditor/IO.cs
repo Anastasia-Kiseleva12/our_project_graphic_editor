@@ -229,5 +229,24 @@ namespace GraphicEditor
                 StrokeWidth = (SvgUnit)rectangle.StrokeThickness
             };
         }
+        public static void SaveToPng(string filePath)
+        {
+            // определяем размер канваса
+            var size = new Size(CanvasToSave.Bounds.Width, CanvasToSave.Bounds.Height);
+
+            // создаем RenderTargetBitmap
+            var bitmap = new RenderTargetBitmap(new PixelSize((int)size.Width, (int)size.Height));
+
+            // отрисовываем Canvas в битмап
+            CanvasToSave.Measure(size);
+            CanvasToSave.Arrange(new Rect(size));
+            bitmap.Render(CanvasToSave);
+
+            // сохраняем в PNG
+            using (var stream = File.Create(filePath))
+            {
+                bitmap.Save(stream);
+            }
+        }
     }
 }
