@@ -525,7 +525,7 @@ namespace GraphicEditor.ViewModels
             IO.SaveToFile(_figureService.Figures, filePath);
         }
 
-        private async Task SaveAs()
+       private async Task SaveAs()
         {
             if (Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop || desktop.MainWindow is null)
                 return;
@@ -542,7 +542,8 @@ namespace GraphicEditor.ViewModels
                 FileTypeChoices = new[] // забиваем доступные форматы в выпадающий список
                 {
                     new FilePickerFileType("Файл JSON") { Patterns = new[] { "*.json" } },
-                    new FilePickerFileType("Файл SVG") { Patterns = new[] { "*.svg" } }
+                    new FilePickerFileType("Файл SVG") { Patterns = new[] { "*.svg" } },
+                    new FilePickerFileType("Файл PNG") { Patterns = new[] { "*.png" }}
                 }
             };
 
@@ -559,13 +560,13 @@ namespace GraphicEditor.ViewModels
                     case ".json":
                         IO.SaveToFile(_figureService.Figures, filePath);
                         break;
-                    
                     case ".svg":
                         IO.SaveToSvg(_figureService.Figures, filePath);
                         break;
-
+                    case ".png":
+                        IO.SaveToPng(filePath);
+                        break;
                     default:
-                        // если формат неизвестен
                         break;
                 }
             }
