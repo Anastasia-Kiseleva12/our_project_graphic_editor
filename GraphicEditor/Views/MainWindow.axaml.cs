@@ -330,65 +330,63 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawRectangle(bool IsSelected, Point TopLeft, Point BottomRight, double strokeThickness, int Color, double Angle)
+            public void DrawRectangle(bool IsSelected, Point P1, Point P2, Point P3, Point P4, double strokeThickness, int Color, double Angle)
             {
+                var figure = new PathFigure
+                {
+                    StartPoint = new Avalonia.Point(P1.X, P1.Y),
+                    Segments = new PathSegments
+                    {
+                        new LineSegment { Point = new Avalonia.Point(P2.X, P2.Y) },
+                        new LineSegment { Point = new Avalonia.Point(P3.X, P3.Y) },
+                        new LineSegment { Point = new Avalonia.Point(P4.X, P4.Y) },
+                        new LineSegment { Point = new Avalonia.Point(P1.X, P1.Y) }
+                    },
+                    IsClosed = true
+                };
+
+                var geometry = new PathGeometry { Figures = new PathFigures { figure } };
+
                 if (IsSelected)
                 {
-                    var highlightGeometry = new RectangleGeometry
-                    {
-                        Rect = new Rect(new Avalonia.Point(TopLeft.X, TopLeft.Y), new Avalonia.Point(BottomRight.X, BottomRight.Y))
-                    };
-
                     var highlightShape = new Path
                     {
                         Stroke = Brushes.LightBlue,
                         StrokeThickness = strokeThickness + 4,
-                        Data = highlightGeometry
+                        Data = geometry
                     };
 
                     DrawingCanvas.Children.Add(highlightShape);
                 }
 
-                var rectangleGeometry = new RectangleGeometry
-                {
-                    Rect = new Rect(new Avalonia.Point(TopLeft.X, TopLeft.Y), new Avalonia.Point(BottomRight.X, BottomRight.Y))
-                };
-
                 var rectangleShape = new Path
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
-                    Data = rectangleGeometry
+                    Data = geometry
                 };
 
                 DrawingCanvas.Children.Add(rectangleShape);
 
                 if (IsSelected)
                 {
-                    var topLeftEllipse = new Ellipse
+                    var points = new[] { P1, P2, P3, P4 };
+                    foreach (var point in points)
                     {
-                        Width = 10,
-                        Height = 10,
-                        Fill = Brushes.Blue,
-                        Stroke = Brushes.Black,
-                        StrokeThickness = 2,
-                        Margin = new Thickness(TopLeft.X - 5, TopLeft.Y - 5, 0, 0)
-                    };
-
-                    var bottomRightEllipse = new Ellipse
-                    {
-                        Width = 10,
-                        Height = 10,
-                        Fill = Brushes.Blue,
-                        Stroke = Brushes.Black,
-                        StrokeThickness = 2,
-                        Margin = new Thickness(BottomRight.X - 5, BottomRight.Y - 5, 0, 0)
-                    };
-
-                    DrawingCanvas.Children.Add(topLeftEllipse);
-                    DrawingCanvas.Children.Add(bottomRightEllipse);
+                        var cornerEllipse = new Ellipse
+                        {
+                            Width = 10,
+                            Height = 10,
+                            Fill = Brushes.Blue,
+                            Stroke = Brushes.Black,
+                            StrokeThickness = 2,
+                            Margin = new Thickness(point.X - 5, point.Y - 5, 0, 0)
+                        };
+                        DrawingCanvas.Children.Add(cornerEllipse);
+                    }
                 }
             }
+
         }
         private void Draw(bool IsSelected)
         {

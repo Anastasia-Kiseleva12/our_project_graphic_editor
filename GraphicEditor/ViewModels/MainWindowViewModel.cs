@@ -347,11 +347,20 @@ namespace GraphicEditor.ViewModels
             }
             else
             {
+                // Определяем 4 точки прямоугольника на основе двух кликов
+                var P1 = StartPoint;
+                var P2 = new Point(point.X, StartPoint.Y);
+                var P3 = point;
+                var P4 = new Point(StartPoint.X, point.Y);
+
                 var pointParameters = new Dictionary<string, Point>
                 {
-                    { "TopLeft", StartPoint },
-                    { "BottomRight", point }
+                    { "P1", P1 },
+                    { "P2", P2 },
+                    { "P3", P3 },
+                    { "P4", P4 }
                 };
+
                 var doubleParameters = new Dictionary<string, double>
                 {
                     { "StrokeThickness", 2}
@@ -365,6 +374,7 @@ namespace GraphicEditor.ViewModels
                 IsCheckedRectangle = false;
             }
         }
+
         private void HandleFigureSelection(Point point)
         {
             var eps = 80; // допустимая погрешность
