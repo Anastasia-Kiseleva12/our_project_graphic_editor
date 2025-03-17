@@ -213,7 +213,7 @@ namespace GraphicEditor
             return polygon;
         }
 
-        private static SvgRectangle CreateSvgRectangle(IFigure figure)
+        /*private static SvgRectangle CreateSvgRectangle(IFigure figure)
         {
             if (figure is not Rectangle rectangle)
                 throw new ArgumentException("Фигура должна быть типа Rectangle.");
@@ -228,7 +228,32 @@ namespace GraphicEditor
                 Stroke = new SvgColourServer(System.Drawing.Color.Black),
                 StrokeWidth = (SvgUnit)rectangle.StrokeThickness
             };
+        }*/
+
+        private static SvgPolygon CreateSvgRectangle(IFigure figure)
+        {
+            if (figure is not Rectangle rectangle)
+                throw new ArgumentException("Фигура должна быть типа Rectangle.");
+
+            var polygon = new SvgPolygon
+            {
+                Fill = new SvgColourServer(System.Drawing.Color.Transparent),
+                Stroke = new SvgColourServer(System.Drawing.Color.Black),
+                StrokeWidth = (SvgUnit)rectangle.StrokeThickness
+            };
+
+            // Создаем коллекцию точек и добавляем их
+            polygon.Points = new SvgPointCollection
+            {
+                (SvgUnit)rectangle.P1.X, (SvgUnit)rectangle.P1.Y,
+                (SvgUnit)rectangle.P2.X, (SvgUnit)rectangle.P2.Y,
+                (SvgUnit)rectangle.P3.X, (SvgUnit)rectangle.P3.Y,
+                (SvgUnit)rectangle.P4.X, (SvgUnit)rectangle.P4.Y
+            };
+
+            return polygon;
         }
+
         public static void SaveToPng(string filePath)
         {
             // определяем размер канваса
