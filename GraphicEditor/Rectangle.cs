@@ -168,7 +168,7 @@ namespace GraphicEditor
         {
             get
             {
-                return (BottomRight.X - TopLeft.X);
+                return Math.Abs(BottomRight.X - TopLeft.X);
             }
         }
 
@@ -176,8 +176,16 @@ namespace GraphicEditor
         {
             get
             {
-                return (BottomRight.Y - TopLeft.Y);
+                return Math.Abs(BottomRight.Y - TopLeft.Y);
             }
+        }
+
+        public Point GetFirstPoint()
+        {
+            return new Point(
+                Math.Min(TopLeft.X, BottomRight.X),
+                Math.Min(TopLeft.Y, BottomRight.Y)
+            );
         }
     }
 }

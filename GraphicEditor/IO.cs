@@ -220,8 +220,8 @@ namespace GraphicEditor
 
             return new SvgRectangle
             {
-                X = (SvgUnit)rectangle.TopLeft.X,
-                Y = (SvgUnit)rectangle.TopLeft.Y,
+                X = (SvgUnit)rectangle.GetFirstPoint().X,
+                Y = (SvgUnit)rectangle.GetFirstPoint().Y,
                 Width = (SvgUnit)rectangle.Width,
                 Height = (SvgUnit)rectangle.Height,
                 Fill = new SvgColourServer(System.Drawing.Color.Transparent),
