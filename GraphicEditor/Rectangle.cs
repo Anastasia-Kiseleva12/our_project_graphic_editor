@@ -196,7 +196,7 @@ namespace GraphicEditor
         }
         public Point GetFirstPoint()
         {
-            return P1; 
+            return new[] { P1, P2, P3, P4 }.OrderBy(p => p.X).ThenBy(p => p.Y).First();
         }
         public double Width => Math.Abs(P2.X - P1.X);
         public double Height => Math.Abs(P3.Y - P1.Y);
