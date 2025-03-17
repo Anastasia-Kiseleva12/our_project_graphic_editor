@@ -126,6 +126,20 @@ namespace GraphicEditor
         public void Rotate(double angle)
         {
             Debug.WriteLine($"Rotate method called with angle: {angle}");
+
+            // Переводим угол в радианы
+            double radians = angle * Math.PI / 180.0;
+
+            // Вычисляем разницу координат
+            double dx = PointOnCircle.X - Center.X;
+            double dy = PointOnCircle.Y - Center.Y;
+
+            // Применяем матрицу поворота
+            double newX = Center.X + dx * Math.Cos(radians) - dy * Math.Sin(radians);
+            double newY = Center.Y + dx * Math.Sin(radians) + dy * Math.Cos(radians);
+
+            // Обновляем позицию точки
+            PointOnCircle = new Point(newX, newY);
         }
 
         public Point GetPointParameter(string parameterName)
