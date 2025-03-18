@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.IO;
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Svg;
+using Svg.Transforms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GraphicEditor
 {
@@ -16,101 +18,58 @@ namespace GraphicEditor
         public static Canvas? CanvasToSave;
         public static void SaveToFile(IEnumerable<IFigure> figures, string filePath)
         {
-            var figuresInfo = new List<Dictionary<string, object>>(); // список для хранения информации о всех фигурах
-
-            foreach (var figure in figures)
+            var figuresInfo = figures.Select(figure => new
             {
-                var figureInfo = new Dictionary<string, object>
-                {
-                    { "Name", figure.Name } // Добавляем имя фигуры
-                };
+                Name = figure.Name,
+                PointParameters = FigureFabric.PointParameters(figure.Name)
+                    .ToDictionary(p => p, p => figure.GetPointParameter(p)),
+                DoubleParameters = FigureFabric.DoubleParameters(figure.Name)
+                    .ToDictionary(p => p, p => figure.GetDoubleParameter(p))
+            }).ToList();
 
-                var pointParamsNames = FigureFabric.PointParameters(figure.Name).ToList(); // список имен точечных параметров
-                var doubleParamsNames = FigureFabric.DoubleParameters(figure.Name).ToList(); // список имен числовых параметров
-
-                var pointParams = new Dictionary<string, object>();
-                foreach (var paramName in pointParamsNames)
-                {
-                    Point value = figure.GetPointParameter(paramName);
-                    pointParams[paramName] = new { value.X, value.Y };
-                }
-
-                if (pointParams.Any())
-                {
-                    figureInfo["PointParameters"] = pointParams;
-                }
-
-                var doubleParams = new Dictionary<string, object>();
-                foreach (var paramName in doubleParamsNames)
-                {
-
-                    double value = figure.GetDoubleParameter(paramName);
-                    doubleParams[paramName] = value;
-                }
-
-                if (doubleParams.Any())
-                {
-                    figureInfo["DoubleParameters"] = doubleParams;
-                }
-
-                figuresInfo.Add(figureInfo); // добавляем информацию о фигуре в общий список
-            }
-
-            var jsonOptions = new JsonSerializerOptions { WriteIndented = true }; // настройки для форматирования JSON
-            var jsonString = JsonSerializer.Serialize(figuresInfo, jsonOptions); // сериализация списка фигур в JSON
-            File.WriteAllText(filePath, jsonString); // запись в файл
+            var jsonString = JsonConvert.SerializeObject(figuresInfo, Formatting.Indented);
+            File.WriteAllText(filePath, jsonString);
         }
 
         public static void LoadFromFile(FigureService figures, string filePath)
         {
             if (!File.Exists(filePath))
-            {
                 throw new FileNotFoundException("File not found.", filePath);
-            }
 
-            var jsonString = File.ReadAllText(filePath); // чтение JSON-файла
-            using var document = JsonDocument.Parse(jsonString); // парсинг
-            var root = document.RootElement; // получение корневого элемента
+            var jsonString = File.ReadAllText(filePath);
+            var figuresInfo = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(jsonString);
 
-            foreach (var figureElement in root.EnumerateArray()) // перебор всех объектов в JSON-массиве
+            foreach (var figureInfo in figuresInfo)
             {
-                if (!figureElement.TryGetProperty("Name", out var nameElement) || nameElement.ValueKind != JsonValueKind.String)
-                    continue; // пропускаем фигуру, если у нее нет имени
-
-                string name = nameElement.GetString(); // имя фигуры
+                if (!figureInfo.TryGetValue("Name", out var nameObj) || nameObj is not string name)
+                    continue;
 
                 var pointParams = new Dictionary<string, Point>();
                 var doubleParams = new Dictionary<string, double>();
 
-                if (figureElement.TryGetProperty("PointParameters", out var pointParamsElement) &&
-                    pointParamsElement.ValueKind == JsonValueKind.Object) // проверяем, есть ли точечные параметры
+                if (figureInfo.TryGetValue("PointParameters", out var pointParamsObj) && pointParamsObj is JObject pointDict)
                 {
-                    foreach (var param in pointParamsElement.EnumerateObject()) // перебираем точечные параметры
+                    foreach (var (key, value) in pointDict)
                     {
-                        if (param.Value.TryGetProperty("X", out var xElement) &&
-                            param.Value.TryGetProperty("Y", out var yElement) &&
-                            xElement.TryGetDouble(out var x) &&
-                            yElement.TryGetDouble(out var y)) // проверяем, что параметры X и Y существуют и являются числами
-                        {
-                            pointParams[param.Name] = new Point(x, y);
-                        }
+                        var point = value?.ToObject<Point>();
+                        if (point != null)
+                            pointParams[key] = point;
                     }
                 }
 
-                if (figureElement.TryGetProperty("DoubleParameters", out var doubleParamsElement) &&
-                    doubleParamsElement.ValueKind == JsonValueKind.Object) // аналогично
+                if (figureInfo.TryGetValue("DoubleParameters", out var doubleParamsObj) && doubleParamsObj is JObject doubleDict)
                 {
-                    foreach (var param in doubleParamsElement.EnumerateObject())
+                    foreach (var (key, value) in doubleDict)
                     {
-                        if (param.Value.TryGetDouble(out var value))
+                        if (value?.Type == JTokenType.Float || value?.Type == JTokenType.Integer)
                         {
-                            doubleParams[param.Name] = value;
+                            doubleParams[key] = value.ToObject<double>();
                         }
                     }
                 }
 
                 var figure = figures.Create(name, pointParams, doubleParams);
-                figures.AddFigure(figure); // создаем фигуру и добавляем ее
+                figures.AddFigure(figure);
             }
         }
 
@@ -125,7 +84,7 @@ namespace GraphicEditor
                 Height = height
             };
 
-            var background = new SvgRectangle
+            /*var background = new SvgRectangle
             {
                 X = 0,
                 Y = 0,
@@ -133,7 +92,7 @@ namespace GraphicEditor
                 Height = height,
                 Fill = new SvgColourServer(System.Drawing.Color.White)
             };
-            svgDoc.Children.Add(background);
+            svgDoc.Children.Add(background);*/
 
             foreach (var figure in figures)
             {
@@ -226,7 +185,8 @@ namespace GraphicEditor
                 Height = (SvgUnit)rectangle.Height,
                 Fill = new SvgColourServer(System.Drawing.Color.Transparent),
                 Stroke = new SvgColourServer(System.Drawing.Color.Black),
-                StrokeWidth = (SvgUnit)rectangle.StrokeThickness
+                StrokeWidth = (SvgUnit)rectangle.StrokeThickness,
+                Transforms = new SvgTransformCollection { new SvgRotate((float)rectangle.Angle, (float)rectangle.Center.X, (float)rectangle.Center.Y) }
             };
         }*/
 
