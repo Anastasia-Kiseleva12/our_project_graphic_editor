@@ -62,7 +62,7 @@ namespace GraphicEditor
         }
         public void Rotate(double angle)
         {
-            double rad = angle * Math.PI / 180;
+            double rad = -angle * Math.PI / 180;
             double cosA = Math.Cos(rad);
             double sinA = Math.Sin(rad);
             Point center = Center;

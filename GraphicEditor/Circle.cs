@@ -128,7 +128,7 @@ namespace GraphicEditor
             Debug.WriteLine($"Rotate method called with angle: {angle}");
 
             // Переводим угол в радианы
-            double radians = angle * Math.PI / 180.0;
+            double radians = -angle * Math.PI / 180.0;
 
             // Вычисляем разницу координат
             double dx = PointOnCircle.X - Center.X;
