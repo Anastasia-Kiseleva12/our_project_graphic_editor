@@ -46,7 +46,7 @@ namespace GraphicEditor
         public Point Center => new Point ((Start.X + End.X) / 2, (Start.Y + End.Y) / 2);
 
         public string Id { get; } = Guid.NewGuid().ToString();
-        Line(Point start, Point end, double strokeThickness)
+        public Line(Point start, Point end, double strokeThickness)
         {
             Start = start;
             End = end;

@@ -403,7 +403,7 @@ namespace GraphicEditor.Views
             }
 
             // Отрисовка временных элементов (если идет создание фигуры)
-            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle)
+            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle || _viewModel.IsDrawingReflectionLine)
             {
                 if (_viewModel.StartPoint != null)
                 {

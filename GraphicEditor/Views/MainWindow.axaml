@@ -284,7 +284,7 @@
 
 							<!-- Отразить по горизонтали -->
 							<Button Classes="Figure" Grid.Row="1" Grid.Column="0"
-									HorizontalAlignment="Center" VerticalAlignment="Center"
+									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ReflectionCommand}"
 									Width="60" Height="60"
 									Margin="2.5">
 								<Image Source="avares://GraphicEditor/Assets/Img/flip-horiz.png" Width="30" Height="30"/>

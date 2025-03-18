@@ -39,6 +39,10 @@ namespace GraphicEditor.ViewModels
         private bool _isDragging; // Флаг перемещения
         private Point? _dragStartPoint; // Начальная точка перемещения
         private IFigure _draggedFigure; // Перемещаемая фигура
+
+        private bool _isDrawingReflectionLine;
+        private Point? _reflectionLineStart;
+        private Point? _reflectionLineEnd;
         public Point? StartPoint
         {
             get => _startPoint;
@@ -113,7 +117,11 @@ namespace GraphicEditor.ViewModels
             get => _isCheckedRectangle;
             set => this.RaiseAndSetIfChanged(ref _isCheckedRectangle, value);
         }
-
+        public bool IsDrawingReflectionLine
+        {
+            get => _isDrawingReflectionLine;
+            set => this.RaiseAndSetIfChanged(ref _isDrawingReflectionLine, value);
+        }
         private bool _isPanelOpen;
         public bool IsPanelOpen
         {
@@ -129,6 +137,7 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<IFigure, Unit> UnselectFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> RotateFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> BackRotateFigureCommand { get; }
+        public ReactiveCommand<Unit, Unit> ReflectionCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
@@ -186,6 +195,14 @@ namespace GraphicEditor.ViewModels
             RotateFigureCommand = ReactiveCommand.Create(RotateFigure);
 
             BackRotateFigureCommand = ReactiveCommand.Create(BackRotateFigure);
+            ReflectionCommand = ReactiveCommand.Create(() =>
+            {
+
+                _isDrawingReflectionLine = true;
+                _reflectionLineStart = null;
+                _reflectionLineEnd = null;
+                Debug.WriteLine("Reflection line mode activated.");
+            });
 
             SaveCommand = ReactiveCommand.Create(Save);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
@@ -244,6 +261,11 @@ namespace GraphicEditor.ViewModels
             if (IsDrawingRectangle)
             {
                 HandleRectangleClick(point);
+                return;
+            }
+            if (_isDrawingReflectionLine)
+            {
+                HandleReflectionLineClick(point);
                 return;
             }
             HandleFigureSelection(point);
@@ -432,6 +454,25 @@ namespace GraphicEditor.ViewModels
             _dragStartPoint = null;
             _draggedFigure = null;
         }
+        private void HandleReflectionLineClick(Point point)
+        {
+            
+            if (_reflectionLineStart == null)
+            {
+                // Первый клик — задаем начало линии
+                _reflectionLineStart = point;
+                Debug.WriteLine($"Reflection line start set at: {_reflectionLineStart}");
+            }
+            else
+            {
+                // Второй клик — задаем конец линии
+                _reflectionLineEnd = point;
+                Debug.WriteLine($"Reflection line end set at: {_reflectionLineEnd}");
+                // Создаем временную линию
+                ReflectionFigure();
+                
+            }
+        }
         private void CreateLine()
         {
             if (IsManualMode)
@@ -525,6 +566,36 @@ namespace GraphicEditor.ViewModels
 
                 // Вызываем событие для обновления отрисовки
                 FiguresChanged?.Invoke();
+            }
+        }
+
+        private void ReflectionFigure()
+        {
+            if (_reflectionLineStart != null && _reflectionLineEnd != null)
+            {
+                // Создаем временную линию
+                var tempLine = new Line(new Point(_reflectionLineStart.X, _reflectionLineStart.Y), new Point(_reflectionLineEnd.X, _reflectionLineEnd.Y), 2);
+
+                // Добавляем временную линию в коллекцию фигур для отрисовки
+                _figureService.AddFigure(tempLine);
+
+                // Обновляем отрисовку, чтобы временная линия появилась на экране
+                FiguresChanged?.Invoke();
+
+                // Вызываем метод отражения, передавая координаты линии
+                SelectedFigure.Reflection(new Point(_reflectionLineStart.X, _reflectionLineStart.Y), new Point(_reflectionLineEnd.X, _reflectionLineEnd.Y));
+
+                // Сбрасываем состояние
+                _isDrawingReflectionLine = false;
+                _reflectionLineStart = null;
+                _reflectionLineEnd = null;
+
+                // Удаляем временную линию через 500 мс
+                Task.Delay(500).ContinueWith(_ =>
+                {
+                    _figureService.RemoveFigure(tempLine);
+                    FiguresChanged?.Invoke();
+                }, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
         private void Save()
