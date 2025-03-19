@@ -41,8 +41,7 @@ namespace GraphicEditor.ViewModels
         private IFigure _draggedFigure; // Перемещаемая фигура
 
         private bool _isDrawingReflectionLine;
-        private Point? _reflectionLineStart;
-        private Point? _reflectionLineEnd;
+
         public Point? StartPoint
         {
             get => _startPoint;
@@ -98,7 +97,7 @@ namespace GraphicEditor.ViewModels
             get => _isCheckedLine;
             set => this.RaiseAndSetIfChanged(ref _isCheckedLine, value);
         }
-        private bool _isSelectedLine;
+    
         private bool _isCheckedCircle;
         public bool IsCheckedCircle
         {
@@ -128,6 +127,7 @@ namespace GraphicEditor.ViewModels
             get => _isPanelOpen;
             set => this.RaiseAndSetIfChanged(ref _isPanelOpen, value);
         }
+        private bool _isSelectedLine;
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateTriangleCommand { get; }
@@ -199,8 +199,8 @@ namespace GraphicEditor.ViewModels
             {
 
                 _isDrawingReflectionLine = true;
-                _reflectionLineStart = null;
-                _reflectionLineEnd = null;
+                StartPoint = null;
+                SecondPoint = null;
                 Debug.WriteLine("Reflection line mode activated.");
             });
 
@@ -456,18 +456,18 @@ namespace GraphicEditor.ViewModels
         }
         private void HandleReflectionLineClick(Point point)
         {
-            
-            if (_reflectionLineStart == null)
+            //_isDrawingReflectionLine = !_isDrawingReflectionLine;
+            if (StartPoint == null)
             {
                 // Первый клик — задаем начало линии
-                _reflectionLineStart = point;
-                Debug.WriteLine($"Reflection line start set at: {_reflectionLineStart}");
+                StartPoint = point;
+                Debug.WriteLine($"Reflection line start set at: {StartPoint}");
             }
             else
             {
                 // Второй клик — задаем конец линии
-                _reflectionLineEnd = point;
-                Debug.WriteLine($"Reflection line end set at: {_reflectionLineEnd}");
+                SecondPoint = point;
+                Debug.WriteLine($"Reflection line end set at: {SecondPoint}");
                 // Создаем временную линию
                 ReflectionFigure();
                 
@@ -571,24 +571,19 @@ namespace GraphicEditor.ViewModels
 
         private void ReflectionFigure()
         {
-            if (_reflectionLineStart != null && _reflectionLineEnd != null)
+            if (StartPoint != null && SecondPoint != null)
             {
                 // Создаем временную линию
-                var tempLine = new Line(new Point(_reflectionLineStart.X, _reflectionLineStart.Y), new Point(_reflectionLineEnd.X, _reflectionLineEnd.Y), 2);
+                var tempLine = new Line(new Point(StartPoint.X, StartPoint.Y), new Point(SecondPoint.X, SecondPoint.Y), 2);
 
                 // Добавляем временную линию в коллекцию фигур для отрисовки
                 _figureService.AddFigure(tempLine);
 
-                // Обновляем отрисовку, чтобы временная линия появилась на экране
+                //// Обновляем отрисовку, чтобы временная линия появилась на экране
                 FiguresChanged?.Invoke();
 
                 // Вызываем метод отражения, передавая координаты линии
-                SelectedFigure.Reflection(new Point(_reflectionLineStart.X, _reflectionLineStart.Y), new Point(_reflectionLineEnd.X, _reflectionLineEnd.Y));
-
-                // Сбрасываем состояние
-                _isDrawingReflectionLine = false;
-                _reflectionLineStart = null;
-                _reflectionLineEnd = null;
+                SelectedFigure.Reflection(new Point(StartPoint.X, StartPoint.Y), new Point(SecondPoint.X, SecondPoint.Y));
 
                 // Удаляем временную линию через 500 мс
                 Task.Delay(500).ContinueWith(_ =>
@@ -596,7 +591,13 @@ namespace GraphicEditor.ViewModels
                     _figureService.RemoveFigure(tempLine);
                     FiguresChanged?.Invoke();
                 }, TaskScheduler.FromCurrentSynchronizationContext());
+
+                // Сбрасываем состояние
+                _isDrawingReflectionLine = false;
+                StartPoint = null;
+                SecondPoint = null;
             }
+          
         }
         private void Save()
         {

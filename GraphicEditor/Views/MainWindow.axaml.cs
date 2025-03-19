@@ -429,7 +429,7 @@ namespace GraphicEditor.Views
                         }
 
                         // Отрисовка временной линии для линии и круга
-                        if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle)
+                        if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingReflectionLine)
                         {
                             drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
                         }

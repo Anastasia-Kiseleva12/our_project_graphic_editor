@@ -26,11 +26,6 @@ namespace GraphicEditor
         void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, int Color, double Angle);
         void DrawRectangle(bool IsSelected, Point P1, Point P2, Point P3, Point P4, double strokeThickness, int Color, double Angle);
     }
-    public interface IDrawingFigure
-    {
-
-    }
-
     public interface IFigure
     {
         void Move(Point vector);
