@@ -316,10 +316,10 @@
 					</Grid>
 				</Border>
 			</Popup>
-
+			<Button Grid.Row="2" Click="ClickOnFillingButton">Заливка</Button>
 			<DockPanel Grid.Row="3">
 				<!--цветовая палитра-->
-				<ColorPicker Name="colorPicker" Width="180" Height="180"
+				<ColorPicker x:Name="colorPicker" Width="180" Height="180"
 									 Margin="0 0 0 10" DockPanel.Dock="Bottom"/>
 			</DockPanel>
 		</Grid>

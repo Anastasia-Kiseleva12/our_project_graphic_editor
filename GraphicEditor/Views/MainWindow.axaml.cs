@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using DynamicData;
@@ -62,6 +63,16 @@ namespace GraphicEditor.Views
             Draw(_viewModel.SelectedFigure?.IsSelected ?? false);
         }
 
+        private void ClickOnFillingButton(object sender, RoutedEventArgs args)
+        {
+            if (_viewModel.SelectedFigure != null)
+            {
+                var color = colorPicker.Color;
+                _viewModel.SelectedFigure.SetColor(color.A, color.R, color.G, color.B);
+                Draw(false);
+            }
+        }
+
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
@@ -69,7 +80,6 @@ namespace GraphicEditor.Views
                 _viewModel.RemoveSelectedFiguresCommand.Execute().Subscribe();
             }
         }
-
         protected override void OnClosed(EventArgs e)
         {
             // Отписываемся от событий при закрытии окна
@@ -330,7 +340,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawRectangle(bool IsSelected, Point P1, Point P2, Point P3, Point P4, double strokeThickness, int Color, double Angle)
+            public void DrawRectangle(bool IsSelected, Point P1, Point P2, Point P3, Point P4, double strokeThickness, uint Color, double Angle)
             {
                 var figure = new PathFigure
                 {
@@ -358,11 +368,11 @@ namespace GraphicEditor.Views
 
                     DrawingCanvas.Children.Add(highlightShape);
                 }
-
                 var rectangleShape = new Path
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
+                    Fill = new SolidColorBrush(Color),
                     Data = geometry
                 };
 

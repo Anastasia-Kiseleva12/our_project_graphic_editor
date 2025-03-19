@@ -66,11 +66,11 @@ namespace GraphicEditor
 
         public bool IsSelected { get; set; }
         public double StrokeThickness { get; set; } = 2;
-        public int Color { get; set; } = unchecked((int)0xFF000000);
+        public uint Color { get; set; } = unchecked(0xFF000000);
 
         public void SetColor(byte a, byte r, byte g, byte b)
         {
-            Color = (a << 24) | (r << 16) | (g << 8) | b;
+            Color = (uint)((a << 24) | (r << 16) | (g << 8) | b);
         }
 
         public void Move(Point vector)
