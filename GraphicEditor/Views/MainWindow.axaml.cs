@@ -140,7 +140,7 @@ namespace GraphicEditor.Views
 
                 DrawingCanvas.Children.Add(lineShape);
             }
-            public void DrawLine(bool IsSelected, Point Start,Point End, double strokeThickness, int Color, double Angle)
+            public void DrawLine(bool IsSelected, Point Start,Point End, double strokeThickness, uint Color, double Angle)
             {
                 if (IsSelected)
                 {
@@ -206,7 +206,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawCircle( bool IsSelected, Point Center, double radius, Point PointOnCircle, double strokeThickness, int Color, double Angle)
+            public void DrawCircle( bool IsSelected, Point Center, double radius, Point PointOnCircle, double strokeThickness, uint Color, double Angle)
             {
                 if (IsSelected)
                 {
@@ -259,7 +259,7 @@ namespace GraphicEditor.Views
                 }
             }
 
-            public void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, int Color, double Angle)
+            public void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, uint Color, double Angle)
             {
                 if (IsSelected)
                 {

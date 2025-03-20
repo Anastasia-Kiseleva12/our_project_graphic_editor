@@ -24,7 +24,8 @@ namespace GraphicEditor
                 PointParameters = FigureFabric.PointParameters(figure.Name)
                     .ToDictionary(p => p, p => figure.GetPointParameter(p)),
                 DoubleParameters = FigureFabric.DoubleParameters(figure.Name)
-                    .ToDictionary(p => p, p => figure.GetDoubleParameter(p))
+                    .ToDictionary(p => p, p => figure.GetDoubleParameter(p)),
+                Color = figure.Color
             }).ToList();
 
             var jsonString = JsonConvert.SerializeObject(figuresInfo, Formatting.Indented);
@@ -46,6 +47,7 @@ namespace GraphicEditor
 
                 var pointParams = new Dictionary<string, Point>();
                 var doubleParams = new Dictionary<string, double>();
+                uint color = 0xFF000000; // черный цвет по умолчанию
 
                 if (figureInfo.TryGetValue("PointParameters", out var pointParamsObj) && pointParamsObj is JObject pointDict)
                 {
@@ -68,7 +70,13 @@ namespace GraphicEditor
                     }
                 }
 
+                if (figureInfo.TryGetValue("Color", out var colorObj) && colorObj is long colorValue)
+                {
+                    color = (uint)colorValue;
+                }
+
                 var figure = figures.Create(name, pointParams, doubleParams);
+                figure.Color = color; // устанавливаем цвет фигуре
                 figures.AddFigure(figure);
             }
         }

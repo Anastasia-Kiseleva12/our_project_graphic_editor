@@ -21,9 +21,9 @@ namespace GraphicEditor
 
     public interface IDrawing
     {
-        void DrawLine(bool selected, Point a, Point b, double strokeThickness, int Color, double Angle);
-        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle, double strokeThickness, int Color, double Angle);
-        void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, int Color, double Angle);
+        void DrawLine(bool selected, Point a, Point b, double strokeThickness, uint Color, double Angle);
+        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle, double strokeThickness, uint Color, double Angle);
+        void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, uint Color, double Angle);
         void DrawRectangle(bool IsSelected, Point P1, Point P2, Point P3, Point P4, double strokeThickness, uint Color, double Angle);
     }
     public interface IFigure
@@ -33,6 +33,7 @@ namespace GraphicEditor
         Point Center { get; }
         string Id { get; }
         string Name { get; }
+        uint Color { get; set; }
 
         bool IsSelected { get; set; }
         public double StrokeThickness { get; set; }
