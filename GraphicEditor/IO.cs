@@ -98,7 +98,7 @@ namespace GraphicEditor
                 Y = 0,
                 Width = width,
                 Height = height,
-                Fill = new SvgColourServer(System.Drawing.Color.White)
+                Fill = new SvgColourServer(System.Drawing.Color.AliceBlue)
             };
             svgDoc.Children.Add(background);*/
 
@@ -123,6 +123,19 @@ namespace GraphicEditor
 
             svgDoc.Write(filePath); // Сохранение SVG в файл
         }
+
+        private static (SvgColourServer Color, float Opacity) GetSvgColor(uint color)
+        {
+            byte a = (byte)((color >> 24) & 0xFF);
+            byte r = (byte)((color >> 16) & 0xFF);
+            byte g = (byte)((color >> 8) & 0xFF);
+            byte b = (byte)(color & 0xFF);
+
+            float opacity = a / 255f;
+            var svgColor = new SvgColourServer(System.Drawing.Color.FromArgb(r, g, b));
+            return (svgColor, opacity);
+        }
+
         //метод для преобразования линии в элемент <line> и сохранения его в SVG.
         private static SvgLine CreateSvgLine(IFigure figure)
         {
@@ -136,7 +149,7 @@ namespace GraphicEditor
                 EndX = (SvgUnit)line.End.X,
                 EndY = (SvgUnit)line.End.Y,
                 Stroke = new SvgColourServer(System.Drawing.Color.Black),
-                StrokeWidth = (SvgUnit)line.StrokeThickness
+                StrokeWidth = (SvgUnit)line.StrokeThickness,
             };
         }
 
@@ -146,12 +159,15 @@ namespace GraphicEditor
             if (figure is not Circle circle)
                 throw new ArgumentException("Фигура должна быть типа Circle.");
 
+            var (fillColor, opacity) = GetSvgColor(circle.Color);
+
             return new SvgCircle
             {
                 CenterX = (SvgUnit)circle.Center.X,
                 CenterY = (SvgUnit)circle.Center.Y,
                 Radius = (SvgUnit)circle.Radius,
-                Fill = new SvgColourServer(System.Drawing.Color.Transparent),
+                Fill = fillColor,
+                FillOpacity = opacity,
                 Stroke = new SvgColourServer(System.Drawing.Color.Black),
                 StrokeWidth = (SvgUnit)circle.StrokeThickness
             };
@@ -162,9 +178,12 @@ namespace GraphicEditor
             if (figure is not Triangle triangle)
                 throw new ArgumentException("Фигура должна быть типа Triangle.");
 
+            var (fillColor, opacity) = GetSvgColor(triangle.Color);
+
             var polygon = new SvgPolygon
             {
-                Fill = new SvgColourServer(System.Drawing.Color.Transparent),
+                Fill = fillColor,
+                FillOpacity = opacity,
                 Stroke = new SvgColourServer(System.Drawing.Color.Black),
                 StrokeWidth = (SvgUnit)triangle.StrokeThickness
             };
@@ -180,32 +199,17 @@ namespace GraphicEditor
             return polygon;
         }
 
-        /*private static SvgRectangle CreateSvgRectangle(IFigure figure)
-        {
-            if (figure is not Rectangle rectangle)
-                throw new ArgumentException("Фигура должна быть типа Rectangle.");
-
-            return new SvgRectangle
-            {
-                X = (SvgUnit)rectangle.GetFirstPoint().X,
-                Y = (SvgUnit)rectangle.GetFirstPoint().Y,
-                Width = (SvgUnit)rectangle.Width,
-                Height = (SvgUnit)rectangle.Height,
-                Fill = new SvgColourServer(System.Drawing.Color.Transparent),
-                Stroke = new SvgColourServer(System.Drawing.Color.Black),
-                StrokeWidth = (SvgUnit)rectangle.StrokeThickness,
-                Transforms = new SvgTransformCollection { new SvgRotate((float)rectangle.Angle, (float)rectangle.Center.X, (float)rectangle.Center.Y) }
-            };
-        }*/
-
         private static SvgPolygon CreateSvgRectangle(IFigure figure)
         {
             if (figure is not Rectangle rectangle)
                 throw new ArgumentException("Фигура должна быть типа Rectangle.");
 
+            var (fillColor, opacity) = GetSvgColor(rectangle.Color);
+
             var polygon = new SvgPolygon
             {
-                Fill = new SvgColourServer(System.Drawing.Color.Transparent),
+                Fill = fillColor,
+                FillOpacity = opacity,
                 Stroke = new SvgColourServer(System.Drawing.Color.Black),
                 StrokeWidth = (SvgUnit)rectangle.StrokeThickness
             };
