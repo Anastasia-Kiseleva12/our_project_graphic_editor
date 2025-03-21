@@ -138,15 +138,8 @@
 						<Separator/>
 						<MenuItem Header="_Выйти"/>
 					</MenuItem>
-					<MenuItem Header="_Правка">
-						<MenuItem Header="Копировать"/>
-						<MenuItem Header="Вставить"/>
-					</MenuItem>
-					<MenuItem Header="_Вид">
-						<MenuItem Header=" "/>
-						<MenuItem Header=" "/>
-					</MenuItem>
-					<MenuItem Header="_Помощь">
+					<MenuItem Header="_Справка">
+						<MenuItem Header="Помощь"/>
 						<MenuItem Header="Документация"/>
 					</MenuItem>
 				</Menu>
