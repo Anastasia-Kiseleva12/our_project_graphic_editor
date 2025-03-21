@@ -238,6 +238,7 @@ namespace GraphicEditor.Views
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
+                    Fill = new SolidColorBrush(Color),
                     Data = circleGeometry
                 };
 
@@ -297,6 +298,7 @@ namespace GraphicEditor.Views
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
+                    Fill = new SolidColorBrush(Color),
                     Data = triangleGeometry
                 };
 
