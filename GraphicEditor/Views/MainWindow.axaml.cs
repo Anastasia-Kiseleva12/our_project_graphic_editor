@@ -39,6 +39,15 @@ namespace GraphicEditor.Views
              DrawingCanvas.PointerPressed += OnCanvasPointerPressed;
              DrawingCanvas.PointerMoved += OnCanvasPointerMoved;
              DrawingCanvas.PointerReleased += OnCanvasPointerReleased;
+
+            this.Closing += async (s, e) =>
+            {
+                if (DataContext is MainWindowViewModel viewModel)
+                {
+                    e.Cancel = true;
+                    await viewModel.Exit();
+                }
+            };
         }
 
         private void HidePopup(object sender, PointerEventArgs e)

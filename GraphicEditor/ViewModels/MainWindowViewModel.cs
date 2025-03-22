@@ -12,7 +12,11 @@ using Avalonia.Controls;
 using Avalonia.Controls.Chrome;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.ApplicationLifetimes;
+using MsBox.Avalonia;
 using Splat;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Models;
 
 namespace GraphicEditor.ViewModels
 {
@@ -141,6 +145,7 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
+        public ReactiveCommand<Unit, Unit> ExitCommand { get; }
 
         private IFigure _selectedFigure;
         public IFigure SelectedFigure
@@ -207,6 +212,7 @@ namespace GraphicEditor.ViewModels
             SaveCommand = ReactiveCommand.Create(Save);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
             LoadCommand = ReactiveCommand.CreateFromTask(Load);
+            ExitCommand = ReactiveCommand.CreateFromTask(Exit);
 
             SelectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
             {
@@ -682,6 +688,40 @@ namespace GraphicEditor.ViewModels
                 IO.LoadFromFile(_figureService, filePath);
             }
 
+        }
+
+        public async Task Exit()
+        {
+            var box = MessageBoxManager.GetMessageBoxCustom(
+            new MessageBoxCustomParams
+            {
+                ContentTitle = "Выход из приложения",
+                ContentMessage = "Все несохранённые данные будут потеряны. Вы уверены, что хотите выйти?",
+                ButtonDefinitions = new[]
+                {
+                    new ButtonDefinition { Name = "Да"},
+                    new ButtonDefinition { Name = "Нет"},
+                    new ButtonDefinition { Name = "Сохранить файл"}
+                },
+                Icon = MsBox.Avalonia.Enums.Icon.Question,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                CanResize = false,
+                MaxWidth = 500,
+                MaxHeight = 800,
+                SizeToContent = SizeToContent.WidthAndHeight,
+                ShowInCenter = true,
+                Topmost = false,
+            });
+
+            var result = await box.ShowAsync();
+            if (result == "Да")
+            {
+                Environment.Exit(0);
+            } else if (result == "Сохранить файл")
+            {
+                await SaveAs();
+                Environment.Exit(0);
+            }
         }
     }
 }
