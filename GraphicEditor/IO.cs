@@ -70,9 +70,9 @@ namespace GraphicEditor
                     }
                 }
 
-                if (figureInfo.TryGetValue("Color", out var colorObj) && colorObj is long colorValue)
+                if (figureInfo.TryGetValue("Color", out var colorObj))
                 {
-                    color = (uint)colorValue;
+                    color = Convert.ToUInt32(colorObj);
                 }
 
                 var figure = figures.Create(name, pointParams, doubleParams);
