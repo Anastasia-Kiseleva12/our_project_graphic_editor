@@ -459,6 +459,12 @@ namespace GraphicEditor.Views
             }
         }
 
+        private void OpenHelpWindow(object sender, RoutedEventArgs e)
+        {
+            var helpWindow = new HelpWindow();
+            helpWindow.Show();
+        }
+
     }
   
 }

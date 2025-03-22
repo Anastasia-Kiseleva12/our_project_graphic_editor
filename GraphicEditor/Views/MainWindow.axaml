@@ -139,7 +139,7 @@
 						<MenuItem Header="_Выйти" Command="{Binding ExitCommand}"/>
 					</MenuItem>
 					<MenuItem Header="_Справка">
-						<MenuItem Header="Помощь"/>
+						<MenuItem Header="Помощь" Click="OpenHelpWindow"/>
 						<MenuItem Header="Документация"/>
 					</MenuItem>
 				</Menu>
@@ -239,6 +239,7 @@
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="*"/>
 						</Grid.RowDefinitions>
 
@@ -306,15 +307,22 @@
 								<TextBlock x:Name="thicknessValueText" Text="1" Margin="10 0 0 0" VerticalAlignment="Center"/>
 							</StackPanel>
 						</StackPanel>
+						<!--цветовая палитра-->
+						<Grid Grid.Row="2">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<ColorPicker Grid.Column="0" x:Name="colorPicker" Width="100" Height="20"
+						 Margin="0 0 0 10" DockPanel.Dock="Bottom"/>
+							<Button Grid.Column="1" Margin="10 0 0 10" Click="ClickOnFillingButton">
+								<Image Source="avares://GraphicEditor/Assets/Img/fill.png"
+									   Width="20" Height="20"/>
+							</Button>
+						</Grid>
 					</Grid>
 				</Border>
 			</Popup>
-			<Button Grid.Row="2" Click="ClickOnFillingButton">Заливка</Button>
-			<DockPanel Grid.Row="3">
-				<!--цветовая палитра-->
-				<ColorPicker x:Name="colorPicker" Width="180" Height="180"
-									 Margin="0 0 0 10" DockPanel.Dock="Bottom"/>
-			</DockPanel>
 		</Grid>
 
 

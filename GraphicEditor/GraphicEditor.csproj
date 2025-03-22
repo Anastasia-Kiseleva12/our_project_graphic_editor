@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\Img\" />
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
@@ -21,6 +20,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="AnimatedImage.Avalonia" Version="2.0.0" />
     <PackageReference Include="Avalonia" Version="11.0.6" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.6" />
     <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
