@@ -142,6 +142,8 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<Unit, Unit> RotateFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> BackRotateFigureCommand { get; }
         public ReactiveCommand<Unit, Unit> ReflectionCommand { get; }
+        public ReactiveCommand<Unit, Unit> ScaleUpCommand { get; }
+        public ReactiveCommand<Unit, Unit> ScaleDownCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
@@ -208,6 +210,8 @@ namespace GraphicEditor.ViewModels
                 SecondPoint = null;
                 Debug.WriteLine("Reflection line mode activated.");
             });
+            ScaleUpCommand = ReactiveCommand.Create(ScaleUp);
+            ScaleDownCommand = ReactiveCommand.Create(ScaleDown);
 
             SaveCommand = ReactiveCommand.Create(Save);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
@@ -604,6 +608,27 @@ namespace GraphicEditor.ViewModels
                 SecondPoint = null;
             }
           
+        }
+        private void ScaleFigure(double scaleFactor)
+        {
+            if (SelectedFigure != null)
+            {
+                // Применяем масштабирование к выбранной фигуре
+                SelectedFigure.Scale(scaleFactor);
+
+                // Вызываем событие для обновления отрисовки
+                FiguresChanged?.Invoke();
+            }
+        }
+
+        public void ScaleUp()
+        {
+            ScaleFigure(1.1); // Увеличиваем размер на 10%
+        }
+
+        public void ScaleDown()
+        {
+            ScaleFigure(0.9); // Уменьшаем размер на 10%
         }
         private void Save()
         {

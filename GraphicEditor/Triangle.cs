@@ -90,9 +90,9 @@ namespace GraphicEditor
             P3 = new Point (P3.X * dx, P3.Y * dy);
         }
 
-        public void Scale(Point center, double dr)
+        public void Scale(double dr)
         {
-            center = Center;
+            Point center = Center;
 
             P1 = new Point (center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
             P2 = new Point (center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);

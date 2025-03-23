@@ -102,7 +102,7 @@ namespace GraphicEditor
             );
         }
 
-        public void Scale(Point center, double dr) => throw new NotImplementedException();
+        public void Scale(double dr) => throw new NotImplementedException();
 
         public void Scale(double dx, double dy)
         {

@@ -291,7 +291,7 @@
 
 							<!-- + размер -->
 							<Button Classes="Figure" Grid.Row="2" Grid.Column="1"
-									HorizontalAlignment="Center" VerticalAlignment="Center"
+									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleUpCommand}"
 									Width="60" Height="28"
 									Margin="2.5">
 								<Image Source="avares://GraphicEditor/Assets/Img/plus-small.png" Width="20" Height="20"/>
@@ -302,7 +302,7 @@
 							
 							<!-- - размер -->
 							<Button Classes="Figure" Grid.Row="3" Grid.Column="1"
-									HorizontalAlignment="Center" VerticalAlignment="Center"
+									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleDownCommand}"
 									Width="60" Height="28"
 									Margin="2.5">
 								<Image Source="avares://GraphicEditor/Assets/Img/minus-small.png" Width="20" Height="20"/>

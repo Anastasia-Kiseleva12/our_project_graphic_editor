@@ -39,7 +39,7 @@ namespace GraphicEditor
         public double StrokeThickness { get; set; }
         void SetColor(byte a, byte r, byte g, byte b);
         void Scale(double dx, double dy);
-        void Scale(Point center, double dr);
+        void Scale(double dr);
         void Reflection(Point a, Point b);
         IFigure Clone();
         void Draw(IDrawing drawing, double Angle);

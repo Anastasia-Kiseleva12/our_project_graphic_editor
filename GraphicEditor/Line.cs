@@ -75,10 +75,10 @@ namespace GraphicEditor
             Start = new Point (Start.X * dx, Start.Y * dy);
             End = new Point (End.X * dx, End.Y * dy);
         }
-        public void Scale(Point center, double dr)
+        public void Scale(double dr)
         {
-            Start = new Point (center.X + (Start.X - center.X) * dr, center.Y + (Start.Y - center.Y) * dr);
-            End = new Point (center.X + (End.X - center.X) * dr, center.Y + (End.Y - center.Y) * dr);
+            Start = new Point (Center.X + (Start.X - Center.X) * dr, Center.Y + (Start.Y - Center.Y) * dr);
+            End = new Point (Center.X + (End.X - Center.X) * dr, Center.Y + (End.Y - Center.Y) * dr);
         }
         public void Reflection(Point a, Point b)
         {
