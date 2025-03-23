@@ -94,7 +94,7 @@ namespace GraphicEditor
         }
         public IFigure Clone()
         {
-            return new Line(new Point (Start.X, Start.Y), new Point (End.X, End.Y), StrokeThickness);
+            return new Line(new Point (Start.X + 50, Start.Y + 50), new Point (End.X + 50, End.Y + 50), StrokeThickness);
         }
         public bool IsIn(Point point, double tolerance = 5)
         {

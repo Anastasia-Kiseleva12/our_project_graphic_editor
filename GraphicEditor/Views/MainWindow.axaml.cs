@@ -88,6 +88,14 @@ namespace GraphicEditor.Views
             {
                 _viewModel.RemoveSelectedFiguresCommand.Execute().Subscribe();
             }
+            else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.C)
+            {
+                _viewModel.CopySelectedFiguresCommand.Execute().Subscribe();
+            }
+            else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.V)
+            {
+                _viewModel.PasteFiguresCommand.Execute().Subscribe();
+            }
         }
         protected override void OnClosed(EventArgs e)
         {

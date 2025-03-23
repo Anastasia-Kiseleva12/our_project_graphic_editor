@@ -17,6 +17,7 @@ using Splat;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Models;
+using Avalonia.Media;
 
 namespace GraphicEditor.ViewModels
 {
@@ -148,6 +149,9 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
+        public ReactiveCommand<Unit, Unit> CopySelectedFiguresCommand { get; }
+        public ReactiveCommand<Unit, Unit> PasteFiguresCommand { get; }
+        private List<IFigure> _copiedFigures = new List<IFigure>();
 
         private IFigure _selectedFigure;
         public IFigure SelectedFigure
@@ -213,6 +217,8 @@ namespace GraphicEditor.ViewModels
             ScaleUpCommand = ReactiveCommand.Create(ScaleUp);
             ScaleDownCommand = ReactiveCommand.Create(ScaleDown);
 
+            CopySelectedFiguresCommand = ReactiveCommand.Create(CopySelectedFigures);
+            PasteFiguresCommand = ReactiveCommand.Create(PasteFigures);
             SaveCommand = ReactiveCommand.Create(Save);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
             LoadCommand = ReactiveCommand.CreateFromTask(Load);
@@ -629,6 +635,25 @@ namespace GraphicEditor.ViewModels
         public void ScaleDown()
         {
             ScaleFigure(0.9); // Уменьшаем размер на 10%
+        }
+        private void CopySelectedFigures()
+        {
+            _copiedFigures.Clear();
+            foreach (var figure in _figureService._selectedFigures)
+            {
+                _copiedFigures.Add(figure.Clone());
+            }
+        }
+
+        private void PasteFigures()
+        {
+            foreach (var figure in _copiedFigures)
+            {
+                var clonedFigure = figure.Clone();
+                clonedFigure.Move(new Point(10, 10)); // Сдвигаем фигуру для видимости при вставке
+                _figureService.AddFigure(clonedFigure);
+            }
+            FiguresChanged?.Invoke();
         }
         private void Save()
         {

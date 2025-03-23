@@ -104,9 +104,9 @@ namespace GraphicEditor
         public IFigure Clone()
         {
             return new Triangle(
-                new Point (P1.X, P1.Y),
-                new Point (P2.X, P2.Y),
-                new Point (P3.X, P3.Y),
+                new Point (P1.X + 50, P1.Y + 50),
+                new Point (P2.X + 50, P2.Y + 50),
+                new Point (P3.X + 50, P3.Y + 50),
                 StrokeThickness
             );
         }
