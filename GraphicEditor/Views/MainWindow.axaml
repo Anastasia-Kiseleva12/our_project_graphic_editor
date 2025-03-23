@@ -248,6 +248,8 @@
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*"/>
@@ -255,7 +257,7 @@
 							</Grid.ColumnDefinitions>
 
 							<!-- Повернуть -->
-							<Button Classes="Figure" Grid.Row="0" Grid.Column="0"
+							<Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
 									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding RotateFigureCommand}"
 									Width="60" Height="60"
 									Margin="2.5">
@@ -266,7 +268,7 @@
 							</Button>
 
 							<!-- Двигать -->
-							<Button Classes="Figure" Grid.Row="0" Grid.Column="1"
+							<Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
 									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding BackRotateFigureCommand}"
 									Width="60" Height="60"
 									Margin="2.5">
@@ -277,7 +279,7 @@
 							</Button>
 
 							<!-- Отразить по горизонтали -->
-							<Button Classes="Figure" Grid.Row="1" Grid.Column="0"
+							<Button Classes="Figure" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0"
 									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ReflectionCommand}"
 									Width="60" Height="60"
 									Margin="2.5">
@@ -287,14 +289,25 @@
 								</ToolTip.Tip>
 							</Button>
 
-							<!-- Отразить по вертикали -->
-							<Button Classes="Figure" Grid.Row="1" Grid.Column="1"
+							<!-- + размер -->
+							<Button Classes="Figure" Grid.Row="2" Grid.Column="1"
 									HorizontalAlignment="Center" VerticalAlignment="Center"
-									Width="60" Height="60"
+									Width="60" Height="28"
 									Margin="2.5">
-								<Image Source="avares://GraphicEditor/Assets/Img/flip-vertic.png" Width="30" Height="30"/>
+								<Image Source="avares://GraphicEditor/Assets/Img/plus-small.png" Width="20" Height="20"/>
 								<ToolTip.Tip>
-									<TextBlock Text="Отразить по вертикали"/>
+									<TextBlock Text="Увеличить"/>
+								</ToolTip.Tip>
+							</Button>
+							
+							<!-- - размер -->
+							<Button Classes="Figure" Grid.Row="3" Grid.Column="1"
+									HorizontalAlignment="Center" VerticalAlignment="Center"
+									Width="60" Height="28"
+									Margin="2.5">
+								<Image Source="avares://GraphicEditor/Assets/Img/minus-small.png" Width="20" Height="20"/>
+								<ToolTip.Tip>
+									<TextBlock Text="Уменьшить"/>
 								</ToolTip.Tip>
 							</Button>
 						</Grid>
