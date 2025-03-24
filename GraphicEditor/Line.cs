@@ -69,12 +69,6 @@ namespace GraphicEditor
             Start = new Point (center.X + (Start.X - center.X) * cosA - (Start.Y - center.Y) * sinA, center.Y + (Start.X - center.X) * sinA + (Start.Y - center.Y) * cosA);
             End = new Point (center.X + (End.X - center.X) * cosA - (End.Y - center.Y) * sinA, center.Y + (End.X - center.X) * sinA + (End.Y - center.Y) * cosA);
         }
-
-        public void Scale(double dx, double dy)
-        {
-            Start = new Point (Start.X * dx, Start.Y * dy);
-            End = new Point (End.X * dx, End.Y * dy);
-        }
         public void Scale(double dr)
         {
             Start = new Point (Center.X + (Start.X - Center.X) * dr, Center.Y + (Start.Y - Center.Y) * dr);
@@ -102,9 +96,6 @@ namespace GraphicEditor
             return distance <= tolerance && point.X >= Math.Min(Start.X, End.X) - tolerance && point.X <= Math.Max(Start.X, End.X) + tolerance &&
                    point.Y >= Math.Min(Start.Y, End.Y) - tolerance && point.Y <= Math.Max(Start.Y, End.Y) + tolerance;
         }
-        public IFigure Intersect(IFigure other) => throw new NotImplementedException();
-        public IFigure Union(IFigure other) => throw new NotImplementedException();
-        public IFigure Subtract(IFigure other) => throw new NotImplementedException();
 
         public void Draw(IDrawing drawing, double Angle)
         {

@@ -38,15 +38,11 @@ namespace GraphicEditor
         bool IsSelected { get; set; }
         public double StrokeThickness { get; set; }
         void SetColor(byte a, byte r, byte g, byte b);
-        void Scale(double dx, double dy);
         void Scale(double dr);
         void Reflection(Point a, Point b);
         IFigure Clone();
         void Draw(IDrawing drawing, double Angle);
         bool IsIn(Point point, double eps);
-        IFigure Intersect(IFigure other);
-        IFigure Union(IFigure other);
-        IFigure Subtract(IFigure other);
         Point GetPointParameter(string parameterName);
         double GetDoubleParameter(string parameterName);
     }

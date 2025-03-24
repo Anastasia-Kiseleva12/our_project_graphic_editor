@@ -102,23 +102,13 @@ namespace GraphicEditor
             );
         }
 
-        public void Scale(double dr) => throw new NotImplementedException();
-
-        public void Scale(double dx, double dy)
+        public void Scale(double dr)
         {
             Point center = Center;
-            P1 = ScalePoint(P1, center, dx, dy);
-            P2 = ScalePoint(P2, center, dx, dy);
-            P3 = ScalePoint(P3, center, dx, dy);
-            P4 = ScalePoint(P4, center, dx, dy);
-        }
-
-        private Point ScalePoint(Point p, Point center, double dx, double dy)
-        {
-            return new Point(
-                center.X + (p.X - center.X) * dx,
-                center.Y + (p.Y - center.Y) * dy
-            );
+            P1 = new Point(center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
+            P2 = new Point(center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);
+            P3 = new Point(center.X + (P3.X - center.X) * dr, center.Y + (P3.Y - center.Y) * dr);
+            P4 = new Point(center.X + (P4.X - center.X) * dr, center.Y + (P4.Y - center.Y) * dr);
         }
 
         public void Reflection(Point a, Point b)

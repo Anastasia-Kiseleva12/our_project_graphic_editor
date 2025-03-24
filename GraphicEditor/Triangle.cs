@@ -83,12 +83,6 @@ namespace GraphicEditor
             P2 = new Point(center.X + (P2.X - center.X) * cos - (P2.Y - center.Y) * sin, center.Y + (P2.X - center.X) * sin + (P2.Y - center.Y) * cos);
             P3 = new Point(center.X + (P3.X - center.X) * cos - (P3.Y - center.Y) * sin, center.Y + (P3.X - center.X) * sin + (P3.Y - center.Y) * cos);
         }
-        public void Scale(double dx, double dy)
-        {
-            P1 = new Point (P1.X * dx, P1.Y * dy);
-            P2 = new Point (P2.X * dx, P2.Y * dy);
-            P3 = new Point (P3.X * dx, P3.Y * dy);
-        }
 
         public void Scale(double dr)
         {
@@ -99,7 +93,25 @@ namespace GraphicEditor
             P3 = new Point (center.X + (P3.X - center.X) * dr, center.Y + (P3.Y - center.Y) * dr);
         }
 
-        public void Reflection(Point a, Point b) => throw new NotImplementedException();
+        public void Reflection(Point a, Point b)
+        {
+            P1 = ReflectPoint(P1, a, b);
+            P2 = ReflectPoint(P2, a, b);
+            P3 = ReflectPoint(P3, a, b);
+        }
+
+        private Point ReflectPoint(Point p, Point a, Point b)
+        {
+            double dx = b.X - a.X;
+            double dy = b.Y - a.Y;
+            double lengthSq = dx * dx + dy * dy;
+            double dot = ((p.X - a.X) * dx + (p.Y - a.Y) * dy) / lengthSq;
+
+            double rx = 2 * (a.X + dot * dx) - p.X;
+            double ry = 2 * (a.Y + dot * dy) - p.Y;
+
+            return new Point(rx, ry);
+        }
 
         public IFigure Clone()
         {

@@ -63,17 +63,11 @@ namespace GraphicEditor
             double distance = Math.Sqrt(Math.Pow(point.X - Center.X, 2) + Math.Pow(point.Y - Center.Y, 2));
             return distance <= Radius;
         }
-
-        public void Scale(double dx, double dy)
-        {
-            throw new NotImplementedException(); // недопустимый метод, изменится тип фигуры
-        }
-
         public void Scale(double dr) => PointOnCircle = new Point(Center.X + (PointOnCircle.X - Center.X) * dr, Center.Y + (PointOnCircle.Y - Center.Y) * dr);
 
         public IFigure Clone()
         {
-            throw new NotImplementedException();
+            return new Circle(new Point(Center.X + 50, Center.Y + 50), new Point(PointOnCircle.X + 50, PointOnCircle.Y + 50), StrokeThickness);
         }
         public double Radius
         {
@@ -99,21 +93,6 @@ namespace GraphicEditor
             return Math.Abs(distance - radius) <= eps;
         }
 
-        public IFigure Intersect(IFigure other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFigure Union(IFigure other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFigure Subtract(IFigure other)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
         {
             Center = pointParams["Center"];
@@ -121,8 +100,23 @@ namespace GraphicEditor
         }
         public void Reflection(Point a, Point b)
         {
-            throw new NotImplementedException();
+            Center = ReflectPoint(Center, a, b);
+            PointOnCircle = ReflectPoint(PointOnCircle, a, b);
         }
+
+        private Point ReflectPoint(Point p, Point a, Point b)
+        {
+            double dx = b.X - a.X;
+            double dy = b.Y - a.Y;
+            double lengthSq = dx * dx + dy * dy;
+            double dot = ((p.X - a.X) * dx + (p.Y - a.Y) * dy) / lengthSq;
+
+            double rx = 2 * (a.X + dot * dx) - p.X;
+            double ry = 2 * (a.Y + dot * dy) - p.Y;
+
+            return new Point(rx, ry);
+        }
+
         public void Rotate(double angle)
         {
             Debug.WriteLine($"Rotate method called with angle: {angle}");
