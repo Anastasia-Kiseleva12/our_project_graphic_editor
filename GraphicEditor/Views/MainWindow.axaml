@@ -118,13 +118,13 @@
 
 	<Grid Background="White">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
-			<RowDefinition Height="22*"/>
 		</Grid.RowDefinitions>
 
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="7*"/>
 		</Grid.ColumnDefinitions>
 
 		<Grid Grid.Row = "0" Grid.ColumnSpan="2"  Background="#606060" >
@@ -148,14 +148,13 @@
 
 		<Grid Grid.Row="1" Grid.Column="0" Background="#9b9b9b">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="0.2*"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
-				<RowDefinition Height="auto"/>
-				<RowDefinition Height="auto"/>
+        <RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<!--кнопка с режимом создания фигуры-->
-			<RelativePanel Grid.Row="0" HorizontalAlignment="Center">
+			<RelativePanel Grid.Row="0" HorizontalAlignment="Center" Margin="0 0 0 20">
 				<TextBlock x:Name="ModeText" Text="Способ создания фигуры:"
 								  Margin="0 20 0 0"/>
 				<ToggleButton Classes="Mode" Margin="0 10 0 0"
@@ -222,120 +221,117 @@
 						<TextBlock Text="Круг"/>
 					</ToolTip.Tip>
 				</RadioButton>
+
+        
 			</Grid>
 
 			<!-- Панель параметров -->
-			<Popup x:Name="ShapeParametersPanelPopup"
-			 IsOpen="{Binding IsPanelOpen, FallbackValue=False}"
-			 Placement="Bottom"
-			 PlacementTarget="{Binding ElementName=colorPicker}"
-			 HorizontalOffset="0"
-			 VerticalOffset="-450"
-				   Margin="5 0 5 10">
-				<Border Background="#606060"
-						CornerRadius="10"
-						Padding="10">
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="*"/>
-						</Grid.RowDefinitions>
+      <Border Grid.Row="2"
+            Background="#606060"
+            CornerRadius="10"
+            Padding="10"
+            Margin="5 0 5 10"
+            IsVisible="{Binding IsPanelOpen, FallbackValue=False}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
 
-						<!-- Кнопки управления фигурой -->
-						<Grid Grid.Row="0" Margin="5">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
+          <!-- Кнопки управления фигурой -->
+          <Grid Grid.Row="0" Margin="5">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-							<!-- Повернуть -->
-							<Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
-									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding RotateFigureCommand}"
-									Width="60" Height="60"
-									Margin="2.5">
-								<Image Source="avares://GraphicEditor/Assets/Img/rotate-left.png" Width="30" Height="30"/>
-								<ToolTip.Tip>
-									<TextBlock Text="Повернуть"/>
-								</ToolTip.Tip>
-							</Button>
+            <!-- Повернуть -->
+            <Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding RotateFigureCommand}"
+                    Width="60" Height="60"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/rotate-left.png" Width="30" Height="30"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Повернуть"/>
+              </ToolTip.Tip>
+            </Button>
 
-							<!-- Двигать -->
-							<Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
-									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding BackRotateFigureCommand}"
-									Width="60" Height="60"
-									Margin="2.5">
-								<Image Source="avares://GraphicEditor/Assets/Img/rotate-right.png" Width="30" Height="30"/>
-								<ToolTip.Tip>
-									<TextBlock Text="Двигать"/>
-								</ToolTip.Tip>
-							</Button>
+            <!-- Двигать -->
+            <Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding BackRotateFigureCommand}"
+                    Width="60" Height="60"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/rotate-right.png" Width="30" Height="30"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Двигать"/>
+              </ToolTip.Tip>
+            </Button>
 
-							<!-- Отразить по горизонтали -->
-							<Button Classes="Figure" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0"
-									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ReflectionCommand}"
-									Width="60" Height="60"
-									Margin="2.5">
-								<Image Source="avares://GraphicEditor/Assets/Img/flip-horiz.png" Width="30" Height="30"/>
-								<ToolTip.Tip>
-									<TextBlock Text="Отразить по горизонтали"/>
-								</ToolTip.Tip>
-							</Button>
+            <!-- Отразить по горизонтали -->
+            <Button Classes="Figure" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ReflectionCommand}"
+                    Width="60" Height="60"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/flip-horiz.png" Width="30" Height="30"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Отразить по горизонтали"/>
+              </ToolTip.Tip>
+            </Button>
 
-							<!-- + размер -->
-							<Button Classes="Figure" Grid.Row="2" Grid.Column="1"
-									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleUpCommand}"
-									Width="60" Height="28"
-									Margin="2.5">
-								<Image Source="avares://GraphicEditor/Assets/Img/plus-small.png" Width="20" Height="20"/>
-								<ToolTip.Tip>
-									<TextBlock Text="Увеличить"/>
-								</ToolTip.Tip>
-							</Button>
-							
-							<!-- - размер -->
-							<Button Classes="Figure" Grid.Row="3" Grid.Column="1"
-									HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleDownCommand}"
-									Width="60" Height="28"
-									Margin="2.5">
-								<Image Source="avares://GraphicEditor/Assets/Img/minus-small.png" Width="20" Height="20"/>
-								<ToolTip.Tip>
-									<TextBlock Text="Уменьшить"/>
-								</ToolTip.Tip>
-							</Button>
-						</Grid>
+            <!-- + размер -->
+            <Button Classes="Figure" Grid.Row="2" Grid.Column="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleUpCommand}"
+                    Width="60" Height="28"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/plus-small.png" Width="20" Height="20"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Увеличить"/>
+              </ToolTip.Tip>
+            </Button>
 
-						<!-- Ползунок толщины -->
-						<StackPanel Grid.Row="1" Margin="0 20 0 0">
-							<TextBlock Text="Толщина" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Slider x:Name="thicknessSlider" Width="110" Minimum="1" Maximum="20" Value="{Binding CurrentThickness, Mode=TwoWay}"/>
-								<TextBlock x:Name="thicknessValueText" Text="1" Margin="10 0 0 0" VerticalAlignment="Center"/>
-							</StackPanel>
-						</StackPanel>
-						<!--цветовая палитра-->
-						<Grid Grid.Row="2">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<ColorPicker Grid.Column="0" x:Name="colorPicker" Width="100" Height="20"
-						 Margin="0 0 0 10" DockPanel.Dock="Bottom"/>
-							<Button Grid.Column="1" Margin="10 0 0 10" Click="ClickOnFillingButton">
-								<Image Source="avares://GraphicEditor/Assets/Img/fill.png"
-									   Width="20" Height="20"/>
-							</Button>
-						</Grid>
-					</Grid>
-				</Border>
-			</Popup>
+            <!-- - размер -->
+            <Button Classes="Figure" Grid.Row="3" Grid.Column="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleDownCommand}"
+                    Width="60" Height="28"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/minus-small.png" Width="20" Height="20"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Уменьшить"/>
+              </ToolTip.Tip>
+            </Button>
+          </Grid>
+
+          <!-- Ползунок толщины -->
+          <StackPanel Grid.Row="1" Margin="0 20 0 0">
+            <TextBlock Text="Толщина" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <Slider x:Name="thicknessSlider" Width="110" Minimum="1" Maximum="20" Value="{Binding CurrentThickness, Mode=TwoWay}"/>
+              <TextBlock x:Name="thicknessValueText" Text="1" Margin="10 0 0 0" VerticalAlignment="Center"/>
+            </StackPanel>
+          </StackPanel>
+
+          <!-- Цветовая палитра -->
+          <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ColorPicker Grid.Column="0" x:Name="colorPicker" Width="100" Height="20"
+             Margin="0 0 0 10" VerticalAlignment="Bottom"/>
+            <Button Grid.Column="1" Margin="10 0 0 10" Click="ClickOnFillingButton">
+              <Image Source="avares://GraphicEditor/Assets/Img/fill.png"
+                     Width="20" Height="20"/>
+            </Button>
+          </Grid>
+        </Grid>
+      </Border>
 		</Grid>
 
 
