@@ -7,7 +7,7 @@
 		Height="900"		Width="1600"
 		x:Class="GraphicEditor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/main.ico"
         Title="GraphicEditor">
 
 	<Design.DataContext>

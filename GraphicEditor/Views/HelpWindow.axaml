@@ -8,6 +8,7 @@
 		Height="700"		Width="1300"
 		x:Class="GraphicEditor.HelpWindow"
 		x:DataType="local:HelpWindowViewModel"
+		Icon="/Assets/help.ico"
 		Title="Помощь">
 
 	<Window.DataContext>
