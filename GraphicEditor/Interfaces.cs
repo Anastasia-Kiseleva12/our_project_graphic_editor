@@ -50,7 +50,6 @@ namespace GraphicEditor
     public interface ILogic
     {
         IEnumerable<IFigure> Figures { get; } //список всех фигур
-        IEnumerable<string> FigureNamesToCreate { get; } //список имен фигур доступных для создания
         IEnumerable<(string, Type)> GetParameters(string figure);
         public IFigure Create(string name, IDictionary<string, Point> parameters, IDictionary<string, double> doubleparameters);
         public IFigure CreateDefault(string name);
@@ -60,6 +59,5 @@ namespace GraphicEditor
 
         void Select(IFigure f);
         void UnSelect(IFigure f);
-        IEnumerable<IFigure> Selected();
     }
 }

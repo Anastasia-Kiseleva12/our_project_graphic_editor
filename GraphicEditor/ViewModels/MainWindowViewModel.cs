@@ -133,7 +133,7 @@ namespace GraphicEditor.ViewModels
             get => _isPanelOpen;
             set => this.RaiseAndSetIfChanged(ref _isPanelOpen, value);
         }
-        private bool _isSelectedLine;
+        private bool _isSelected;
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateTriangleCommand { get; }
@@ -211,7 +211,7 @@ namespace GraphicEditor.ViewModels
             ReflectionCommand = ReactiveCommand.Create(() =>
             {
 
-                _isDrawingReflectionLine = true;
+                IsDrawingReflectionLine = true;
                 StartPoint = null;
                 CurrentPoint = null;
                 Debug.WriteLine("Reflection line mode activated.");
@@ -283,7 +283,7 @@ namespace GraphicEditor.ViewModels
                 HandleRectangleClick(point);
                 return;
             }
-            if (_isDrawingReflectionLine)
+            if (IsDrawingReflectionLine)
             {
                 HandleReflectionLineClick(point);
                 return;
@@ -429,7 +429,7 @@ namespace GraphicEditor.ViewModels
                 {
                     // Если фигура уже выделена, начинаем перемещение
                     _isDragging = true;
-                    _isSelectedLine = true;
+                    _isSelected = true;
                     _dragStartPoint = point;
                     _draggedFigure = figure;
                 }
@@ -451,7 +451,12 @@ namespace GraphicEditor.ViewModels
         }
         public void HandleCanvasMove(Point point)
         {
-            if (IsDrawingLine || IsDrawingCircle || IsDrawingTriangle)
+            if (IsDrawingReflectionLine && StartPoint != null)
+            {
+                CurrentPoint = point;
+                FiguresChanged?.Invoke();
+            }
+            else if (IsDrawingLine || IsDrawingCircle || IsDrawingTriangle)
             {
                 CurrentPoint = point;
             }
@@ -474,25 +479,27 @@ namespace GraphicEditor.ViewModels
             _dragStartPoint = null;
             _draggedFigure = null;
         }
-        private void HandleReflectionLineClick(Point point)
+        private async void HandleReflectionLineClick(Point point)
         {
-            //_isDrawingReflectionLine = !_isDrawingReflectionLine;
             if (StartPoint == null)
             {
-                // Первый клик — задаем начало линии
                 StartPoint = point;
-                Debug.WriteLine($"Reflection line start set at: {StartPoint}");
+                Debug.WriteLine($"Start reflection line start point: {StartPoint}");
             }
-            else if (CurrentPoint == null)
+            else
             {
-                // Второй клик — задаем конец линии
                 CurrentPoint = point;
-                Debug.WriteLine($"Reflection line end set at: {CurrentPoint}");
-                // Создаем временную линию
+
                 ReflectionFigure();
-                
+
+                await Task.Delay(100);
+
+                StartPoint = null;
+                CurrentPoint = null;
+                IsDrawingReflectionLine = false;
             }
         }
+
         private void CreateLine()
         {
             if (IsManualMode)
@@ -591,33 +598,14 @@ namespace GraphicEditor.ViewModels
 
         private void ReflectionFigure()
         {
-            if (StartPoint != null && CurrentPoint != null)
-            {
-                // Создаем временную линию
-                var tempLine = new Line(new Point(StartPoint.X, StartPoint.Y), new Point(CurrentPoint.X, CurrentPoint.Y), 2);
+            if (SelectedFigure == null || StartPoint == null || CurrentPoint == null)
+                return;
 
-                // Добавляем временную линию в коллекцию фигур для отрисовки
-                _figureService.AddFigure(tempLine);
+            SelectedFigure.Reflection(StartPoint, CurrentPoint);
 
-                //// Обновляем отрисовку, чтобы временная линия появилась на экране
-                //FiguresChanged?.Invoke();
+            // Обновляем отрисовку
+            FiguresChanged?.Invoke();
 
-                // Вызываем метод отражения, передавая координаты линии
-                SelectedFigure.Reflection(new Point(StartPoint.X, StartPoint.Y), new Point(CurrentPoint.X, CurrentPoint.Y));
-
-                // Удаляем временную линию через 500 мс
-                Task.Delay(500).ContinueWith(_ =>
-                {
-                    _figureService.RemoveFigure(tempLine);
-                    FiguresChanged?.Invoke();
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-
-                // Сбрасываем состояние
-                _isDrawingReflectionLine = false;
-                StartPoint = null;
-                //CurrentPoint = null;
-            }
-          
         }
         private void ScaleFigure(double scaleFactor)
         {
@@ -661,6 +649,7 @@ namespace GraphicEditor.ViewModels
         }
         private void Save()
         {
+            UnselectFigureCommand.Execute(null).Subscribe();
             // сохранение файла в корень проекта (временно)
             string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
             string filePath = Path.Combine(projectRoot, "test.json");
@@ -670,6 +659,7 @@ namespace GraphicEditor.ViewModels
 
        private async Task SaveAs()
         {
+            UnselectFigureCommand.Execute(null).Subscribe();
             if (Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop || desktop.MainWindow is null)
                 return;
             // получаем главное окно
@@ -707,7 +697,6 @@ namespace GraphicEditor.ViewModels
                         IO.SaveToSvg(_figureService.Figures, filePath);
                         break;
                     case ".png":
-                        HandleFigureSelection(new Point (-10000000, -10000000));
                         IO.SaveToPng(filePath);
                         break;
                     default:

@@ -432,7 +432,7 @@ namespace GraphicEditor.Views
             }
 
             // Отрисовка временных элементов (если идет создание фигуры)
-            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle || _viewModel.IsDrawingReflectionLine)
+            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle)
             {
                 if (_viewModel.StartPoint != null)
                 {
@@ -458,12 +458,22 @@ namespace GraphicEditor.Views
                         }
 
                         // Отрисовка временной линии для линии и круга
-                        if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingReflectionLine)
+                        if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle)
                         {
                             drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
                         }
                     }
                 }
+            }
+
+            if (_viewModel.IsDrawingReflectionLine && _viewModel.StartPoint != null && _viewModel.CurrentPoint != null)
+            {
+
+                drawer.DrawTemporaryPoint(_viewModel.StartPoint, Brushes.Red);
+                // Отрисовка временной линии отражения
+                drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
+
+                drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Blue);
             }
         }
 

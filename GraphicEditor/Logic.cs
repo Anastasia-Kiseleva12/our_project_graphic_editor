@@ -16,8 +16,6 @@ namespace GraphicEditor
 
         public IEnumerable<IFigure> Figures => _figures.Items;
 
-        public IEnumerable<string> FigureNamesToCreate => FigureFabric.AvailableFigures; //список всех доступных имен фигур
-
         public void AddFigure(IFigure figure)
         {
             if (figure == null) throw new ArgumentNullException(nameof(figure));
@@ -70,11 +68,6 @@ namespace GraphicEditor
             if (f == null) throw new ArgumentNullException(nameof(f));
             f.IsSelected = true;
             _selectedFigures.Add(f);
-        }
-
-        public IEnumerable<IFigure> Selected()
-        {
-            throw new NotImplementedException();
         }
 
         public void UnSelect(IFigure f)
