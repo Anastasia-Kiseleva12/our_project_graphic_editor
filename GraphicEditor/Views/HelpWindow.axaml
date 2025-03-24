@@ -70,7 +70,7 @@
 				<TextBlock Text="{Binding Description}"
 						   TextWrapping="Wrap"
 						   VerticalAlignment="Center"
-						   FontSize="17"
+						   FontSize="18"
 						   Margin="20"/>
 			</Border>
 

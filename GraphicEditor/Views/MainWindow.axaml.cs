@@ -13,6 +13,9 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using DynamicData;
 using GraphicEditor.ViewModels;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using System.IO;
 
 namespace GraphicEditor.Views
 {
@@ -148,7 +151,7 @@ namespace GraphicEditor.Views
                     EndPoint = new Avalonia.Point(end.X, end.Y)
                 };
 
-                var lineShape = new Path
+                var lineShape = new Avalonia.Controls.Shapes.Path
                 {
                     Stroke = strokeBrush,
                     StrokeThickness = 2,
@@ -167,7 +170,7 @@ namespace GraphicEditor.Views
                         EndPoint = new Avalonia.Point(End.X, End.Y)
                     };
 
-                    var highlightShape = new Path
+                    var highlightShape = new Avalonia.Controls.Shapes.Path
                     {
                         Stroke = Brushes.LightBlue,
                         StrokeThickness = strokeThickness + 4,
@@ -183,7 +186,7 @@ namespace GraphicEditor.Views
                     EndPoint = new Avalonia.Point(End.X, End.Y)
                 };
 
-                var lineShape = new Path
+                var lineShape = new Avalonia.Controls.Shapes.Path
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
@@ -234,7 +237,7 @@ namespace GraphicEditor.Views
                         RadiusY = radius
                     };
 
-                    var highlightShape = new Path
+                    var highlightShape = new Avalonia.Controls.Shapes.Path
                     {
                         Stroke = Brushes.LightBlue,
                         StrokeThickness = strokeThickness + 4,
@@ -251,7 +254,7 @@ namespace GraphicEditor.Views
                     RadiusY = radius
                 };
 
-                var circleShape = new Path
+                var circleShape = new Avalonia.Controls.Shapes.Path
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
@@ -291,7 +294,7 @@ namespace GraphicEditor.Views
                     highlightFigure.Segments.Add(new LineSegment { Point = new Avalonia.Point(Point1.X, Point1.Y) });
                     highlightGeometry.Figures.Add(highlightFigure);
 
-                    var highlightShape = new Path
+                    var highlightShape = new Avalonia.Controls.Shapes.Path
                     {
                         Stroke = Brushes.LightBlue,
                         StrokeThickness = strokeThickness + 4,
@@ -311,7 +314,7 @@ namespace GraphicEditor.Views
                 triangleFigure.Segments.Add(new LineSegment { Point = new Avalonia.Point(Point1.X, Point1.Y) });
                 triangleGeometry.Figures.Add(triangleFigure);
 
-                var triangleShape = new Path
+                var triangleShape = new Avalonia.Controls.Shapes.Path
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
@@ -378,7 +381,7 @@ namespace GraphicEditor.Views
 
                 if (IsSelected)
                 {
-                    var highlightShape = new Path
+                    var highlightShape = new Avalonia.Controls.Shapes.Path
                     {
                         Stroke = Brushes.LightBlue,
                         StrokeThickness = strokeThickness + 4,
@@ -387,7 +390,7 @@ namespace GraphicEditor.Views
 
                     DrawingCanvas.Children.Add(highlightShape);
                 }
-                var rectangleShape = new Path
+                var rectangleShape = new Avalonia.Controls.Shapes.Path
                 {
                     Stroke = Brushes.Black,
                     StrokeThickness = strokeThickness,
@@ -483,6 +486,26 @@ namespace GraphicEditor.Views
             helpWindow.Show();
         }
 
+        
+
+        private void OpenDocumentation(object sender, RoutedEventArgs e)
+        {
+            string projectRoot = System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\");
+            string filePath = System.IO.Path.Combine(projectRoot, "Documentation.docx");
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при открытии файла: {ex.Message}");
+            }
+        }
     }
   
 }

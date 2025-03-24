@@ -140,7 +140,7 @@
 					</MenuItem>
 					<MenuItem Header="_Справка">
 						<MenuItem Header="Помощь" Click="OpenHelpWindow"/>
-						<MenuItem Header="Документация"/>
+						<MenuItem Header="Документация" Click="OpenDocumentation"/>
 					</MenuItem>
 				</Menu>
 			</DockPanel>
