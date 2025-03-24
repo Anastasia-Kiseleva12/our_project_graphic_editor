@@ -134,12 +134,16 @@ namespace GraphicEditor
 
         public IFigure Clone()
         {
-            return new Rectangle(
+            var clonedRectangle = new Rectangle(
                 new Point(P1.X + 50, P1.Y + 50),
                 new Point(P2.X + 50, P2.Y + 50),
                 new Point(P3.X + 50, P3.Y + 50),
                 new Point(P4.X + 50, P4.Y + 50),
                 StrokeThickness);
+
+            clonedRectangle.Color = this.Color;
+
+            return clonedRectangle;
         }
 
         public bool IsIn(Point point, double eps)

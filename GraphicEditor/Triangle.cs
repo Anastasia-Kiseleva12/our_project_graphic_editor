@@ -112,15 +112,18 @@ namespace GraphicEditor
 
             return new Point(rx, ry);
         }
-
         public IFigure Clone()
         {
-            return new Triangle(
-                new Point (P1.X + 50, P1.Y + 50),
-                new Point (P2.X + 50, P2.Y + 50),
-                new Point (P3.X + 50, P3.Y + 50),
+            var clonedTriangle = new Triangle(
+                new Point(P1.X + 50, P1.Y + 50),
+                new Point(P2.X + 50, P2.Y + 50),
+                new Point(P3.X + 50, P3.Y + 50),
                 StrokeThickness
             );
+
+            clonedTriangle.Color = this.Color;
+
+            return clonedTriangle;
         }
 
         public bool IsIn(Point point, double eps)

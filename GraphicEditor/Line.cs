@@ -88,7 +88,10 @@ namespace GraphicEditor
         }
         public IFigure Clone()
         {
-            return new Line(new Point (Start.X + 50, Start.Y + 50), new Point (End.X + 50, End.Y + 50), StrokeThickness);
+            var clonedLine = new Line(new Point(Start.X + 50, Start.Y + 50), new Point(End.X + 50, End.Y + 50), StrokeThickness);
+
+            clonedLine.Color = this.Color;
+            return clonedLine;
         }
         public bool IsIn(Point point, double tolerance = 5)
         {
