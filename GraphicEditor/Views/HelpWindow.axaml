@@ -37,6 +37,8 @@
 				<TreeViewItem Header="Удаление" Tag="delete"/>
 				<TreeViewItem Header="Поворот" Tag="rotate"/>
 				<TreeViewItem Header="Отражение" Tag="reflection"/>
+				<TreeViewItem Header="Масштаб" Tag="zoom"/>
+				<TreeViewItem Header="Копирование" Tag="copypaste"/>
 				<TreeViewItem Header="Заливка" Tag="fill"/>
 			</TreeViewItem>
 		</TreeView>

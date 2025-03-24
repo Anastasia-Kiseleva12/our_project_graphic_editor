@@ -787,6 +787,7 @@ namespace GraphicEditor.ViewModels
                     Environment.Exit(0);
                     break;
             }
+            _isSaved = false;
         }
     }
 }
