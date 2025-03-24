@@ -40,6 +40,7 @@ namespace GraphicEditor.ViewModels
         private bool _isDrawingCircle;
         private bool _isDrawingTriangle;
         private bool _isDrawingRectangle;
+        private bool _isSaved = false;
 
         private bool _isDragging; // Флаг перемещения
         private Point? _dragStartPoint; // Начальная точка перемещения
@@ -164,6 +165,7 @@ namespace GraphicEditor.ViewModels
                 this.RaiseAndSetIfChanged(ref _selectedFigure, value);
 
                 IsPanelOpen = value != null;
+                _isSaved = false;
             }
         }
 
@@ -227,7 +229,7 @@ namespace GraphicEditor.ViewModels
             SelectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
             {
                 _figureService.Select(figure);
-                SelectedFigure = figure; 
+                SelectedFigure = figure;
             });
 
             UnselectFigureCommand = ReactiveCommand.Create<IFigure>(figure =>
@@ -248,12 +250,14 @@ namespace GraphicEditor.ViewModels
             var figure = _figureService.CreateDefault(figureType);
             _figureService.AddFigure(figure);
             setIsChecked(false); // Сбрасываем флаг IsChecked
+            _isSaved = false;
         }
         private void CreateFigure(string figureType, Dictionary<string, Point> parameters, Dictionary<string, double> doubleParameters)
         {
             var figure = _figureService.Create(figureType, parameters, doubleParameters);
             _figureService.AddFigure(figure);
             FiguresChanged?.Invoke();
+            _isSaved = false;
         }
         public void HandleCanvasClick(Point point)
         {
@@ -661,6 +665,7 @@ namespace GraphicEditor.ViewModels
             string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
             string filePath = Path.Combine(projectRoot, "test.json");
             IO.SaveToFile(_figureService.Figures, filePath);
+            _isSaved = true;
         }
 
        private async Task SaveAs()
@@ -708,6 +713,7 @@ namespace GraphicEditor.ViewModels
                     default:
                         break;
                 }
+                _isSaved = true;
             }
         }
 
@@ -742,35 +748,44 @@ namespace GraphicEditor.ViewModels
 
         public async Task Exit()
         {
-            var box = MessageBoxManager.GetMessageBoxCustom(
-            new MessageBoxCustomParams
+            switch (_isSaved)
             {
-                ContentTitle = "Выход из приложения",
-                ContentMessage = "Все несохранённые данные будут потеряны. Вы уверены, что хотите выйти?",
-                ButtonDefinitions = new[]
-                {
-                    new ButtonDefinition { Name = "Да"},
-                    new ButtonDefinition { Name = "Нет"},
-                    new ButtonDefinition { Name = "Сохранить файл"}
-                },
-                Icon = MsBox.Avalonia.Enums.Icon.Question,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                CanResize = false,
-                MaxWidth = 500,
-                MaxHeight = 800,
-                SizeToContent = SizeToContent.WidthAndHeight,
-                ShowInCenter = true,
-                Topmost = false,
-            });
+                case false:
+                    var box = MessageBoxManager.GetMessageBoxCustom(
+                    new MessageBoxCustomParams
+                    {
+                        ContentTitle = "Выход из приложения",
+                        ContentMessage = "Все несохранённые данные будут потеряны. Вы уверены, что хотите выйти?",
+                        ButtonDefinitions = new[]
+                        {
+                            new ButtonDefinition { Name = "Да"},
+                            new ButtonDefinition { Name = "Нет"},
+                            new ButtonDefinition { Name = "Сохранить файл"}
+                        },
+                        Icon = MsBox.Avalonia.Enums.Icon.Question,
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                        CanResize = false,
+                        MaxWidth = 500,
+                        MaxHeight = 800,
+                        SizeToContent = SizeToContent.WidthAndHeight,
+                        ShowInCenter = true,
+                        Topmost = false,
+                    });
 
-            var result = await box.ShowAsync();
-            if (result == "Да")
-            {
-                Environment.Exit(0);
-            } else if (result == "Сохранить файл")
-            {
-                await SaveAs();
-                Environment.Exit(0);
+                    var result = await box.ShowAsync();
+                    if (result == "Да")
+                    {
+                        Environment.Exit(0);
+                    }
+                    else if (result == "Сохранить файл")
+                    {
+                        await SaveAs();
+                        Environment.Exit(0);
+                    }
+                    break;
+                case true:
+                    Environment.Exit(0);
+                    break;
             }
         }
     }
