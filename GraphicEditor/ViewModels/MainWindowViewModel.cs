@@ -211,7 +211,7 @@ namespace GraphicEditor.ViewModels
 
                 _isDrawingReflectionLine = true;
                 StartPoint = null;
-                SecondPoint = null;
+                CurrentPoint = null;
                 Debug.WriteLine("Reflection line mode activated.");
             });
             ScaleUpCommand = ReactiveCommand.Create(ScaleUp);
@@ -479,11 +479,11 @@ namespace GraphicEditor.ViewModels
                 StartPoint = point;
                 Debug.WriteLine($"Reflection line start set at: {StartPoint}");
             }
-            else
+            else if (CurrentPoint == null)
             {
                 // Второй клик — задаем конец линии
-                SecondPoint = point;
-                Debug.WriteLine($"Reflection line end set at: {SecondPoint}");
+                CurrentPoint = point;
+                Debug.WriteLine($"Reflection line end set at: {CurrentPoint}");
                 // Создаем временную линию
                 ReflectionFigure();
                 
@@ -587,19 +587,19 @@ namespace GraphicEditor.ViewModels
 
         private void ReflectionFigure()
         {
-            if (StartPoint != null && SecondPoint != null)
+            if (StartPoint != null && CurrentPoint != null)
             {
                 // Создаем временную линию
-                var tempLine = new Line(new Point(StartPoint.X, StartPoint.Y), new Point(SecondPoint.X, SecondPoint.Y), 2);
+                var tempLine = new Line(new Point(StartPoint.X, StartPoint.Y), new Point(CurrentPoint.X, CurrentPoint.Y), 2);
 
                 // Добавляем временную линию в коллекцию фигур для отрисовки
                 _figureService.AddFigure(tempLine);
 
                 //// Обновляем отрисовку, чтобы временная линия появилась на экране
-                FiguresChanged?.Invoke();
+                //FiguresChanged?.Invoke();
 
                 // Вызываем метод отражения, передавая координаты линии
-                SelectedFigure.Reflection(new Point(StartPoint.X, StartPoint.Y), new Point(SecondPoint.X, SecondPoint.Y));
+                SelectedFigure.Reflection(new Point(StartPoint.X, StartPoint.Y), new Point(CurrentPoint.X, CurrentPoint.Y));
 
                 // Удаляем временную линию через 500 мс
                 Task.Delay(500).ContinueWith(_ =>
@@ -611,7 +611,7 @@ namespace GraphicEditor.ViewModels
                 // Сбрасываем состояние
                 _isDrawingReflectionLine = false;
                 StartPoint = null;
-                SecondPoint = null;
+                //CurrentPoint = null;
             }
           
         }

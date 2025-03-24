@@ -67,7 +67,14 @@ namespace GraphicEditor
 
         public IFigure Clone()
         {
-            return new Circle(new Point(Center.X + 50, Center.Y + 50), new Point(PointOnCircle.X + 50, PointOnCircle.Y + 50), StrokeThickness);
+            var clonedCircle = new Circle(
+            new Point(Center.X + 50, Center.Y + 50),
+            new Point(PointOnCircle.X + 50, PointOnCircle.Y + 50),
+            StrokeThickness);
+
+            clonedCircle.Color = this.Color;
+
+            return clonedCircle;
         }
         public double Radius
         {
