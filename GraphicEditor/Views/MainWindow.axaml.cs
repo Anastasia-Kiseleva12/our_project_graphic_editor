@@ -1,8 +1,5 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -11,10 +8,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
-using DynamicData;
 using GraphicEditor.ViewModels;
-using MsBox.Avalonia.Enums;
-using MsBox.Avalonia;
 using System.IO;
 
 namespace GraphicEditor.Views
@@ -473,11 +467,8 @@ namespace GraphicEditor.Views
                     {
                         if (_viewModel.SecondPoint != null)
                         {
-                            // Линия от первой точки ко второй
                             drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.SecondPoint, Brushes.Gray);
-                            // Линия от второй точки к текущей
                             drawer.DrawTemporaryLine(_viewModel.SecondPoint, _viewModel.CurrentPoint, Brushes.Gray);
-                            // Линия от текущей точки к первой
                             drawer.DrawTemporaryLine(_viewModel.CurrentPoint, _viewModel.StartPoint, Brushes.Gray);
                         }
                         else if (_viewModel.StartPoint != null)

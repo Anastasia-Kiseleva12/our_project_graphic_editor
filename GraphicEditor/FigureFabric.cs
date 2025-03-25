@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
-using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 
 namespace GraphicEditor
 {

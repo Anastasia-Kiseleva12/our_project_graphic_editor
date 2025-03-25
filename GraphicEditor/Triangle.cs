@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Linq;
 
 namespace GraphicEditor
 {

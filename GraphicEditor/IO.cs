@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Svg;
-using Svg.Transforms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

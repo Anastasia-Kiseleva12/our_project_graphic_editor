@@ -133,7 +133,6 @@
 				<Menu DockPanel.Dock="Top" >
 					<MenuItem Header="_Файл">
 						<MenuItem Header="_Открыть" Command="{Binding LoadCommand}"/>
-						<MenuItem Header="_Сохранить" Command="{Binding SaveCommand}"/>
 						<MenuItem Header="_Сохранить как..." Command="{Binding SaveAsCommand}"/>
 						<Separator/>
 						<MenuItem Header="_Выйти" Command="{Binding ExitCommand}"/>

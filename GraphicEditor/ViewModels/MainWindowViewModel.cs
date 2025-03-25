@@ -5,19 +5,14 @@ using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using DynamicData;
 using System.Linq;
 using System.IO;
 using Avalonia.Controls;
-using Avalonia.Controls.Chrome;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.ApplicationLifetimes;
 using MsBox.Avalonia;
-using Splat;
-using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Models;
-using Avalonia.Media;
 
 namespace GraphicEditor.ViewModels
 {
@@ -133,7 +128,6 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<Unit, Unit> ReflectionCommand { get; }
         public ReactiveCommand<Unit, Unit> ScaleUpCommand { get; }
         public ReactiveCommand<Unit, Unit> ScaleDownCommand { get; }
-        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveAsCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
@@ -204,7 +198,6 @@ namespace GraphicEditor.ViewModels
 
             CopySelectedFiguresCommand = ReactiveCommand.Create(CopySelectedFigures);
             PasteFiguresCommand = ReactiveCommand.Create(PasteFigures);
-            SaveCommand = ReactiveCommand.Create(Save);
             SaveAsCommand = ReactiveCommand.CreateFromTask(SaveAs);
             LoadCommand = ReactiveCommand.CreateFromTask(Load);
             ExitCommand = ReactiveCommand.CreateFromTask(Exit);
@@ -627,16 +620,6 @@ namespace GraphicEditor.ViewModels
             IsCheckedCircle = false;
             IsCheckedTriangle = false;
         }
-        private void Save()
-        {
-            UnselectFigureCommand.Execute(null).Subscribe();
-            // сохранение файла в корень проекта (временно)
-            string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
-            string filePath = Path.Combine(projectRoot, "test.json");
-            IO.SaveToFile(_figureService.Figures, filePath);
-            _isSaved = true;
-        }
-
        private async Task SaveAs()
         {
             UnselectFigureCommand.Execute(null).Subscribe();
