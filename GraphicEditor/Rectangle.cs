@@ -121,23 +121,32 @@ namespace GraphicEditor
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public void Scale(double dr)
-        {
-            double MinScaleDistance = 10.0;
-            double currentMinDistance = GetMinDistanceFromCenterToVertex();
-            double newMinDistance = currentMinDistance * dr;
-
-            if (newMinDistance < MinScaleDistance)
+            public void Scale(double dr)
             {
-                dr = MinScaleDistance / currentMinDistance;
-            }
+                const double MinScaleDistance = 10.0;
+                const double MinEdgeLength = 10.0;
+                double currentMinDistance = GetMinDistanceFromCenterToVertex();
+                double newMinDistance = currentMinDistance * dr;
 
-            Point center = Center;
-            P1 = new Point(center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
-            P2 = new Point(center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);
-            P3 = new Point(center.X + (P3.X - center.X) * dr, center.Y + (P3.Y - center.Y) * dr);
-            P4 = new Point(center.X + (P4.X - center.X) * dr, center.Y + (P4.Y - center.Y) * dr);
-        }
+                if (newMinDistance < MinScaleDistance)
+                {
+                    dr = MinScaleDistance / currentMinDistance;
+                }
+
+                double newWidth = Width * dr;
+                double newHeight = Height * dr;
+
+                if (dr < 1.0 && newWidth < MinEdgeLength || newHeight < MinEdgeLength)
+                {
+                    return;
+                }
+
+                Point center = Center;
+                P1 = new Point(center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
+                P2 = new Point(center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);
+                P3 = new Point(center.X + (P3.X - center.X) * dr, center.Y + (P3.Y - center.Y) * dr);
+                P4 = new Point(center.X + (P4.X - center.X) * dr, center.Y + (P4.Y - center.Y) * dr);
+            }
 
         public void Reflection(Point a, Point b)
         {

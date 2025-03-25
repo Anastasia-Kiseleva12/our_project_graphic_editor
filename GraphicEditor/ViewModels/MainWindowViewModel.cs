@@ -319,7 +319,9 @@ namespace GraphicEditor.ViewModels
             if (StartPoint == null)
             {
                 StartPoint = point;
+
                 Debug.WriteLine($"Start point set at: {StartPoint}");
+
             }
             else if (SecondPoint == null)
             {
@@ -328,6 +330,13 @@ namespace GraphicEditor.ViewModels
             }
             else
             {
+                if (CalculateDistance(point, StartPoint) < 10 ||
+                    CalculateDistance(point, SecondPoint) < 10)
+                {
+                    Debug.WriteLine("Point is too close to existing points");
+                    return;
+                }
+
                 var pointParameters = new Dictionary<string, Point>
                 {
                     { "P1", StartPoint },
@@ -353,7 +362,13 @@ namespace GraphicEditor.ViewModels
             }
             else
             {
-                // Определяем 4 точки прямоугольника на основе двух кликов
+                // Проверяем, что точки не на одной линии
+                if (Math.Abs(StartPoint.X - point.X) < 5 || Math.Abs(StartPoint.Y - point.Y) < 5)
+                {
+                    // Показываем сообщение об ошибке
+                    Debug.WriteLine("Cannot create rectangle - points are collinear");
+                    return;
+                }
                 var P1 = StartPoint;
                 var P2 = new Point(point.X, StartPoint.Y);
                 var P3 = point;
@@ -522,13 +537,11 @@ namespace GraphicEditor.ViewModels
 
         private void RemoveSelectedFigures()
         {
-            //удаляем все выделенные фигуры
             var selectedFigures = _figureService._selectedFigures.ToList();
             foreach (var figure in selectedFigures)
             {
                 _figureService.RemoveFigure(figure);
             }
-
             FiguresChanged?.Invoke();
         }
         private void RotateFigure()
@@ -536,13 +549,8 @@ namespace GraphicEditor.ViewModels
             double angle = 0;
             if (SelectedFigure != null)
             {
-                // Увеличиваем угол вращения на 10 градусов (можно изменить)
                 angle += 10;
-
-                // Применяем вращение к выбранной фигуре
                 SelectedFigure.Rotate(angle);
-
-                // Вызываем событие для обновления отрисовки
                 FiguresChanged?.Invoke();
             }
         }
@@ -552,13 +560,8 @@ namespace GraphicEditor.ViewModels
             double angle = 0;
             if (SelectedFigure != null)
             {
-                // Увеличиваем угол вращения на 10 градусов (можно изменить)
                 angle -= 10;
-
-                // Применяем вращение к выбранной фигуре
                 SelectedFigure.Rotate(angle);
-
-                // Вызываем событие для обновления отрисовки
                 FiguresChanged?.Invoke();
             }
         }
@@ -567,10 +570,7 @@ namespace GraphicEditor.ViewModels
         {
             if (SelectedFigure == null || StartPoint == null || CurrentPoint == null)
                 return;
-
             SelectedFigure.Reflection(StartPoint, CurrentPoint);
-
-            // Обновляем отрисовку
             FiguresChanged?.Invoke();
 
         }
@@ -578,23 +578,21 @@ namespace GraphicEditor.ViewModels
         {
             if (SelectedFigure != null)
             {
-                // Применяем масштабирование к выбранной фигуре
                 SelectedFigure.Scale(scaleFactor);
-
-                // Вызываем событие для обновления отрисовки
                 FiguresChanged?.Invoke();
             }
         }
 
         public void ScaleUp()
         {
-            ScaleFigure(1.1); // Увеличиваем размер на 10%
+            ScaleFigure(1.1);
         }
 
         public void ScaleDown()
         {
-            ScaleFigure(0.9); // Уменьшаем размер на 10%
+            ScaleFigure(0.9);
         }
+
 
         private double CalculateDistance(Point p1, Point p2)
         {
@@ -616,7 +614,7 @@ namespace GraphicEditor.ViewModels
             foreach (var figure in _copiedFigures)
             {
                 var clonedFigure = figure.Clone();
-                clonedFigure.Move(new Point(10, 10)); // Сдвигаем фигуру для видимости при вставке
+                clonedFigure.Move(new Point(10, 10));
                 _figureService.AddFigure(clonedFigure);
             }
             FiguresChanged?.Invoke();

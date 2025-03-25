@@ -100,24 +100,33 @@ namespace GraphicEditor
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-
         public void Scale(double dr)
         {
-            double MinScaleDistance = 10.0;
+            const double MinScaleDistance = 20.0;
+            const double MinEdgeLength = 10.0;
             double currentMinDistance = GetMinDistanceFromCenterToVertex();
             double newMinDistance = currentMinDistance * dr;
 
-            if (newMinDistance < MinScaleDistance)
+            if (dr < 1 && newMinDistance < MinScaleDistance)
             {
-                dr = MinScaleDistance / currentMinDistance;
+                return;
+            }
+
+            double edge1 = DistanceBetweenPoints(P1, P2) * dr;
+            double edge2 = DistanceBetweenPoints(P2, P3) * dr;
+            double edge3 = DistanceBetweenPoints(P3, P1) * dr;
+
+            if (dr < 1.0 && edge1 < MinEdgeLength || edge2 < MinEdgeLength || edge3 < MinEdgeLength)
+            {
+                return;
             }
 
             Point center = Center;
-
-            P1 = new Point (center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
-            P2 = new Point (center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);
-            P3 = new Point (center.X + (P3.X - center.X) * dr, center.Y + (P3.Y - center.Y) * dr);
+            P1 = new Point(center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
+            P2 = new Point(center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);
+            P3 = new Point(center.X + (P3.X - center.X) * dr, center.Y + (P3.Y - center.Y) * dr);
         }
+
 
         public void Reflection(Point a, Point b)
         {
