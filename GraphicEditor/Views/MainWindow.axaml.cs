@@ -425,6 +425,8 @@ namespace GraphicEditor.Views
             DrawingCanvas.Children.Clear();
             var figures = _viewModel._figureService.Figures;
             var drawer = new Drawer(DrawingCanvas);
+
+            // Отрисовка всех фигур
             foreach (var figure in figures)
             {
                 if (figure.IsSelected)
@@ -435,47 +437,77 @@ namespace GraphicEditor.Views
             }
 
             // Отрисовка временных элементов (если идет создание фигуры)
-            if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle || _viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle)
+            if (_viewModel.CurrentDrawingMode != MainWindowViewModel.DrawingMode.None &&
+                _viewModel.CurrentDrawingMode != MainWindowViewModel.DrawingMode.Dragging &&
+                _viewModel.StartPoint != null)
             {
-                if (_viewModel.StartPoint != null)
-                {
-                    // Отрисовка первой точки
-                    drawer.DrawTemporaryPoint(_viewModel.StartPoint, Brushes.Red);
+                // Отрисовка первой точки
+                drawer.DrawTemporaryPoint(_viewModel.StartPoint, Brushes.Red);
 
-                    // Отрисовка второй точки (если есть)
-                    if (_viewModel.SecondPoint != null)
+                // Отрисовка второй точки (если есть)
+                if (_viewModel.SecondPoint != null)
+                {
+                    drawer.DrawTemporaryPoint(_viewModel.SecondPoint, Brushes.Blue);
+                }
+
+                // Отрисовка текущей точки (если есть)
+                if (_viewModel.CurrentPoint != null)
+                {
+                    // Для треугольника и прямоугольника текущая точка зеленая
+                    var currentPointColor = (_viewModel.CurrentDrawingMode == MainWindowViewModel.DrawingMode.Triangle ||
+                                           _viewModel.CurrentDrawingMode == MainWindowViewModel.DrawingMode.Rectangle)
+                        ? Brushes.Green
+                        : Brushes.Blue;
+
+                    drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, currentPointColor);
+
+                    // Отрисовка временной линии для линии и круга
+                    if (_viewModel.CurrentDrawingMode == MainWindowViewModel.DrawingMode.Line ||
+                        _viewModel.CurrentDrawingMode == MainWindowViewModel.DrawingMode.Circle)
                     {
-                        drawer.DrawTemporaryPoint(_viewModel.SecondPoint, Brushes.Blue);
+                        drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
                     }
 
-                    // Отрисовка текущей точки (если есть)
-                    if (_viewModel.CurrentPoint != null)
+                    // Для треугольника рисуем временные линии
+                    if (_viewModel.CurrentDrawingMode == MainWindowViewModel.DrawingMode.Triangle)
                     {
-                        if (_viewModel.IsDrawingTriangle || _viewModel.IsDrawingRectangle)
+                        if (_viewModel.SecondPoint != null)
                         {
-                            drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Green);
+                            // Линия от первой точки ко второй
+                            drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.SecondPoint, Brushes.Gray);
+                            // Линия от второй точки к текущей
+                            drawer.DrawTemporaryLine(_viewModel.SecondPoint, _viewModel.CurrentPoint, Brushes.Gray);
+                            // Линия от текущей точки к первой
+                            drawer.DrawTemporaryLine(_viewModel.CurrentPoint, _viewModel.StartPoint, Brushes.Gray);
                         }
-                        else
+                        else if (_viewModel.StartPoint != null)
                         {
-                            drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Blue);
-                        }
-
-                        // Отрисовка временной линии для линии и круга
-                        if (_viewModel.IsDrawingLine || _viewModel.IsDrawingCircle)
-                        {
+                            // Если есть только первая точка, рисуем линию к текущей
                             drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
                         }
+                    }
+
+                    // Для прямоугольника рисуем временные линии
+                    if (_viewModel.CurrentDrawingMode == MainWindowViewModel.DrawingMode.Rectangle)
+                    {
+                        var tempP2 = new Point(_viewModel.CurrentPoint.X, _viewModel.StartPoint.Y);
+                        var tempP4 = new Point(_viewModel.StartPoint.X, _viewModel.CurrentPoint.Y);
+
+                        drawer.DrawTemporaryLine(_viewModel.StartPoint, tempP2, Brushes.Gray);
+                        drawer.DrawTemporaryLine(tempP2, _viewModel.CurrentPoint, Brushes.Gray);
+                        drawer.DrawTemporaryLine(_viewModel.CurrentPoint, tempP4, Brushes.Gray);
+                        drawer.DrawTemporaryLine(tempP4, _viewModel.StartPoint, Brushes.Gray);
                     }
                 }
             }
 
-            if (_viewModel.IsDrawingReflectionLine && _viewModel.StartPoint != null && _viewModel.CurrentPoint != null)
+            // Отрисовка линии отражения
+            if (_viewModel.CurrentDrawingMode == MainWindowViewModel.DrawingMode.ReflectionLine &&
+                _viewModel.StartPoint != null &&
+                _viewModel.CurrentPoint != null)
             {
-
                 drawer.DrawTemporaryPoint(_viewModel.StartPoint, Brushes.Red);
-                // Отрисовка временной линии отражения
                 drawer.DrawTemporaryLine(_viewModel.StartPoint, _viewModel.CurrentPoint, Brushes.Gray);
-
                 drawer.DrawTemporaryPoint(_viewModel.CurrentPoint, Brushes.Blue);
             }
         }

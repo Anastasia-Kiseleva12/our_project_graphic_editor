@@ -23,79 +23,37 @@ namespace GraphicEditor.ViewModels
 {
     public class MainWindowViewModel : ReactiveObject
     {
-        private bool _isManualMode; //флаг для переключения режима отрисовки
+        public enum DrawingMode
+        {
+            None,
+            Line,
+            Circle,
+            Triangle,
+            Rectangle,
+            ReflectionLine,
+            Dragging
+        }
+
+        private DrawingMode _currentDrawingMode = DrawingMode.None;
+        public DrawingMode CurrentDrawingMode
+        {
+            get => _currentDrawingMode;
+            set => this.RaiseAndSetIfChanged(ref _currentDrawingMode, value);
+        }
+
+        private bool _isManualMode;
         public bool IsManualMode
         {
             get => _isManualMode;
-            set
-            {
-                Debug.WriteLine($"IsManualMode changed: {value}");
-                this.RaiseAndSetIfChanged(ref _isManualMode, value);
-            }
+            set => this.RaiseAndSetIfChanged(ref _isManualMode, value);
         }
-        private Point? _startPoint; //временная точка для отрисовка
-        private Point? _currentPoint;
 
-        private bool _isDrawingLine;
-        private bool _isDrawingCircle;
-        private bool _isDrawingTriangle;
-        private bool _isDrawingRectangle;
-        private bool _isSaved = false;
-
-        private bool _isDragging; // Флаг перемещения
-        private Point? _dragStartPoint; // Начальная точка перемещения
-        private IFigure _draggedFigure; // Перемещаемая фигура
-
-        private bool _isDrawingReflectionLine;
-
-        public Point? StartPoint
-        {
-            get => _startPoint;
-            set => this.RaiseAndSetIfChanged(ref _startPoint, value);
-        }
+        private Point? _startPoint;
         private Point? _secondPoint;
-        public Point? SecondPoint
-        {
-            get => _secondPoint;
-            set => this.RaiseAndSetIfChanged(ref _secondPoint, value);
-        }
-        public Point? CurrentPoint
-        {
-            get => _currentPoint;
-            set => this.RaiseAndSetIfChanged(ref _currentPoint, value);
-        }
-        private double _currentThickness = 1;
-        public double CurrentThickness
-        {
-            get => _currentThickness;
-            set => this.RaiseAndSetIfChanged(ref _currentThickness, value);
-        }
-        private double _Angle;
-        public double Angle
-        {
-            get => _Angle;
-            set => this.RaiseAndSetIfChanged(ref _Angle, value);
-        }
-        public bool IsDrawingLine
-        {
-            get => _isDrawingLine;
-            set => this.RaiseAndSetIfChanged(ref _isDrawingLine, value);
-        }
-        public bool IsDrawingCircle
-        {
-            get => _isDrawingCircle;
-            set => this.RaiseAndSetIfChanged(ref _isDrawingCircle, value);
-        }
-        public bool IsDrawingTriangle
-        {
-            get => _isDrawingTriangle;
-            set => this.RaiseAndSetIfChanged(ref _isDrawingTriangle, value);
-        }
-        public bool IsDrawingRectangle
-        {
-            get => _isDrawingRectangle;
-            set => this.RaiseAndSetIfChanged(ref _isDrawingRectangle, value);
-        }
+        private Point? _currentPoint;
+        private bool _isSaved = false;
+        private Point? _dragStartPoint;
+        private IFigure _draggedFigure;
 
         private bool _isCheckedLine;
         public bool IsCheckedLine
@@ -103,37 +61,66 @@ namespace GraphicEditor.ViewModels
             get => _isCheckedLine;
             set => this.RaiseAndSetIfChanged(ref _isCheckedLine, value);
         }
-    
-        private bool _isCheckedCircle;
-        public bool IsCheckedCircle
-        {
-            get => _isCheckedCircle;
-            set => this.RaiseAndSetIfChanged(ref _isCheckedCircle, value);
-        }
-        private bool _isCheckedTriangle;
-        public bool IsCheckedTriangle
-        {
-            get => _isCheckedTriangle;
-            set => this.RaiseAndSetIfChanged(ref _isCheckedTriangle, value);
-        }
+
         private bool _isCheckedRectangle;
         public bool IsCheckedRectangle
         {
             get => _isCheckedRectangle;
             set => this.RaiseAndSetIfChanged(ref _isCheckedRectangle, value);
         }
-        public bool IsDrawingReflectionLine
+
+        private bool _isCheckedTriangle;
+        public bool IsCheckedTriangle
         {
-            get => _isDrawingReflectionLine;
-            set => this.RaiseAndSetIfChanged(ref _isDrawingReflectionLine, value);
+            get => _isCheckedTriangle;
+            set => this.RaiseAndSetIfChanged(ref _isCheckedTriangle, value);
         }
+
+        private bool _isCheckedCircle;
+        public bool IsCheckedCircle
+        {
+            get => _isCheckedCircle;
+            set => this.RaiseAndSetIfChanged(ref _isCheckedCircle, value);
+        }
+        public Point? StartPoint
+        {
+            get => _startPoint;
+            set => this.RaiseAndSetIfChanged(ref _startPoint, value);
+        }
+
+        public Point? SecondPoint
+        {
+            get => _secondPoint;
+            set => this.RaiseAndSetIfChanged(ref _secondPoint, value);
+        }
+
+        public Point? CurrentPoint
+        {
+            get => _currentPoint;
+            set => this.RaiseAndSetIfChanged(ref _currentPoint, value);
+        }
+
+        private double _currentThickness = 1;
+        public double CurrentThickness
+        {
+            get => _currentThickness;
+            set => this.RaiseAndSetIfChanged(ref _currentThickness, value);
+        }
+
+        private double _angle;
+        public double Angle
+        {
+            get => _angle;
+            set => this.RaiseAndSetIfChanged(ref _angle, value);
+        }
+
         private bool _isPanelOpen;
         public bool IsPanelOpen
         {
             get => _isPanelOpen;
             set => this.RaiseAndSetIfChanged(ref _isPanelOpen, value);
         }
-        private bool _isSelected;
+
         public ReactiveCommand<Unit, Unit> CreatePolylineCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateCircleCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateTriangleCommand { get; }
@@ -152,26 +139,22 @@ namespace GraphicEditor.ViewModels
         public ReactiveCommand<Unit, Unit> ExitCommand { get; }
         public ReactiveCommand<Unit, Unit> CopySelectedFiguresCommand { get; }
         public ReactiveCommand<Unit, Unit> PasteFiguresCommand { get; }
-        private List<IFigure> _copiedFigures = new List<IFigure>();
 
+        private List<IFigure> _copiedFigures = new List<IFigure>();
         private IFigure _selectedFigure;
         public IFigure SelectedFigure
         {
-
             get => _selectedFigure;
             set
             {
                 Debug.WriteLine($"SelectedFigure changed from {_selectedFigure?.Name} to {value?.Name}");
                 this.RaiseAndSetIfChanged(ref _selectedFigure, value);
-
                 IsPanelOpen = value != null;
                 _isSaved = false;
             }
         }
 
         public FigureService _figureService;
-
-        //событие, которое будет вызываться при изменении коллекции
         public event Action FiguresChanged;
 
         public MainWindowViewModel()
@@ -211,7 +194,7 @@ namespace GraphicEditor.ViewModels
             ReflectionCommand = ReactiveCommand.Create(() =>
             {
 
-                IsDrawingReflectionLine = true;
+                CurrentDrawingMode = DrawingMode.ReflectionLine;
                 StartPoint = null;
                 CurrentPoint = null;
                 Debug.WriteLine("Reflection line mode activated.");
@@ -244,12 +227,11 @@ namespace GraphicEditor.ViewModels
 
 
         }
-        private void CreateDefaultFigure(string figureType, Action<bool> setIsChecked)
+        private void CreateDefaultFigure(string figureType)
         {
             Debug.WriteLine($"Auto mode: Create default {figureType}.");
             var figure = _figureService.CreateDefault(figureType);
             _figureService.AddFigure(figure);
-            setIsChecked(false); // Сбрасываем флаг IsChecked
             _isSaved = false;
         }
         private void CreateFigure(string figureType, Dictionary<string, Point> parameters, Dictionary<string, double> doubleParameters)
@@ -261,34 +243,27 @@ namespace GraphicEditor.ViewModels
         }
         public void HandleCanvasClick(Point point)
         {
-            if (IsDrawingLine)
+            switch (CurrentDrawingMode)
             {
-                HandleLineClick(point);
-                return;
+                case DrawingMode.Line:
+                    HandleLineClick(point);
+                    break;
+                case DrawingMode.Circle:
+                    HandleCircleClick(point);
+                    break;
+                case DrawingMode.Triangle:
+                    HandleTriangleClick(point);
+                    break;
+                case DrawingMode.Rectangle:
+                    HandleRectangleClick(point);
+                    break;
+                case DrawingMode.ReflectionLine:
+                    HandleReflectionLineClick(point);
+                    break;
+                default:
+                    HandleFigureSelection(point);
+                    break;
             }
-
-            if (IsDrawingCircle)
-            {
-                HandleCircleClick(point);
-                return;
-            }
-
-            if (IsDrawingTriangle)
-            {
-                HandleTriangleClick(point);
-                return;
-            }
-            if (IsDrawingRectangle)
-            {
-                HandleRectangleClick(point);
-                return;
-            }
-            if (IsDrawingReflectionLine)
-            {
-                HandleReflectionLineClick(point);
-                return;
-            }
-            HandleFigureSelection(point);
 
         }
         private void HandleLineClick(Point point)
@@ -312,10 +287,7 @@ namespace GraphicEditor.ViewModels
 
                 CreateFigure("Line", pointParameters, doubleParameters);
 
-                IsDrawingLine = false;
-                StartPoint = null;
-                CurrentPoint = null;
-                IsCheckedLine = false;
+                ResetDrawingState();
             }
         }
 
@@ -339,10 +311,7 @@ namespace GraphicEditor.ViewModels
                 };
                 CreateFigure("Circle", pointParameters, doubleParameters);
 
-                IsDrawingCircle = false;
-                StartPoint = null;
-                CurrentPoint = null;
-                IsCheckedCircle = false;
+                ResetDrawingState();
             }
         }
 
@@ -372,11 +341,7 @@ namespace GraphicEditor.ViewModels
                 };
                 CreateFigure("Triangle", pointParameters, doubleParameters);
 
-                IsDrawingTriangle = false;
-                StartPoint = null;
-                SecondPoint = null;
-                CurrentPoint = null;
-                IsCheckedTriangle = false;
+                ResetDrawingState();
             }
         }
 
@@ -410,10 +375,7 @@ namespace GraphicEditor.ViewModels
 
                 CreateFigure("Rectangle", pointParameters, doubleParameters);
 
-                IsDrawingRectangle = false;
-                StartPoint = null;
-                CurrentPoint = null;
-                IsCheckedRectangle = false;
+                ResetDrawingState();
             }
         }
 
@@ -428,8 +390,7 @@ namespace GraphicEditor.ViewModels
                 if (_selectedFigure == figure)
                 {
                     // Если фигура уже выделена, начинаем перемещение
-                    _isDragging = true;
-                    _isSelected = true;
+                    CurrentDrawingMode = DrawingMode.Dragging;
                     _dragStartPoint = point;
                     _draggedFigure = figure;
                 }
@@ -451,33 +412,34 @@ namespace GraphicEditor.ViewModels
         }
         public void HandleCanvasMove(Point point)
         {
-            if (IsDrawingReflectionLine && StartPoint != null)
+            if (CurrentDrawingMode == DrawingMode.ReflectionLine && StartPoint != null)
             {
                 CurrentPoint = point;
                 FiguresChanged?.Invoke();
             }
-            else if (IsDrawingLine || IsDrawingCircle || IsDrawingTriangle)
+            else if (CurrentDrawingMode is DrawingMode.Line or DrawingMode.Circle or DrawingMode.Triangle or DrawingMode.Rectangle)
             {
                 CurrentPoint = point;
             }
-            else if (_isDragging && _draggedFigure != null && _dragStartPoint != null)
+            else if (CurrentDrawingMode == DrawingMode.Dragging && _draggedFigure != null && _dragStartPoint != null)
             {
                 var deltaX = point.X - _dragStartPoint.X;
                 var deltaY = point.Y - _dragStartPoint.Y;
                 var vector = new Point(deltaX, deltaY);
 
                 _draggedFigure.Move(vector);
-
                 _dragStartPoint = point;
-
                 FiguresChanged?.Invoke();
             }
         }
         public void HandleCanvasRelease()
         {
-            _isDragging = false;
-            _dragStartPoint = null;
-            _draggedFigure = null;
+            if (CurrentDrawingMode == DrawingMode.Dragging)
+            {
+                CurrentDrawingMode = DrawingMode.None;
+                _dragStartPoint = null;
+                _draggedFigure = null;
+            }
         }
         private async void HandleReflectionLineClick(Point point)
         {
@@ -494,70 +456,68 @@ namespace GraphicEditor.ViewModels
 
                 await Task.Delay(100);
 
-                StartPoint = null;
-                CurrentPoint = null;
-                IsDrawingReflectionLine = false;
+                ResetDrawingState();
+                CurrentDrawingMode = DrawingMode.None;
             }
         }
 
         private void CreateLine()
         {
-            ResetAllDrawingStates();
+            ResetDrawingState();
             if (IsManualMode)
             {
-                CreateDefaultFigure("Line", value => IsCheckedLine = value);
+                CreateDefaultFigure("Line");
             }
             else
             {
-                IsDrawingLine = true;
+                CurrentDrawingMode = DrawingMode.Line;
                 IsCheckedLine = true;
-                _startPoint = null;
+                StartPoint = null;
             }
         }
 
         private void CreateCircle()
         {
-            ResetAllDrawingStates();
+            ResetDrawingState();
             if (IsManualMode)
             {
-                CreateDefaultFigure("Circle", value => IsCheckedCircle = value);
+                CreateDefaultFigure("Circle");
             }
             else
             {
-                IsDrawingCircle = true;
+                CurrentDrawingMode = DrawingMode.Circle;
                 IsCheckedCircle = true;
-                _startPoint = null;
+                StartPoint = null;
             }
         }
 
         private void CreateTriangle()
         {
-            ResetAllDrawingStates();
+            ResetDrawingState();
             if (IsManualMode)
             {
-                CreateDefaultFigure("Triangle", value => IsCheckedTriangle = value);
+                CreateDefaultFigure("Triangle");
             }
             else
             {
-                IsDrawingTriangle = true;
+                CurrentDrawingMode = DrawingMode.Triangle;
                 IsCheckedTriangle = true;
-                _startPoint = null;
+                StartPoint = null;
             }
         }
 
         private void CreateRectangle()
         {
-            ResetAllDrawingStates();
+            ResetDrawingState();
             if (IsManualMode)
             {
-
-                CreateDefaultFigure("Rectangle", value => IsCheckedRectangle = value);
+                CreateDefaultFigure("Rectangle");
             }
             else
             {
-                IsDrawingRectangle = true;
+                CurrentDrawingMode = DrawingMode.Rectangle;
                 IsCheckedRectangle = true;
-                _startPoint = null;
+                StartPoint = null;
             }
         }
 
@@ -655,22 +615,17 @@ namespace GraphicEditor.ViewModels
             }
             FiguresChanged?.Invoke();
         }
-        private void ResetAllDrawingStates()
+        private void ResetDrawingState()
         {
-            IsDrawingLine = false;
-            IsDrawingCircle = false;
-            IsDrawingTriangle = false;
-            IsDrawingRectangle = false;
-            IsDrawingReflectionLine = false;
+            CurrentDrawingMode = DrawingMode.None;
+            StartPoint = null;
+            SecondPoint = null;
+            CurrentPoint = null;
 
+            IsCheckedRectangle = false;
             IsCheckedLine = false;
             IsCheckedCircle = false;
             IsCheckedTriangle = false;
-            IsCheckedRectangle = false;
-
-            StartPoint = null;
-            CurrentPoint = null;
-            SecondPoint = null;
         }
         private void Save()
         {
