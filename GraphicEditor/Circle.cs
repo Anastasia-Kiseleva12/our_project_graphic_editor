@@ -56,12 +56,6 @@ namespace GraphicEditor
             Center += vector;
             PointOnCircle += vector;
         }
-
-        public bool ContainsPoint(Point point)
-        {
-            double distance = Math.Sqrt(Math.Pow(point.X - Center.X, 2) + Math.Pow(point.Y - Center.Y, 2));
-            return distance <= Radius;
-        }
         public void Scale(double dr) => PointOnCircle = new Point(Center.X + (PointOnCircle.X - Center.X) * dr, Center.Y + (PointOnCircle.Y - Center.Y) * dr);
 
         public IFigure Clone()
@@ -126,8 +120,6 @@ namespace GraphicEditor
 
         public void Rotate(double angle)
         {
-            Debug.WriteLine($"Rotate method called with angle: {angle}");
-
             // Переводим угол в радианы
             double radians = -angle * Math.PI / 180.0;
 

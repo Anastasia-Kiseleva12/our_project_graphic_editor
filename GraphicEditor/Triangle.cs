@@ -134,10 +134,6 @@ namespace GraphicEditor
             return (a > -eps && b > -eps && c > -eps) || (a < eps && b < eps && c < eps);
         }
 
-        public IFigure Intersect(IFigure other) => throw new NotImplementedException();
-        public IFigure Union(IFigure other) => throw new NotImplementedException();
-        public IFigure Subtract(IFigure other) => throw new NotImplementedException();
-
         public void Draw(IDrawing drawing, double Angle)
         {
             drawing.DrawTriangle(IsSelected,  P1, P2, P3, StrokeThickness, Color, Angle);

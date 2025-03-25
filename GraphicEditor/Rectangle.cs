@@ -203,8 +203,5 @@ namespace GraphicEditor
         }
         public double Width => Math.Abs(P2.X - P1.X);
         public double Height => Math.Abs(P3.Y - P1.Y);
-        public IFigure Intersect(IFigure other) => throw new NotImplementedException();
-        public IFigure Union(IFigure other) => throw new NotImplementedException();
-        public IFigure Subtract(IFigure other) => throw new NotImplementedException();
     }
 }
