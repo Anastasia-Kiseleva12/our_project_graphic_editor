@@ -71,6 +71,7 @@ namespace GraphicEditor
             P2 += vector;
             P3 += vector;
         }
+        
         public void Rotate(double angle)
         {
             double radians = -angle * Math.PI / 180;
@@ -83,8 +84,34 @@ namespace GraphicEditor
             P3 = new Point(center.X + (P3.X - center.X) * cos - (P3.Y - center.Y) * sin, center.Y + (P3.X - center.X) * sin + (P3.Y - center.Y) * cos);
         }
 
+        public double GetMinDistanceFromCenterToVertex()
+        {
+            double distanceToP1 = DistanceBetweenPoints(Center, P1);
+            double distanceToP2 = DistanceBetweenPoints(Center, P2);
+            double distanceToP3 = DistanceBetweenPoints(Center, P3);
+
+            return Math.Min(distanceToP1, Math.Min(distanceToP2, distanceToP3));
+        }
+
+        private double DistanceBetweenPoints(Point a, Point b)
+        {
+            double dx = a.X - b.X;
+            double dy = a.Y - b.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
+
         public void Scale(double dr)
         {
+            double MinScaleDistance = 20.0;
+            double currentMinDistance = GetMinDistanceFromCenterToVertex();
+            double newMinDistance = currentMinDistance * dr;
+
+            if (newMinDistance < MinScaleDistance)
+            {
+                dr = MinScaleDistance / currentMinDistance;
+            }
+
             Point center = Center;
 
             P1 = new Point (center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);

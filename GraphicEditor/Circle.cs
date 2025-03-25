@@ -56,7 +56,24 @@ namespace GraphicEditor
             Center += vector;
             PointOnCircle += vector;
         }
-        public void Scale(double dr) => PointOnCircle = new Point(Center.X + (PointOnCircle.X - Center.X) * dr, Center.Y + (PointOnCircle.Y - Center.Y) * dr);
+
+        
+        public void Scale(double dr)
+        {
+            double MinScaleDistance = 20.0;
+            double currentRadius = Radius;
+            double newRadius = currentRadius * dr;
+
+            if (newRadius < MinScaleDistance)
+            {
+                dr = MinScaleDistance / currentRadius;
+            }
+
+            PointOnCircle = new Point(
+                Center.X + (PointOnCircle.X - Center.X) * dr,
+                Center.Y + (PointOnCircle.Y - Center.Y) * dr
+            );
+        }
 
         public IFigure Clone()
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Diagnostics;
 
 namespace GraphicEditor
 {
@@ -68,8 +69,32 @@ namespace GraphicEditor
             Start = new Point (center.X + (Start.X - center.X) * cosA - (Start.Y - center.Y) * sinA, center.Y + (Start.X - center.X) * sinA + (Start.Y - center.Y) * cosA);
             End = new Point (center.X + (End.X - center.X) * cosA - (End.Y - center.Y) * sinA, center.Y + (End.X - center.X) * sinA + (End.Y - center.Y) * cosA);
         }
+        public double GetMinDistanceFromCenterToEnd()
+        {
+            Point center = Center;
+            double d1 = DistanceBetweenPoints(center, Start);
+            double d2 = DistanceBetweenPoints(center, End);
+
+            return Math.Min(d1, d2);
+        }
+        private double DistanceBetweenPoints(Point a, Point b)
+        {
+            double dx = a.X - b.X;
+            double dy = a.Y - b.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
         public void Scale(double dr)
         {
+            double MinScaleDistance = 20.0;
+            double currentMinDistance = GetMinDistanceFromCenterToEnd();
+            double newMinDistance = currentMinDistance * dr;
+
+            if (newMinDistance < MinScaleDistance)
+            {
+                dr = MinScaleDistance / currentMinDistance;
+                Debug.WriteLine("Достигнут минимальный размер линии");
+            }
+
             Start = new Point (Center.X + (Start.X - Center.X) * dr, Center.Y + (Start.Y - Center.Y) * dr);
             End = new Point (Center.X + (End.X - Center.X) * dr, Center.Y + (End.Y - Center.Y) * dr);
         }

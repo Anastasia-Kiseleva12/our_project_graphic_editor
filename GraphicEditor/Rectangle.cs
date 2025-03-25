@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GraphicEditor
@@ -102,8 +103,35 @@ namespace GraphicEditor
             );
         }
 
+        public double GetMinDistanceFromCenterToVertex()
+        {
+            Point center = Center;
+            double d1 = DistanceBetweenPoints(center, P1);
+            double d2 = DistanceBetweenPoints(center, P2);
+            double d3 = DistanceBetweenPoints(center, P3);
+            double d4 = DistanceBetweenPoints(center, P4);
+
+            return Math.Min(Math.Min(d1, d2), Math.Min(d3, d4));
+        }
+
+        private double DistanceBetweenPoints(Point a, Point b)
+        {
+            double dx = a.X - b.X;
+            double dy = a.Y - b.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
         public void Scale(double dr)
         {
+            double MinScaleDistance = 20.0;
+            double currentMinDistance = GetMinDistanceFromCenterToVertex();
+            double newMinDistance = currentMinDistance * dr;
+
+            if (newMinDistance < MinScaleDistance)
+            {
+                dr = MinScaleDistance / currentMinDistance;
+            }
+
             Point center = Center;
             P1 = new Point(center.X + (P1.X - center.X) * dr, center.Y + (P1.Y - center.Y) * dr);
             P2 = new Point(center.X + (P2.X - center.X) * dr, center.Y + (P2.Y - center.Y) * dr);
