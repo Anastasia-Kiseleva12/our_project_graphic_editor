@@ -153,8 +153,12 @@ namespace GraphicEditor
             double minY = Math.Min(Math.Min(P1.Y, P2.Y), Math.Min(P3.Y, P4.Y));
             double maxY = Math.Max(Math.Max(P1.Y, P2.Y), Math.Max(P3.Y, P4.Y));
 
-            return point.X >= minX - eps && point.X <= maxX + eps &&
-                   point.Y >= minY - eps && point.Y <= maxY + eps;
+            bool nearLeftEdge = Math.Abs(point.X - minX) <= eps && point.Y >= minY && point.Y <= maxY;
+            bool nearRightEdge = Math.Abs(point.X - maxX) <= eps && point.Y >= minY && point.Y <= maxY;
+            bool nearTopEdge = Math.Abs(point.Y - minY) <= eps && point.X >= minX && point.X <= maxX;
+            bool nearBottomEdge = Math.Abs(point.Y - maxY) <= eps && point.X >= minX && point.X <= maxX;
+
+            return nearLeftEdge || nearRightEdge || nearTopEdge || nearBottomEdge;
         }
 
         public void Draw(IDrawing drawing, double Angle)

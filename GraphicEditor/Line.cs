@@ -93,12 +93,22 @@ namespace GraphicEditor
             clonedLine.Color = this.Color;
             return clonedLine;
         }
-        public bool IsIn(Point point, double tolerance = 5)
+        public bool IsIn(Point point, double eps)
         {
-            double distance = Math.Abs((End.Y - Start.Y) * point.X - (End.X - Start.X) * point.Y + End.X * Start.Y - End.Y * Start.X) / Math.Sqrt(Math.Pow(End.Y - Start.Y, 2) + Math.Pow(End.X - Start.X, 2));
-            return distance <= tolerance && point.X >= Math.Min(Start.X, End.X) - tolerance && point.X <= Math.Max(Start.X, End.X) + tolerance &&
-                   point.Y >= Math.Min(Start.Y, End.Y) - tolerance && point.Y <= Math.Max(Start.Y, End.Y) + tolerance;
+            double dx = End.X - Start.X;
+            double dy = End.Y - Start.Y;
+            double lengthSquared = dx * dx + dy * dy;
+            double t = ((point.X - Start.X) * dx + (point.Y - Start.Y) * dy) / lengthSquared;
+            if (t < 0 || t > 1)
+                return false;
+            double closestX = Start.X + t * dx;
+            double closestY = Start.Y + t * dy;
+            double distance = Math.Sqrt((point.X - closestX) * (point.X - closestX) +
+                                        (point.Y - closestY) * (point.Y - closestY));
+            return distance <= (eps + StrokeThickness / 2);
         }
+
+
 
         public void Draw(IDrawing drawing, double Angle)
         {

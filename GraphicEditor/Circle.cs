@@ -92,13 +92,14 @@ namespace GraphicEditor
 
         public bool IsIn(Point point, double eps)
         {
-
-            double radius = Math.Sqrt(Math.Pow(PointOnCircle.X - Center.X, 2) + Math.Pow(PointOnCircle.Y - Center.Y, 2));
-
+            double radius = Radius;
             double distance = Math.Sqrt(Math.Pow(point.X - Center.X, 2) + Math.Pow(point.Y - Center.Y, 2));
-
-            return Math.Abs(distance - radius) <= eps;
+            double ringThickness = StrokeThickness * 0.4;
+            double innerRadius = radius - ringThickness / 2 - eps;
+            double outerRadius = radius + ringThickness / 2 + eps;
+            return distance >= innerRadius && distance <= outerRadius;
         }
+
 
         public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
         {
