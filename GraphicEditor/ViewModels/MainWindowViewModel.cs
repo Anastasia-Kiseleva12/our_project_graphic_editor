@@ -195,33 +195,13 @@ namespace GraphicEditor.ViewModels
                 });
 
 
-            CreatePolylineCommand = ReactiveCommand.Create(() =>
-            {
-                ResetAllDrawingStates();
-                _isDrawingLine = !_isDrawingLine;
-                _isCheckedLine = _isDrawingLine;
-            });
+            CreatePolylineCommand = ReactiveCommand.Create(CreateLine);
 
-            CreateCircleCommand = ReactiveCommand.Create(() =>
-            {
-                ResetAllDrawingStates();
-                _isDrawingCircle = !_isDrawingCircle;
-                _isCheckedCircle = _isDrawingCircle;
-            });
+            CreateCircleCommand = ReactiveCommand.Create(CreateCircle);
 
-            CreateTriangleCommand = ReactiveCommand.Create(() =>
-            {
-                ResetAllDrawingStates();
-                _isDrawingTriangle = !_isDrawingTriangle;
-                _isCheckedTriangle = _isDrawingTriangle;
-            });
+            CreateTriangleCommand = ReactiveCommand.Create(CreateTriangle);
 
-            CreateRectangleCommand = ReactiveCommand.Create(() =>
-            {
-                ResetAllDrawingStates();
-                _isDrawingRectangle = !_isDrawingRectangle;
-                _isCheckedRectangle = _isDrawingRectangle;
-            });
+            CreateRectangleCommand = ReactiveCommand.Create(CreateRectangle);
 
             RemoveSelectedFiguresCommand = ReactiveCommand.Create(RemoveSelectedFigures);
 
