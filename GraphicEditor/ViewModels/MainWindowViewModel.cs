@@ -660,6 +660,7 @@ namespace GraphicEditor.ViewModels
                         IO.SaveToSvg(_figureService.Figures, filePath);
                         break;
                     case ".png":
+                        HandleCanvasClick(new Point(-1000000, -1000000));
                         IO.SaveToPng(filePath);
                         break;
                     default:
