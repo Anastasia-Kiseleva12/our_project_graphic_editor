@@ -490,7 +490,7 @@ namespace GraphicEditor.Views
 
         private void OpenDocumentation(object sender, RoutedEventArgs e)
         {
-            string projectRoot = System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\");
+            string projectRoot = System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Documentation\");
             string filePath = System.IO.Path.Combine(projectRoot, "Documentation.docx");
 
             try

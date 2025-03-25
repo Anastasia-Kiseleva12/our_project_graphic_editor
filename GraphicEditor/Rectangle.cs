@@ -66,7 +66,7 @@ namespace GraphicEditor
 
         public bool IsSelected { get; set; }
         public double StrokeThickness { get; set; } = 2;
-        public uint Color { get; set; } = unchecked(0xFF000000);
+        public uint Color { get; set; } = unchecked(0xffffff);
 
         public void SetColor(byte a, byte r, byte g, byte b)
         {

@@ -194,14 +194,34 @@ namespace GraphicEditor.ViewModels
                     }
                 });
 
-  
-            CreatePolylineCommand = ReactiveCommand.Create(CreateLine);
 
-            CreateCircleCommand = ReactiveCommand.Create(CreateCircle);
+            CreatePolylineCommand = ReactiveCommand.Create(() =>
+            {
+                ResetAllDrawingStates();
+                _isDrawingLine = !_isDrawingLine;
+                _isCheckedLine = _isDrawingLine;
+            });
 
-            CreateTriangleCommand = ReactiveCommand.Create(CreateTriangle);
+            CreateCircleCommand = ReactiveCommand.Create(() =>
+            {
+                ResetAllDrawingStates();
+                _isDrawingCircle = !_isDrawingCircle;
+                _isCheckedCircle = _isDrawingCircle;
+            });
 
-            CreateRectangleCommand = ReactiveCommand.Create(CreateRectangle);
+            CreateTriangleCommand = ReactiveCommand.Create(() =>
+            {
+                ResetAllDrawingStates();
+                _isDrawingTriangle = !_isDrawingTriangle;
+                _isCheckedTriangle = _isDrawingTriangle;
+            });
+
+            CreateRectangleCommand = ReactiveCommand.Create(() =>
+            {
+                ResetAllDrawingStates();
+                _isDrawingRectangle = !_isDrawingRectangle;
+                _isCheckedRectangle = _isDrawingRectangle;
+            });
 
             RemoveSelectedFiguresCommand = ReactiveCommand.Create(RemoveSelectedFigures);
 
@@ -502,45 +522,52 @@ namespace GraphicEditor.ViewModels
 
         private void CreateLine()
         {
+            ResetAllDrawingStates();
             if (IsManualMode)
             {
                 CreateDefaultFigure("Line", value => IsCheckedLine = value);
             }
             else
             {
-                _isDrawingLine = !_isDrawingLine;
+                IsDrawingLine = true;
+                IsCheckedLine = true;
                 _startPoint = null;
             }
         }
 
         private void CreateCircle()
         {
+            ResetAllDrawingStates();
             if (IsManualMode)
             {
                 CreateDefaultFigure("Circle", value => IsCheckedCircle = value);
             }
             else
             {
-                _isDrawingCircle = !_isDrawingCircle;
+                IsDrawingCircle = true;
+                IsCheckedCircle = true;
                 _startPoint = null;
             }
         }
 
         private void CreateTriangle()
         {
+            ResetAllDrawingStates();
             if (IsManualMode)
             {
                 CreateDefaultFigure("Triangle", value => IsCheckedTriangle = value);
             }
             else
             {
-                _isDrawingTriangle = !_isDrawingTriangle;
+                IsDrawingTriangle = true;
+                IsCheckedTriangle = true;
                 _startPoint = null;
             }
         }
 
         private void CreateRectangle()
         {
+            ResetAllDrawingStates();
             if (IsManualMode)
             {
 
@@ -548,7 +575,8 @@ namespace GraphicEditor.ViewModels
             }
             else
             {
-                _isDrawingRectangle = !_isDrawingRectangle;
+                IsDrawingRectangle = true;
+                IsCheckedRectangle = true;
                 _startPoint = null;
             }
         }
@@ -646,6 +674,23 @@ namespace GraphicEditor.ViewModels
                 _figureService.AddFigure(clonedFigure);
             }
             FiguresChanged?.Invoke();
+        }
+        private void ResetAllDrawingStates()
+        {
+            IsDrawingLine = false;
+            IsDrawingCircle = false;
+            IsDrawingTriangle = false;
+            IsDrawingRectangle = false;
+            IsDrawingReflectionLine = false;
+
+            IsCheckedLine = false;
+            IsCheckedCircle = false;
+            IsCheckedTriangle = false;
+            IsCheckedRectangle = false;
+
+            StartPoint = null;
+            CurrentPoint = null;
+            SecondPoint = null;
         }
         private void Save()
         {

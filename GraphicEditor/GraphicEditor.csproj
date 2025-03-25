@@ -18,6 +18,11 @@
     <None Remove="Models\**" />
   </ItemGroup>
 
+	<ItemGroup>
+		<EmbeddedResource Include="Documentation\Documentation.docx">
+			<LogicalName>Documentation.docx</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AnimatedImage.Avalonia" Version="2.0.0" />
