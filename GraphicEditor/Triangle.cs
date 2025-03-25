@@ -103,7 +103,7 @@ namespace GraphicEditor
 
         public void Scale(double dr)
         {
-            double MinScaleDistance = 20.0;
+            double MinScaleDistance = 10.0;
             double currentMinDistance = GetMinDistanceFromCenterToVertex();
             double newMinDistance = currentMinDistance * dr;
 

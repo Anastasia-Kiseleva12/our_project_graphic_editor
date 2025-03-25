@@ -236,6 +236,12 @@ namespace GraphicEditor.ViewModels
         }
         public void HandleCanvasClick(Point point)
         {
+            if (StartPoint != null && CalculateDistance(StartPoint, point) < 20)
+                return;
+
+            if (SecondPoint != null && CalculateDistance(SecondPoint, point) < 20)
+                return;
+
             switch (CurrentDrawingMode)
             {
                 case DrawingMode.Line:
@@ -588,6 +594,13 @@ namespace GraphicEditor.ViewModels
         public void ScaleDown()
         {
             ScaleFigure(0.9); // Уменьшаем размер на 10%
+        }
+
+        private double CalculateDistance(Point p1, Point p2)
+        {
+            double dx = p1.X - p2.X;
+            double dy = p1.Y - p2.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
         }
         private void CopySelectedFigures()
         {
