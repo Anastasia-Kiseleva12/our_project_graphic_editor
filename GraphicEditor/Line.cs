@@ -105,10 +105,8 @@ namespace GraphicEditor
             double closestY = Start.Y + t * dy;
             double distance = Math.Sqrt((point.X - closestX) * (point.X - closestX) +
                                         (point.Y - closestY) * (point.Y - closestY));
-            return distance <= (eps + StrokeThickness / 2);
+            return distance <= (eps * 0.1 + StrokeThickness / 2);
         }
-
-
 
         public void Draw(IDrawing drawing, double Angle)
         {
