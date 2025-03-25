@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphicEditor
 {
@@ -10,52 +7,54 @@ namespace GraphicEditor
     {
         public double X { get; set; }
         public double Y { get; set; }
+        public Point(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+        public static Point operator +(Point a, Point b) => new Point(a.X + b.X, a.Y + b.Y);
+        public static Point operator -(Point a, Point b) => new Point(a.X - b.X, a.Y - b.Y);
     }
 
     public interface IDrawing
     {
-        void DrawLine(Point a, Point b);
-        void DrawCircle(Point Center, double r);
+        void DrawLine(bool selected, Point a, Point b, double strokeThickness, uint Color, double Angle);
+        void DrawCircle(bool selected, Point Center, double r, Point PointOnCircle, double strokeThickness, uint Color, double Angle);
+        void DrawTriangle(bool IsSelected, Point Point1, Point Point2, Point Point3, double strokeThickness, uint Color, double Angle);
+        void DrawRectangle(bool IsSelected, Point P1, Point P2, Point P3, Point P4, double strokeThickness, uint Color, double Angle);
     }
-    public interface IDrawingFigure
-    {
-
-    }
-
     public interface IFigure
     {
         void Move(Point vector);
-        void Rotate(Point center, double angle);
+        void Rotate(double angle);
         Point Center { get; }
         string Id { get; }
+        string Name { get; }
+        uint Color { get; set; }
 
-        void Scale(double dx, double dy);
-        void Scale(Point center, double dr);
+        bool IsSelected { get; set; }
+        public double StrokeThickness { get; set; }
+        void SetColor(byte a, byte r, byte g, byte b);
+        void Scale(double dr);
         void Reflection(Point a, Point b);
         IFigure Clone();
-        void Draw(IDrawing drawing);
+        void Draw(IDrawing drawing, double Angle);
         bool IsIn(Point point, double eps);
-        IFigure Intersect(IFigure other);
-        IFigure Union(IFigure other);
-        IFigure Subtract(IFigure other);
-        void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
-
+        Point GetPointParameter(string parameterName);
+        double GetDoubleParameter(string parameterName);
     }
 
     public interface ILogic
     {
         IEnumerable<IFigure> Figures { get; } //список всех фигур
-        void Save(string FilePath, string FileFormat);
-        void Load(string FilePath, string FileFormat);
-        IEnumerable<string> FigureNamesToCreate { get; } //список имен фигур доступных для создания
         IEnumerable<(string, Type)> GetParameters(string figure);
-        IFigure Create(string name, IDictionary<string, object> parameters);
+        public IFigure Create(string name, IDictionary<string, Point> parameters, IDictionary<string, double> doubleparameters);
+        public IFigure CreateDefault(string name);
         void AddFigure(IFigure figure);
         void RemoveFigure(IFigure figure);
         IFigure Find(Point p, double eps);
 
         void Select(IFigure f);
         void UnSelect(IFigure f);
-        IEnumerable<IFigure> Selected();
     }
 }

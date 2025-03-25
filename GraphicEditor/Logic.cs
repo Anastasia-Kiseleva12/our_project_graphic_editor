@@ -1,22 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia.Controls.Shapes;
 
 using DynamicData;
 
 namespace GraphicEditor
 {
-    public class FigureService 
+    public class FigureService: ILogic
     {
-        public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Id); // Все фигуры
-        private readonly HashSet<IFigure> _selectedFigures = new(); // Выбранные фигуры
+        public readonly SourceCache<IFigure,string> _figures = new(fig=>fig.Id); //Все фигуры
+        public readonly HashSet<IFigure> _selectedFigures = new(); //Выбранные фигуры
 
         public IEnumerable<IFigure> Figures => _figures.Items;
-
-        public IEnumerable<string> FigureNamesToCreate => FigureFabric.AvailableFigures; //список всех доступных имен фигур
 
         public void AddFigure(IFigure figure)
         {
@@ -24,7 +19,7 @@ namespace GraphicEditor
             _figures.AddOrUpdate(figure);
         }
 
-        public void RemoveFigure(IFigure figure)
+        public void RemoveFigure(IFigure figure)// удаление
         {
             if (figure == null) return;
             _figures.Remove(figure);
@@ -38,8 +33,18 @@ namespace GraphicEditor
                 throw new ArgumentException($"Фигура с именем {name} не найдена.", nameof(name));
             }
 
-            var figure = FigureFabric.CreateFigure(name);
-            figure.SetParameters(doubleparameters, parameters);        
+            var figure = FigureFabric.CreateFigure(name,doubleparameters, parameters);        
+
+            return figure;
+        }
+        public IFigure CreateDefault(string name)
+        {
+            if (!FigureFabric.AvailableFigures.Contains(name))
+            {
+                throw new ArgumentException($"Фигура с именем {name} не найдена.", nameof(name));
+            }
+
+            var figure = FigureFabric.CreateFigureDefault(name);
 
             return figure;
         }
@@ -55,30 +60,32 @@ namespace GraphicEditor
             throw new NotImplementedException();
         }
 
-        public void Load(string FilePath, string FileFormat)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public void Save(string FilePath, string FileFormat)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Select(IFigure f)
         {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<IFigure> Selected()
-        {
-            throw new NotImplementedException();
+            if (f == null) throw new ArgumentNullException(nameof(f));
+            f.IsSelected = true;
+            _selectedFigures.Add(f);
         }
 
         public void UnSelect(IFigure f)
         {
-            throw new NotImplementedException();
+            if (f == null)
+            {
+                //Снимаем выделение со всех фигур
+                foreach (var figure in _selectedFigures)
+                {
+                    figure.IsSelected = false;
+                }
+                _selectedFigures.Clear();
+            }
+            else
+            {
+                if (_selectedFigures.Contains(f)) //Проверяем что фигура была выделена
+                {
+                    f.IsSelected = false;
+                    _selectedFigures.Remove(f);
+                }
+            }
         }
     }
 }

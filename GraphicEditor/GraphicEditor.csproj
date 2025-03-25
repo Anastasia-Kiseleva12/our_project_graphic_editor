@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\Img\" />
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
@@ -19,9 +18,16 @@
     <None Remove="Models\**" />
   </ItemGroup>
 
+	<ItemGroup>
+		<EmbeddedResource Include="Documentation\Documentation.docx">
+			<LogicalName>Documentation.docx</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AnimatedImage.Avalonia" Version="2.0.0" />
     <PackageReference Include="Avalonia" Version="11.0.6" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.6" />
     <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.6" />
@@ -29,6 +35,9 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6" />
     <PackageReference Include="DynamicData" Version="9.1.2" />
+    <PackageReference Include="MessageBox.Avalonia" Version="3.1.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Svg" Version="3.4.7" />
     <PackageReference Include="System.Composition.AttributedModel" Version="9.0.2" />
     <PackageReference Include="System.Composition.TypedParts" Version="9.0.2" />
   </ItemGroup>

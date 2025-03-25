@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:anim="https://github.com/whistyun/AnimatedImage.Avalonia"
+		xmlns:local="clr-namespace:GraphicEditor.ViewModels"
+		mc:Ignorable="d" d:DesignWidth="1300" d:DesignHeight="700"
+		Height="700"		Width="1300"
+		x:Class="GraphicEditor.HelpWindow"
+		x:DataType="local:HelpWindowViewModel"
+		Icon="/Assets/help.ico"
+		Title="Помощь">
+
+	<Window.DataContext>
+		<local:HelpWindowViewModel/>
+	</Window.DataContext>
+
+	<Grid Background="WhiteSmoke">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="5.5*"/>
+		</Grid.ColumnDefinitions>
+
+		<TreeView Name="HelpTreeView" Grid.Column="0" 
+				  Background="Gray" Margin="0"
+                  SelectionChanged="HelpTreeView_SelectionChanged">
+			<TreeViewItem Header="Создание фигур" Margin="0 10 0 0">
+				<TreeViewItem Header="Автоматическое" Tag="auto"/>
+				<TreeViewItem Header="Линия" Tag="line"/>
+				<TreeViewItem Header="Квадрат" Tag="rectangle"/>
+				<TreeViewItem Header="Треугольник" Tag="triangle"/>
+				<TreeViewItem Header="Круг" Tag="circle"/>
+			</TreeViewItem>
+
+			<TreeViewItem Header="Работа с фигурами">
+				<TreeViewItem Header="Перемещение" Tag="move"/>
+				<TreeViewItem Header="Удаление" Tag="delete"/>
+				<TreeViewItem Header="Поворот" Tag="rotate"/>
+				<TreeViewItem Header="Отражение" Tag="reflection"/>
+				<TreeViewItem Header="Масштаб" Tag="zoom"/>
+				<TreeViewItem Header="Копирование" Tag="copypaste"/>
+				<TreeViewItem Header="Заливка" Tag="fill"/>
+			</TreeViewItem>
+		</TreeView>
+
+		<Grid Grid.Column="1" Background="#c1c1c1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="3*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+				<TextBlock Grid.ColumnSpan="2"
+						   Text="{Binding Content}"
+                           FontSize="25"
+						   FontWeight="500"
+                           Foreground="#606060"
+                           HorizontalAlignment="Center"
+						   VerticalAlignment="Top"
+						   Margin="0 20 0 0"/>
+			<Border Grid.Column="0"
+				  Grid.Row="1"
+				  Background="Gray"
+				  HorizontalAlignment="Center"
+				  Margin="20 0 10 0"
+				  CornerRadius="5">
+				<TextBlock Text="{Binding Description}"
+						   TextWrapping="Wrap"
+						   VerticalAlignment="Center"
+						   FontSize="18"
+						   Margin="20"/>
+			</Border>
+
+				<Image Grid.Column="1" Grid.RowSpan="3"
+					   anim:ImageBehavior.AnimatedSource="{Binding GifSource}"
+                       Stretch="Uniform"
+					   VerticalAlignment="Center"
+					   Margin="20 0 20 0"/>
+			</Grid>
+	</Grid>
+</Window>

@@ -7,12 +7,13 @@
 		Height="900"		Width="1600"
 		x:Class="GraphicEditor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/main.ico"
         Title="GraphicEditor">
-        
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
 	<Window.Styles>
 		<!--переопределяем вид радио-кнопок для выбора фигуры-->
 		<Style Selector="RadioButton.Figure">
@@ -20,172 +21,356 @@
 				<Setter.Value>
 					<ControlTemplate>
 						<Grid>
-							<Border Name="ButtFig" Width="130" Height="50"
-									CornerRadius="10"
-									Background="#646464">
+							<Border Name="ButtFig" Width="82" Height="60"
+												  CornerRadius="10"
+												  Background="#707070"
+									Margin="5">
 							</Border>
 							<ContentPresenter Content="{TemplateBinding Content}"
-											  HorizontalAlignment="Center"
-											  VerticalAlignment="Center"/>
+															HorizontalAlignment="Center"
+															VerticalAlignment="Center"/>
 						</Grid>
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
 		</Style>
+
+		<!-- Уид для панели параметров -->
+		<Style Selector="Border#ShapeParametersPanel">
+			<Setter Property="Background" Value="#606060"/>
+			<!-- Чуть темнее серого -->
+			<Setter Property="CornerRadius" Value="10"/>
+			<!-- Скругление углов -->
+			<Setter Property="BorderBrush" Value="#707070"/>
+			<!-- Цвет рамки -->
+			<Setter Property="BorderThickness" Value="1"/>
+			<!-- Толщина рамки -->
+		</Style>
+
+		<!--переопределяем вида кнопок для параметров-->
+		<Style Selector="Button.Figure">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Grid>
+							<Border Name="ButtFig" Width="82" Height="60"
+												  CornerRadius="10"
+												  Background="#707070"
+									Margin="5">
+							</Border>
+							<ContentPresenter Content="{TemplateBinding Content}"
+															HorizontalAlignment="Center"
+															VerticalAlignment="Center"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!--вид выбранной кнопки в параметрах-->
+		<Style Selector="Button.Figure:checked /template/ Border#ButtFig">
+			<Setter Property="Background" Value="#606060"/>
+		</Style>
+		<!--вид кнопки при наведенном курсоре в параметрах-->
+		<Style Selector="Button.Figure:pointerover /template/ Border#ButtFig">
+			<Setter Property="Background" Value="#808080"/>
+		</Style>
+
 		<!--вид выбранной кнопки-->
 		<Style Selector="RadioButton.Figure:checked /template/ Border#ButtFig">
-			<Setter Property="Background" Value="#999999"/>
+			<Setter Property="Background" Value="#606060"/>
 		</Style>
 		<!--вид кнопки при наведенном курсоре-->
 		<Style Selector="RadioButton.Figure:pointerover /template/ Border#ButtFig">
-      <Setter Property="Background" Value="#787878"/>
+			<Setter Property="Background" Value="#808080"/>
+		</Style>
+		<!--переопределение кнопки режима-->
+		<Style Selector="ToggleButton.Mode">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Grid>
+							<Border Height="40" Width="180"
+												  CornerRadius="10"
+												  Background="#707070">
+							</Border>
+							<TextBlock Text="Вручную"
+													  HorizontalAlignment="Center"
+													  VerticalAlignment="Center"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<!--меняем текст если нажата-->
+		<Style Selector="ToggleButton.Mode:checked /template/ TextBlock" >
+			<Setter Property="Text" Value="По умолчанию"/>
+		</Style>
+		<!--вид кнопки при наведенном курсоре-->
+		<Style Selector="ToggleButton.Mode:pointerover /template/ Border" >
+			<Setter Property="Background" Value="#808080"/>
+		</Style>
+
+		<Style Selector="MenuItem">
+			<Setter Property="Foreground" Value="WhiteSmoke"/>
 		</Style>
 	</Window.Styles>
 
-  <Window.Styles>
-    <!--переопределяем вид радио-кнопок для переключениями между вкладок-->
-    <Style Selector="RadioButton.Figure2">
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate>
-            <Grid>
-              <Border Name="ButtFig" Width="300" Height="22"
-									CornerRadius="10,10,0,0"
-									Background="#c4c4c4">
-              </Border>
-              <ContentPresenter Content="{TemplateBinding Content}"
-											  HorizontalAlignment="Center"
-											  VerticalAlignment="Center"/>
-            </Grid>
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
-    <!--вид выбранной кнопки-->
-    <Style Selector="RadioButton.Figure2:checked /template/ Border#ButtFig">
-      <Setter Property="Background" Value="#a8a8a8"/>
-    </Style>
-    <!--вид кнопки при наведенном курсоре-->
-    <Style Selector="RadioButton.Figure2:pointerover /template/ Border#ButtFig">
-      <Setter Property="Background" Value="#bdbdbd"/>
-    </Style>
-  </Window.Styles>
 	<Grid Background="White">
-		<Grid Background="AliceBlue">
-			<!--рабочая поляна(тут будет полотно)-->
-			<Canvas Name="DrawingCanvas" Background="AliceBlue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+		<Grid Grid.Row = "0" Grid.ColumnSpan="2"  Background="#606060" >
+			<!--тут выпадающий список-->
+			<DockPanel >
+				<Menu DockPanel.Dock="Top" >
+					<MenuItem Header="_Файл">
+						<MenuItem Header="_Открыть" Command="{Binding LoadCommand}"/>
+						<MenuItem Header="_Сохранить как..." Command="{Binding SaveAsCommand}"/>
+						<Separator/>
+						<MenuItem Header="_Выйти" Command="{Binding ExitCommand}"/>
+					</MenuItem>
+					<MenuItem Header="_Справка">
+						<MenuItem Header="Помощь" Click="OpenHelpWindow"/>
+						<MenuItem Header="Документация" Click="OpenDocumentation"/>
+					</MenuItem>
+				</Menu>
+			</DockPanel>
+		</Grid>
+
+		<Grid Grid.Row="1" Grid.Column="0" Background="#9b9b9b">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<!--кнопка с режимом создания фигуры-->
+			<RelativePanel Grid.Row="0" HorizontalAlignment="Center" Margin="0 0 0 20">
+				<TextBlock x:Name="ModeText" Text="Способ создания фигуры:"
+								  Margin="0 20 0 0"/>
+				<ToggleButton Classes="Mode" Margin="0 10 0 0"
+					  IsChecked="{Binding IsManualMode, Mode=TwoWay}"
+					  RelativePanel.Below="ModeText"/>
+			</RelativePanel>
+
+			<!-- Контейнер кнопок для фигур -->
+			<Grid Margin="5 0 5 10" Grid.Row="1">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<!-- Линия -->
+				<RadioButton Classes="Figure" Grid.Row="0" Grid.Column="0"
+							 Command="{Binding CreatePolylineCommand}" HorizontalAlignment="Center"
+							 IsChecked="{Binding IsCheckedLine}">
+					<Image Source="avares://GraphicEditor/Assets/Img/slash.png" Height="27" Width="27" Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Линия"/>
+					</ToolTip.Tip>
+				</RadioButton>
+
+				<!-- Квадрат -->
+				<RadioButton Classes="Figure" Grid.Row="0" Grid.Column="1"
+							  Command="{Binding CreateRectangleCommand}" IsChecked="{Binding IsCheckedRectangle}"
+							 HorizontalAlignment="Center">
+					<Image Source="avares://GraphicEditor/Assets/Img/no-people.png"
+						   Height="27"
+						   Width="27"
+						   Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Квадрат"/>
+					</ToolTip.Tip>
+				</RadioButton>
+
+				<!-- Треугольник -->
+				<RadioButton Classes="Figure" Grid.Row="1" Grid.Column="0"
+							 Command="{Binding CreateTriangleCommand}" HorizontalAlignment="Center"
+							 IsChecked="{Binding IsCheckedTriangle}">
+					<Image Source="avares://GraphicEditor/Assets/Img/triangle.png"
+						   Height="27"
+						   Width="27"
+						   Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Треугольник"/>
+					</ToolTip.Tip>
+				</RadioButton>
+
+				<!-- Круг -->
+				<RadioButton Classes="Figure" Grid.Row="1" Grid.Column="1"
+							 Command="{Binding CreateCircleCommand}" HorizontalAlignment="Center"
+							 IsChecked="{Binding IsCheckedCircle}">
+					<Image Source="avares://GraphicEditor/Assets/Img/circle.png"
+						   Height="27"
+						   Width="27"
+						   Margin="5"/>
+					<ToolTip.Tip>
+						<TextBlock Text="Круг"/>
+					</ToolTip.Tip>
+				</RadioButton>
+
+        
+			</Grid>
+
+			<!-- Панель параметров -->
+      <Border Grid.Row="2"
+            Background="#606060"
+            CornerRadius="10"
+            Padding="10"
+            Margin="5 0 5 10"
+            IsVisible="{Binding IsPanelOpen, FallbackValue=False}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <!-- Кнопки управления фигурой -->
+          <Grid Grid.Row="0" Margin="5">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Повернуть -->
+            <Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding RotateFigureCommand}"
+                    Width="60" Height="60"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/rotate-left.png" Width="30" Height="30"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Повернуть"/>
+              </ToolTip.Tip>
+            </Button>
+
+            <!-- Двигать -->
+            <Button Classes="Figure" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding BackRotateFigureCommand}"
+                    Width="60" Height="60"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/rotate-right.png" Width="30" Height="30"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Двигать"/>
+              </ToolTip.Tip>
+            </Button>
+
+            <!-- Отразить по горизонтали -->
+            <Button Classes="Figure" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ReflectionCommand}"
+                    Width="60" Height="60"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/flip-horiz.png" Width="30" Height="30"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Отразить по горизонтали"/>
+              </ToolTip.Tip>
+            </Button>
+
+            <!-- + размер -->
+            <Button Classes="Figure" Grid.Row="2" Grid.Column="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleUpCommand}"
+                    Width="60" Height="28"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/plus-small.png" Width="20" Height="20"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Увеличить"/>
+              </ToolTip.Tip>
+            </Button>
+
+            <!-- - размер -->
+            <Button Classes="Figure" Grid.Row="3" Grid.Column="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding ScaleDownCommand}"
+                    Width="60" Height="28"
+                    Margin="2.5">
+              <Image Source="avares://GraphicEditor/Assets/Img/minus-small.png" Width="20" Height="20"/>
+              <ToolTip.Tip>
+                <TextBlock Text="Уменьшить"/>
+              </ToolTip.Tip>
+            </Button>
+          </Grid>
+
+          <!-- Ползунок толщины -->
+          <StackPanel Grid.Row="1" Margin="0 20 0 0">
+            <TextBlock Text="Толщина" Margin="0 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <Slider x:Name="thicknessSlider" Width="110" Minimum="1" Maximum="20" Value="{Binding CurrentThickness, Mode=TwoWay}"/>
+              <TextBlock x:Name="thicknessValueText" Text="1" Margin="10 0 0 0" VerticalAlignment="Center"/>
+            </StackPanel>
+          </StackPanel>
+
+          <!-- Цветовая палитра -->
+          <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ColorPicker Grid.Column="0" x:Name="colorPicker" Width="100" Height="20"
+             Margin="0 0 0 10" VerticalAlignment="Bottom"/>
+            <Button Grid.Column="1" Margin="10 0 0 10" Click="ClickOnFillingButton">
+              <Image Source="avares://GraphicEditor/Assets/Img/fill.png"
+                     Width="20" Height="20"/>
+            </Button>
+          </Grid>
+        </Grid>
+      </Border>
+		</Grid>
+
+
+		<Grid Grid.Row = "1" Grid.Column="1">
+			<Canvas ClipToBounds="True" Name="DrawingCanvas" Background="AliceBlue"
+						  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 				<!-- В этом Canvas будут отображаться все фигуры -->
 			</Canvas>
-			<!--поле с выбором фигуры и цветовой схемой-->
-			<Panel Background="#4b4b4b"
-				   Height="858"
-				   Width="198"
-				   Canvas.Left="0"
-				   Canvas.Bottom="0">
-				<!--контейнер кнопок для фигур-->
-				<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" >
-					<RadioButton Classes="Figure" Margin="0 20 0 0" Command="{Binding CreatePolylineCommand}">
-						<Image Source="avares://GraphicEditor/Assets/Img/slash.png" Height="27" Width="27" Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Линия"/>
-						</ToolTip.Tip>
-					</RadioButton>
-					<RadioButton Classes="Figure" Content="Квадрат" Margin="0 20 0 0">
-						<Image Source="avares://GraphicEditor/Assets/Img/no-people.png"
-							Height="27"
-							Width="27"
-							Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Квадрат"/>
-						</ToolTip.Tip>
-					</RadioButton>
-					<RadioButton Classes="Figure" Content="Треугольник" Margin="0 20 0 0">
-						<Image Source="avares://GraphicEditor/Assets/Img/triangle.png"
-							Height="27"
-							Width="27"
-							Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Треугольник"/>
-						</ToolTip.Tip>
-					</RadioButton>
-					<RadioButton Classes="Figure" Content="Круг" Margin="0 20 0 0">
-						<Image Source="avares://GraphicEditor/Assets/Img/circle.png"
-							Height="27"
-							Width="27"
-							Margin="5"/>
-						<ToolTip.Tip>
-							<TextBlock Text="Круг"/>
-						</ToolTip.Tip>
-					</RadioButton>
-				</StackPanel>
-				<!--цветовая схема-->
-				<Rectangle Fill="DarkGoldenrod"
-				   Height="180"
-				   Width="180"
-				   VerticalAlignment="Bottom"
-				   Margin="0 0 0 10"/>
-			</Panel>
-			<!--тут выпадающий список-->
-			<Panel  Background="#646464"
-				   Height="40"
-				   Width="1600"
-				   Canvas.Top="0"
-				   Canvas.Right="0">
-				<DockPanel>
-					<Menu DockPanel.Dock="Top">
-						<MenuItem Header="_Файл">
-							<MenuItem Header="_Открыть"/>
-							<Separator/>
-							<MenuItem Header="_Выйти"/>
-						</MenuItem>
-						<MenuItem Header="_Правка">
-							<MenuItem Header="Копировать"/>
-							<MenuItem Header="Вставить"/>
-						</MenuItem>
-						<MenuItem Header="_Вид">
-							<MenuItem Header=" "/>
-							<MenuItem Header=" "/>
-						</MenuItem>
-						<MenuItem Header="_Помощь">
-							<MenuItem Header="Документация"/>
-						</MenuItem>
-					</Menu>
-					<TextBlock/>
-				</DockPanel>
-			</Panel>
-
-
-			<!--просто полосчка один горизонтальная-->
-			<Panel Background="#404040"
-				   Height="2"
-				   Width="1600"
-				   Canvas.Top="40"
-				   Canvas.Right="0"/>
-			<!--просто полосчка два вертикальная-->
-			<Panel Background="#404040"
-				   Height="858"
-				   Width="2"
-				   Canvas.Left="198"
-				   Canvas.Bottom="0"/>
-			<!--тут переключаемся между окнами-->
-			<Panel Background="#4b4b4b"
-				   Height="30"
-				   Width="1400"
-				   Canvas.Top="42"
-				   Canvas.Right="0">
-
-				<StackPanel Margin="0 0 0 0" Orientation="Horizontal" HorizontalAlignment="Left" >
-					<RadioButton Classes="Figure2" Content="Проект 1" Margin="0 8 0 0">
-						Проект 1
-					</RadioButton>
-					<RadioButton Classes="Figure2" Content="Проект 2" Margin="10 8 0 0">
-						Проект 2
-					</RadioButton>
-					<RadioButton Classes="Figure2" Content="Проект 3" Margin="10 8 0 0">
-						Проект 3
-					</RadioButton>
-				</StackPanel>
-			</Panel>
 		</Grid>
+
+		<Popup x:Name="LinePopup" IsOpen="{Binding IsCheckedLine, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+				   VerticalOffset="-70" PlacementTarget="{Binding ElementName=LineButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+						  PointerEntered="HidePopup">
+				<TextBlock Text="Выберите две точки на холсте, чтобы нарисовать линию."/>
+			</Border>
+		</Popup>
+
+		<Popup x:Name="RectanglePopup" IsOpen="{Binding IsCheckedRectangle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+               VerticalOffset="-70" PlacementTarget="{Binding ElementName=RectangleButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+					PointerEntered="HidePopup">
+				<TextBlock Text="Выберите две точки - противоположные углы прямоугольника."/>
+			</Border>
+		</Popup>
+
+		<Popup x:Name="TrianglePopup" IsOpen="{Binding IsCheckedTriangle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+               VerticalOffset="-70" PlacementTarget="{Binding ElementName=TriangleButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+					PointerEntered="HidePopup">
+				<TextBlock Text="Выберите три точки на холсте, чтобы нарисовать треугольник."/>
+			</Border>
+		</Popup>
+		<Popup x:Name="CirclePopup" IsOpen="{Binding IsCheckedCircle, FallbackValue=False}" Placement="Bottom" HorizontalOffset="0"
+				   VerticalOffset="-70" PlacementTarget="{Binding ElementName=CircleButton}">
+			<Border Background="Gray" Padding="20" CornerRadius="10"
+						  PointerEntered="HidePopup">
+				<TextBlock Text="Выберите центр и точку лежащую на окружности, чтобы нарисовать круг."/>
+			</Border>
+		</Popup>
+
 	</Grid>
 </Window>

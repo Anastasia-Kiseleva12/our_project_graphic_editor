@@ -2,19 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
-using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 
 namespace GraphicEditor
 {
     public class FigureMetadata
     {
         public string Name { get; set; }
-        public int NumberOfPointParameters { get; set; }
-        public int NumberOfDoubleParameters { get; set; }
-        public IEnumerable<string> PointParametersNames { get; set; }
-        public IEnumerable<string> DoubleParametersNames { get; set; }
+    }
+    public interface IFigureCreator
+    {
+        public int NumberOfPointParameters
+        {
+            get; 
+        }
+        public int NumberOfDoubleParameters
+        {
+            get;
+        }
+        public IEnumerable<string> PointParametersNames
+        {
+            get;
+        }
+        public IEnumerable<string> DoubleParametersNames
+        {
+            get;
+        }
+        IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
+        IFigure CreateDefault();
     }
 
     public static class FigureFabric
@@ -22,7 +37,7 @@ namespace GraphicEditor
         class ImportInfo
         {
             [ImportMany]
-            public IEnumerable<Lazy<IFigure, FigureMetadata>> AvailableFigures { get; set; } = [];
+            public IEnumerable<Lazy<IFigureCreator, FigureMetadata>> AvailableFigures { get; set; } = [];
         }
         static ImportInfo info;
         static FigureFabric()
@@ -45,182 +60,31 @@ namespace GraphicEditor
 
         public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
         public static IEnumerable<FigureMetadata> AvailableMetadata => info.AvailableFigures.Select(f => f.Metadata);
-        public static IFigure CreateFigure(string FigureName)
+        public static IFigure CreateFigure(string FigureName,
+            IDictionary<string, double> doubleParams,
+            IDictionary<string, Point> pointParams)
         {
-            return info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value;
+            return info.AvailableFigures
+                .First(f => f.Metadata.Name == FigureName)
+                .Value
+                .Create(doubleParams,pointParams);
         }
-    }
-    [Export(typeof(IFigure))]
-    [ExportMetadata(nameof(FigureMetadata.Name), nameof(Line))]
-    [ExportMetadata(nameof(FigureMetadata.NumberOfPointParameters), 2)]
-    [ExportMetadata(nameof(FigureMetadata.NumberOfDoubleParameters), 0)]
-    [ExportMetadata(nameof(FigureMetadata.DoubleParametersNames), new string[] { })]  
-    [ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] { "First", "Second" })]
-    public class Line: IFigure
-    {
-        public string Name => "Line";
-        public Point Start { get; private set; }
-        public Point End { get; private set; }
-        public Point Center => new Point { X = (Start.X + End.X) / 2, Y = (Start.Y + End.Y) / 2 };
-
-        public string Id { get; } = Guid.NewGuid().ToString();
-        public Line() {}
-        public Line(Point start, Point end)
+        public static IFigure CreateFigureDefault(string FigureName)
         {
-            Start = start;
-            End = end;
-        }
-        public void Move(Point vector)
-        {
-            Start = new Point { X = Start.X + vector.X, Y = Start.Y + vector.Y };
-            End = new Point { X = End.X + vector.X, Y = End.Y + vector.Y };
-        }
-        public void Rotate(Point center, double angle)
-        {
-            double rad = angle * Math.PI / 180;
-            double cosA = Math.Cos(rad);
-            double sinA = Math.Sin(rad);
-            Start = new Point { X = center.X + (Start.X - center.X) * cosA - (Start.Y - center.Y) * sinA , Y = center.Y + (Start.X - center.X) * sinA + (Start.Y - center.Y) * cosA };
-            End = new Point { X = center.X + (End.X - center.X) * cosA - (End.Y - center.Y) * sinA, Y = center.Y + (End.X - center.X) * sinA + (End.Y - center.Y) * cosA };
+            return info.AvailableFigures
+                .First(f => f.Metadata.Name == FigureName)
+                .Value
+                .CreateDefault();
         }
 
-        public void Scale(double dx, double dy)
-        {
-            Start = new Point { X = Start.X * dx, Y = Start.Y * dy };
-            End = new Point { X = End.X * dx, Y = End.Y * dy };
-        }
-        public void Scale(Point center, double dr)
-        {
-            Start = new Point { X = center.X + (Start.X - center.X) * dr, Y = center.Y + (Start.Y - center.Y) * dr };
-            End = new Point { X = center.X + (End.X - center.X) * dr, Y = center.Y + (End.Y - center.Y) * dr };
-        }
-        public void Reflection(Point a, Point b) => throw new NotImplementedException();
-        public IFigure Clone()
-        {
-            return new Line(new Point { X = Start.X, Y = Start.Y }, new Point { X = End.X, Y = End.Y });
-        }
-        public IEnumerable<IDrawingFigure> GetAsDrawable() => throw new NotImplementedException();
-        public bool IsIn(Point point, double eps) => throw new NotImplementedException();
-        public IFigure Intersect(IFigure other) => throw new NotImplementedException();
-        public IFigure Union(IFigure other) => throw new NotImplementedException();
-        public IFigure Subtract(IFigure other) => throw new NotImplementedException();
-        public IEnumerable<Point> GetLinePoints() 
-        {
+        public static IEnumerable<string> PointParameters(string FigureName) =>
+            info.AvailableFigures
+                .First(f => f.Metadata.Name == FigureName)
+                .Value.PointParametersNames;
 
-            int x0 = (int)Math.Round(Start.X);
-            int y0 = (int)Math.Round(Start.Y);
-            int x1 = (int)Math.Round(End.X);
-            int y1 = (int)Math.Round(End.Y);
-
-            int dx = Math.Abs(x1 - x0);
-            int dy = Math.Abs(y1 - y0);
-            int sx = x0 < x1 ? 1 : -1;
-            int sy = y0 < y1 ? 1 : -1;
-            int err = dx - dy;
-
-            while (true)
-            {
-                yield return new Point { X = x0, Y = y0 };
-
-                if (x0 == x1 && y0 == y1) break;
-                int e2 = 2 * err;
-                if (e2 > -dy) { err -= dy; x0 += sx; }
-                if (e2 < dx) { err += dx; y0 += sy; }
-            }
-        }
-
-        public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
-        {
-            Start = pointParams["First"];
-            End = pointParams["Second"];
-        }
-
-        public void Draw(IDrawing drawing)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    [Export(typeof(IFigure))]
-    [ExportMetadata(nameof(FigureMetadata.Name), "Circle")]
-    [ExportMetadata(nameof(FigureMetadata.NumberOfPointParameters), 2)]
-    [ExportMetadata(nameof(FigureMetadata.NumberOfDoubleParameters), 0)]
-    [ExportMetadata(nameof(FigureMetadata.DoubleParametersNames), new string[] { })]
-    [ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] { "Center", "Radius" })]
-
-    public class Circle : IFigure
-{
-    public Point Center { get; private set; }
-    public Point PointOnCircle { get; private set; }
-
-    public string Id { get; } = Guid.NewGuid().ToString();
-
-    public Circle() { }
-
-    public Circle(Point center, Point pointOnCircle)
-    {
-        Center = center;
-        PointOnCircle = pointOnCircle;
-    }
-
-        public void Move(Point vector)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Rotate(Point center, double angle)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Scale(double dx, double dy)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Scale(Point center, double dr)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Reflection(Point a, Point b)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFigure Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Draw(IDrawing drawing)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsIn(Point point, double eps)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFigure Intersect(IFigure other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFigure Union(IFigure other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFigure Subtract(IFigure other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
-        {
-            throw new NotImplementedException();
-        }
+        public static IEnumerable<string> DoubleParameters(string FigureName) =>
+            info.AvailableFigures
+                .First(f => f.Metadata.Name == FigureName)
+                .Value.DoubleParametersNames;
     }
 }
